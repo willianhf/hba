@@ -9,7 +9,7 @@ export class UserMap extends Mapper<User> {
     const username = UserName.create({ name: persisted.username });
     const password = UserPassword.create({
       value: persisted.password,
-      isHashed: true,
+      isHashed: true
     });
 
     const user = User.create(
@@ -17,7 +17,7 @@ export class UserMap extends Mapper<User> {
         username: username.getValue(),
         password: password.getValue(),
         isVerified: persisted.isVerified,
-        isAdmin: persisted.isAdmin,
+        isAdmin: persisted.isAdmin
       },
       id
     );
@@ -36,7 +36,7 @@ export class UserMap extends Mapper<User> {
       username: domain.username.value,
       password: hashedPassword,
       isVerified: domain.isVerified,
-      isAdmin: domain.isAdmin,
+      isAdmin: domain.isAdmin
     };
   }
 }

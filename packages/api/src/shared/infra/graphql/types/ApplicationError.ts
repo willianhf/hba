@@ -7,6 +7,6 @@ export const ApplicationErrorRef = schemaBuilder.simpleObject('ApplicationError'
     title: t.string(),
     description: t.string(),
     originalName: t.string({ nullable: true }),
-    stackTrace: t.string({ nullable: true }),
-  }),
+    stackTrace: t.string({ nullable: true })
+  })
 });

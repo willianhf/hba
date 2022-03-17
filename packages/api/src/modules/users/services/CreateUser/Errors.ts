@@ -14,10 +14,6 @@ export class ValidationError extends CreateUserError {
 
 export class UsernameTakenError extends CreateUserError {
   constructor(username: string) {
-    super(
-      'UsernameTakenError',
-      'Username is already taken',
-      `The username "${username}" is already taken`
-    );
+    super('UsernameTakenError', 'Username is already taken', `The username "${username}" is already taken`);
   }
 }

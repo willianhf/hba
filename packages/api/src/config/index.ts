@@ -12,7 +12,7 @@ type Environment = Partial<Config>;
 function getEnvironment(): Environment {
   return {
     isProduction: process.env.NODE_ENV === 'production',
-    saltRounds: 6,
+    saltRounds: 6
   };
 }
 

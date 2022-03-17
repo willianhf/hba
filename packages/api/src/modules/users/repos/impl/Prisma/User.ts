@@ -8,7 +8,7 @@ export class PrismaUserRepository implements UserRepository {
   public async getUserById(userId: UniqueIdentifier): Promise<User> {
     const persistedUser = await prisma.user.findFirst({
       where: { id: userId.toValue() },
-      rejectOnNotFound: true,
+      rejectOnNotFound: true
     });
     const domainUser = UserMap.toDomain(persistedUser);
 
@@ -18,7 +18,7 @@ export class PrismaUserRepository implements UserRepository {
   public async getUserByUsername(username: UserName): Promise<User> {
     const persistedUser = await prisma.user.findFirst({
       where: { username: username.value },
-      rejectOnNotFound: true,
+      rejectOnNotFound: true
     });
     const domainUser = UserMap.toDomain(persistedUser);
 
@@ -30,14 +30,14 @@ export class PrismaUserRepository implements UserRepository {
 
     const persistedUser = await prisma.user.create({ data: persistanceProps });
     const domainUser = UserMap.toDomain(persistedUser);
-    
+
     return domainUser;
   }
 
   public async exists(username: UserName): Promise<boolean> {
     const persistedUser = await prisma.user.findFirst({
       where: { username: username.value },
-      select: { id: true },
+      select: { id: true }
     });
 
     return !!persistedUser;

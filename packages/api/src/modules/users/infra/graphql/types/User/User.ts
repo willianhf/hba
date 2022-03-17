@@ -12,7 +12,7 @@ schemaBuilder.objectType(UserRef, {
     createdAt: t.field({
       type: 'Date',
       resolve: user => user.createdAt,
-      nullable: true,
-    }),
-  }),
+      nullable: true
+    })
+  })
 });

@@ -16,8 +16,8 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
       .required('Password is null or undefined')
       .when('$isHashed', {
         is: (isHashed: boolean) => isHashed,
-        then: string().min(5, 'Password has to be at least ${min} characters'),
-      }),
+        then: string().min(5, 'Password has to be at least ${min} characters')
+      })
   });
 
   private constructor(props: UserPasswordProps) {
@@ -32,10 +32,7 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
     return !!this.props.isHashed;
   }
 
-  private async compareHashPassword(
-    plainText: string,
-    hashed: string
-  ): Promise<boolean> {
+  private async compareHashPassword(plainText: string, hashed: string): Promise<boolean> {
     return bcrypt.compare(plainText, hashed);
   }
 
@@ -64,13 +61,13 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
   public static create(props: UserPasswordProps): Result<UserPassword> {
     try {
       this.schema.validateSync(props, {
-        context: { isHashed: props.isHashed },
+        context: { isHashed: props.isHashed }
       });
 
       return Result.ok(
         new UserPassword({
           value: props.value,
-          isHashed: props.isHashed,
+          isHashed: props.isHashed
         })
       );
     } catch (ex) {

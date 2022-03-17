@@ -1,7 +1,7 @@
 import config from '~/config';
 
 interface FormattedError {
-  hasError: true,
+  hasError: true;
   name: string;
   title: string;
   description: string;
@@ -24,7 +24,7 @@ export class ApplicationError {
         hasError: true,
         name: this.name,
         title: this.title,
-        description: this.description,
+        description: this.description
       };
     }
 
@@ -34,7 +34,7 @@ export class ApplicationError {
       title: this.title,
       description: this.description,
       originalName: this.originalName,
-      stackTrace: this.stackTrace,
+      stackTrace: this.stackTrace
     };
   }
 
@@ -44,13 +44,7 @@ export class ApplicationError {
     }
 
     if (error instanceof Error) {
-      return new this(
-        error.name,
-        error.name,
-        error.message,
-        error.name,
-        error.stack
-      ).toPlainObject();
+      return new this(error.name, error.name, error.message, error.name, error.stack).toPlainObject();
     }
 
     return new UnexpectedError().toPlainObject();

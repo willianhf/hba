@@ -19,15 +19,12 @@ export class User extends PersistableEntity<UserProps, UniqueIdentifier> {
     super(props, id);
   }
 
-  public static create(
-    props: CreateUserProps,
-    id?: UniqueIdentifier
-  ): Result<User> {
+  public static create(props: CreateUserProps, id?: UniqueIdentifier): Result<User> {
     const user = new User(
       {
         ...props,
         isAdmin: props.isAdmin ?? false,
-        isVerified: props.isVerified ?? false,
+        isVerified: props.isVerified ?? false
       },
       id
     );

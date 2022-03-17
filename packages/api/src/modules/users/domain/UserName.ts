@@ -12,7 +12,7 @@ export class UserName extends ValueObject<UserNameProps> {
       .nullable()
       .required('Username is null or undefined')
       .min(3, 'Username is not at least ${min} characters')
-      .max(25, 'Username greater than ${max} characters'),
+      .max(25, 'Username greater than ${max} characters')
   });
 
   private constructor(props: UserNameProps) {

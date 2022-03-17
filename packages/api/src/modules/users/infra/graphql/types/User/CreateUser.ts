@@ -16,6 +16,6 @@ export const CreateUserResult = schemaBuilder.unionType('CreateUserResult', {
 export const CreateUserInput = schemaBuilder.inputType('CreateUserInput', {
   fields: t => ({
     username: t.string({ required: true }),
-    password: t.string({ required: true }),
-  }),
+    password: t.string({ required: true })
+  })
 });

@@ -15,11 +15,7 @@ interface FailureGuardResult {
 type GuardResult = SuccessGuardResult | FailureGuardResult;
 
 export class Guard {
-  public static fromSchema<T>(
-    schema: SchemaOf<any>,
-    data: T,
-    options?: ValidateOptions
-  ): GuardResult {
+  public static fromSchema<T>(schema: SchemaOf<any>, data: T, options?: ValidateOptions): GuardResult {
     try {
       schema.validateSync(data, options);
 

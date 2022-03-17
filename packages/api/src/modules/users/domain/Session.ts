@@ -15,14 +15,8 @@ export class Session extends PersistableEntity<SessionProps, UniqueIdentifier> {
     super(props, id);
   }
 
-  public static create(
-    props: CreateSessionProps,
-    id?: UniqueIdentifier
-  ): Session {
-    return new Session(
-      { ...props, createdAt: props.createdAt ?? new Date() },
-      id
-    );
+  public static create(props: CreateSessionProps, id?: UniqueIdentifier): Session {
+    return new Session({ ...props, createdAt: props.createdAt ?? new Date() }, id);
   }
 
   get user(): User {

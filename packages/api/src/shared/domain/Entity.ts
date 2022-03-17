@@ -7,14 +7,8 @@ export abstract class Entity<Props> {
   }
 }
 
-export abstract class PersistableEntity<
-  Props,
-  TIdentifier extends Identifier<any>
-> extends Entity<Props> {
-  constructor(
-    protected readonly props: Props,
-    protected readonly id?: TIdentifier
-  ) {
+export abstract class PersistableEntity<Props, TIdentifier extends Identifier<any>> extends Entity<Props> {
+  constructor(protected readonly props: Props, protected readonly id?: TIdentifier) {
     super(props);
   }
 

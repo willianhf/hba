@@ -7,7 +7,7 @@ schemaBuilder.mutationFields(t => ({
   createUser: t.field({
     type: CreateUserResult,
     args: {
-      input: t.arg({ type: CreateUserInput, required: true }),
+      input: t.arg({ type: CreateUserInput, required: true })
     },
     resolve: async (_root, args) => {
       try {
@@ -17,6 +17,6 @@ schemaBuilder.mutationFields(t => ({
       } catch (error) {
         return ApplicationError.fromRaw(error);
       }
-    },
-  }),
+    }
+  })
 }));

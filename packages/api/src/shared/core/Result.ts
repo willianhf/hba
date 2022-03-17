@@ -3,15 +3,11 @@ type ResultError<T> = T | string | Nullish;
 export class Result<T> {
   public constructor(isSuccess: boolean, public error: ResultError<T>, private value?: T) {
     if (isSuccess && error) {
-      throw new Error(
-        'InvalidOperation: A result cannot be successful and contain an error'
-      );
+      throw new Error('InvalidOperation: A result cannot be successful and contain an error');
     }
 
     if (!isSuccess && !error) {
-      throw new Error(
-        'InvalidOperation: A failing result needs to contain an error message'
-      );
+      throw new Error('InvalidOperation: A failing result needs to contain an error message');
     }
 
     this.error = error;
@@ -20,7 +16,7 @@ export class Result<T> {
     Object.freeze(this);
   }
 
-  public isSuccess(): this is { _value: T} {
+  public isSuccess(): this is { _value: T } {
     return !!this.value;
   }
 
@@ -30,9 +26,7 @@ export class Result<T> {
 
   public getValue(): T {
     if (this.isFailure()) {
-      throw new Error(
-        `Can't get the value of an error result. Use 'errorValue' instead.`
-      );
+      throw new Error(`Can't get the value of an error result. Use 'errorValue' instead.`);
     }
 
     return this.value as T;

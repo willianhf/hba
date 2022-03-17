@@ -11,10 +11,10 @@ type SchemaBuilderConfig = {
 };
 
 export const schemaBuilder = new SchemaBuilder<SchemaBuilderConfig>({
-  plugins: [SimpleObjectsPlugin],
+  plugins: [SimpleObjectsPlugin]
 });
 
 schemaBuilder.scalarType('Date', {
   serialize: (value: Date) => value.toISOString(),
-  parseValue: (value: string) => new Date(value),
+  parseValue: (value: string) => new Date(value)
 });

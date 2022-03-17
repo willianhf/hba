@@ -25,14 +25,14 @@ export class VerificationCode extends ValueObject<VerificationCodeProps> {
   get expiresAt(): Date {
     return this.props.expiresAt;
   }
-  
+
   public isExpired(): boolean {
     const now = new Date();
 
     return now > this.expiresAt;
   }
 
-  public isValid(code: string) : boolean {
+  public isValid(code: string): boolean {
     if (this.isExpired()) {
       return false;
     }
@@ -55,7 +55,7 @@ export class VerificationCode extends ValueObject<VerificationCodeProps> {
       const deserialized = VerificationCode.deserialize(serialized);
 
       return Result.ok(new VerificationCode(deserialized));
-    } 
+    }
 
     const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
     let code = '';

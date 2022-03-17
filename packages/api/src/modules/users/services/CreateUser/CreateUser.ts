@@ -30,7 +30,7 @@ export class CreateUserService implements Service<CreateUserDTO, Output> {
 
     const userResult = User.create({
       username,
-      password: passwordResult.getValue(),
+      password: passwordResult.getValue()
     });
     if (userResult.isFailure()) {
       throw new ValidationError(userResult.error.toString());
