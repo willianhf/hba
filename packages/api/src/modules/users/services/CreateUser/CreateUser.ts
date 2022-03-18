@@ -20,7 +20,7 @@ export class CreateUserService implements Service<CreateUserDTO, User> {
       throw new UsernameTakenError(username.value);
     }
 
-    const user = User.create({ username, password }).getValue();
+    const user = User.create({ username, password });
     const persistedUser = await this.userRepository.save(user);
 
     return persistedUser;

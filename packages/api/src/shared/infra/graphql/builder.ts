@@ -1,8 +1,8 @@
 import SchemaBuilder from '@pothos/core';
-import SimpleObjectsPlugin from '@pothos/plugin-simple-objects';
 import ScopeAuthPlugin from '@pothos/plugin-scope-auth';
+import SimpleObjectsPlugin from '@pothos/plugin-simple-objects';
+import { AuthenticationError, ForbiddenError } from 'apollo-server';
 import { User } from '~/modules/users/domain';
-import { ApplicationError } from '~/shared/core/Error';
 
 type SchemaBuilderConfig = {
   Scalars: {
@@ -28,7 +28,19 @@ export const schemaBuilder = new SchemaBuilder<SchemaBuilderConfig>({
     isAdmin: !!context.user?.isAdmin
   }),
   scopeAuthOptions: {
-    unauthorizedError: () => 'You are not authorized to access this resource.',
+    unauthorizedError: (_parent, _context, _info, result) => {
+      if ('failures' in result.failure) {
+        const [failure] = result.failure.failures;
+
+        if ('scope' in failure) {
+          if (failure.scope === 'isAdmin') {
+            return new ForbiddenError('You must be an admin to perform this action.');
+          }
+        }
+      }
+
+      return new AuthenticationError('You must be logged in to perform this action.');
+    }
   }
 });
 
