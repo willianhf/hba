@@ -11,9 +11,8 @@ schemaBuilder.mutationFields(t => ({
     },
     resolve: async (_root, args) => {
       try {
-        const result = await createUserService.execute(args.input);
-
-        return result.getValue();
+        const user = await createUserService.execute(args.input);
+        return user;
       } catch (error) {
         return ApplicationError.fromRaw(error);
       }

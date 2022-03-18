@@ -1,10 +1,11 @@
 import { UniqueIdentifier } from '~/shared/domain';
 import { PersistableEntity } from '~/shared/domain/Entity';
+import { RequiredExceptFor } from '~/types/common';
 import { User } from './User';
 
 interface SessionProps {
   user: User;
-  hostname: string;
+  userAgent: string;
   createdAt: Date;
 }
 
@@ -23,8 +24,8 @@ export class Session extends PersistableEntity<SessionProps, UniqueIdentifier> {
     return this.props.user;
   }
 
-  get hostname(): string {
-    return this.props.hostname;
+  get userAgent(): string {
+    return this.props.userAgent;
   }
 
   get createdAt(): Date {

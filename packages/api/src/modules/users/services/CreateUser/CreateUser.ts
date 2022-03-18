@@ -9,12 +9,10 @@ interface CreateUserDTO {
   password: string;
 }
 
-type Output = Result<User>;
-
-export class CreateUserService implements Service<CreateUserDTO, Output> {
+export class CreateUserService implements Service<CreateUserDTO, User> {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async execute(dto: CreateUserDTO): Promise<Output> {
+  async execute(dto: CreateUserDTO): Promise<User> {
     const usernameResult = UserName.create({ name: dto.username });
     const passwordResult = UserPassword.create({ value: dto.password });
     const validationResult = Result.combine([usernameResult, passwordResult]);
@@ -28,17 +26,9 @@ export class CreateUserService implements Service<CreateUserDTO, Output> {
       throw new UsernameTakenError(username.value);
     }
 
-    const userResult = User.create({
-      username,
-      password: passwordResult.getValue()
-    });
-    if (userResult.isFailure()) {
-      throw new ValidationError(userResult.error.toString());
-    }
-
-    const user = userResult.getValue();
+    const user = User.create({ username, password: passwordResult.getValue() }).getValue();
     const persistedUser = await this.userRepository.save(user);
 
-    return Result.ok(persistedUser);
+    return persistedUser;
   }
 }

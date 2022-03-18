@@ -1,10 +1,9 @@
+type UserId = string;
+type SessionId = string;
+
 export interface JWTClaims {
-  userId: string;
-  sessionId: string;
+  userId: UserId;
+  sessionId: SessionId;
 }
 
 export type JWTToken = string;
-
-export type SessionId = string;
-
-export type RefreshToken = string;

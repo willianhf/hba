@@ -1,6 +1,6 @@
 import { Mapper } from '~/shared/core/Mapper';
 import { UniqueIdentifier } from '~/shared/domain';
-import { PersistedUser, PersistanceUser } from '../database';
+import { PersistedUser, ToPersistUser } from '../database';
 import { User, UserName, UserPassword } from '../domain';
 
 export class UserMap extends Mapper<User> {
@@ -17,7 +17,8 @@ export class UserMap extends Mapper<User> {
         username: username.getValue(),
         password: password.getValue(),
         isVerified: persisted.isVerified,
-        isAdmin: persisted.isAdmin
+        isAdmin: persisted.isAdmin,
+        createdAt: persisted.createdAt
       },
       id
     );
@@ -29,7 +30,7 @@ export class UserMap extends Mapper<User> {
     return user.getValue();
   }
 
-  public static async toPersistence(domain: User): Promise<PersistanceUser> {
+  public static async toPersistence(domain: User): Promise<ToPersistUser> {
     const hashedPassword = await domain.password.getHashedValue();
 
     return {

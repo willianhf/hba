@@ -8,6 +8,9 @@ type SchemaBuilderConfig = {
       Output: Date;
     };
   };
+  Context: {
+    userAgent: string;
+  }
 };
 
 export const schemaBuilder = new SchemaBuilder<SchemaBuilderConfig>({

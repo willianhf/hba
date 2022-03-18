@@ -1,6 +1,7 @@
 import { Result } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { PersistableEntity } from '~/shared/domain/Entity';
+import { OptionalExceptFor } from '~/types/common';
 import { UserName } from './UserName';
 import { UserPassword } from './UserPassword';
 

@@ -5,24 +5,28 @@ import { UserMap } from '~/modules/users/mappers';
 import { UniqueIdentifier } from '~/shared/domain';
 
 export class PrismaUserRepository implements UserRepository {
-  public async getUserById(userId: UniqueIdentifier): Promise<User> {
+  public async getUserById(userId: UniqueIdentifier): Promise<User | null> {
     const persistedUser = await prisma.user.findFirst({
       where: { id: userId.toValue() },
-      rejectOnNotFound: true
     });
-    const domainUser = UserMap.toDomain(persistedUser);
 
-    return domainUser;
+    if (persistedUser) {
+      return UserMap.toDomain(persistedUser);
+    }
+
+    return null;
   }
 
-  public async getUserByUsername(username: UserName): Promise<User> {
+  public async getUserByUsername(username: UserName): Promise<User | null> {
     const persistedUser = await prisma.user.findFirst({
       where: { username: username.value },
-      rejectOnNotFound: true
     });
-    const domainUser = UserMap.toDomain(persistedUser);
 
-    return domainUser;
+    if (persistedUser) {
+      return UserMap.toDomain(persistedUser);
+    }
+
+    return null;
   }
 
   public async save(user: User): Promise<User> {

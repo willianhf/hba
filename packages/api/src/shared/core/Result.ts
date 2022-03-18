@@ -1,3 +1,5 @@
+import { Nullish } from '~/types/common';
+
 type ResultError<T> = T | string | Nullish;
 
 export class Result<T> {

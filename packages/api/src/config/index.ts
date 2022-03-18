@@ -5,6 +5,7 @@ dotenv();
 interface Config {
   isProduction: boolean;
   saltRounds: number;
+  jwtSecret: string;
 }
 
 type Environment = Partial<Config>;
@@ -12,7 +13,8 @@ type Environment = Partial<Config>;
 function getEnvironment(): Environment {
   return {
     isProduction: process.env.NODE_ENV === 'production',
-    saltRounds: 6
+    saltRounds: 6,
+    jwtSecret: process.env.JWT_SECRET
   };
 }
 
