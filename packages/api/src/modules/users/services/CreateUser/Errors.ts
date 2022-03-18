@@ -1,13 +1,7 @@
-import { ApplicationError } from '~/shared/core/Error';
+import { ValidationInputError } from '~/shared/core/Error';
 
-export class ValidationError extends ApplicationError {
-  constructor(message: string) {
-    super('ValidationError', 'Validation Error', message);
-  }
-}
-
-export class UsernameTakenError extends ApplicationError {
+export class UsernameTakenError extends ValidationInputError {
   constructor(username: string) {
-    super('UsernameTakenError', 'Username is already taken', `The username "${username}" is already taken`);
+    super({ field: 'username', message: `The username "${username}" is already taken` });
   }
 }

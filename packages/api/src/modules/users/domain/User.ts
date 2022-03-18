@@ -1,4 +1,3 @@
-import { Result } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { PersistableEntity } from '~/shared/domain/Entity';
 import { OptionalExceptFor } from '~/types/common';
@@ -20,7 +19,7 @@ export class User extends PersistableEntity<UserProps, UniqueIdentifier> {
     super(props, id);
   }
 
-  public static create(props: CreateUserProps, id?: UniqueIdentifier): Result<User> {
+  public static create(props: CreateUserProps, id?: UniqueIdentifier): User {
     const user = new User(
       {
         ...props,
@@ -30,7 +29,7 @@ export class User extends PersistableEntity<UserProps, UniqueIdentifier> {
       id
     );
 
-    return Result.ok(user);
+    return user;
   }
 
   get username(): UserName {

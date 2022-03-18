@@ -1036,6 +1036,11 @@
   resolved "https://registry.yarnpkg.com/@pothos/core/-/core-3.3.3.tgz#c7ab8bab1eb6e0bed588e107b9142ab446ef575a"
   integrity sha512-xDd22CSORazbSQRSYURCYGxs9qToHun1DdbHVS0UOMIfp5dpM2JfJyuZVDh3PlfLAOi7gYVQ2LIh+fqKjT4mAQ==
 
+"@pothos/plugin-scope-auth@^3.4.2":
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/@pothos/plugin-scope-auth/-/plugin-scope-auth-3.4.2.tgz#0d443dc4064fedce9cd448be6688d800a565b0af"
+  integrity sha512-HsOJN33ClFYCrb2U0SXCiG8gYYFTle5zTZegYKTUxuf0CzDTKDxzrFVt/3Ud0ou7xzp94h6IY3C+h+kHRyopnw==
+
 "@pothos/plugin-simple-objects@^3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@pothos/plugin-simple-objects/-/plugin-simple-objects-3.0.3.tgz#9d05a89bc07f5ed895380522427bba417127483d"

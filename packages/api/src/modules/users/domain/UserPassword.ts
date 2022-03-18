@@ -1,7 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { object, string, ValidationError } from 'yup';
 import { ValueObject } from '~/shared/domain';
-import { Result } from '~/shared/core';
 import config from '~/config';
 
 export interface UserPasswordProps {
@@ -58,28 +57,14 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
     return this.hashPassword(this.props.value);
   }
 
-  public static create(props: UserPasswordProps): Result<UserPassword> {
-    try {
-      this.schema.validateSync(props, {
-        context: { isHashed: props.isHashed }
-      });
+  public static create(props: UserPasswordProps): UserPassword {
+    this.schema.validateSync(props, {
+      context: { isHashed: props.isHashed }
+    });
 
-      return Result.ok(
-        new UserPassword({
-          value: props.value,
-          isHashed: props.isHashed
-        })
-      );
-    } catch (ex) {
-      if (ex instanceof ValidationError) {
-        return Result.fail<UserPassword>(ex.errors[0]);
-      }
-
-      if (ex instanceof Error) {
-        return Result.fail<UserPassword>(ex.message);
-      }
-
-      return Result.fail<UserPassword>('Unexpected error');
-    }
+    return new UserPassword({
+      value: props.value,
+      isHashed: props.isHashed
+    });
   }
 }

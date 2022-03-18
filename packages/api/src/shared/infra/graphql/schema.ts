@@ -1,10 +1,17 @@
-import { schemaBuilder } from './builder';
 import '~/modules/users/infra/graphql/resolvers';
+import { schemaBuilder } from './builder';
 
 schemaBuilder.mutationType({});
 schemaBuilder.queryType({
   fields: t => ({
-    hello: t.string({ resolve: () => 'Hello world!' })
+    hello: t.string({
+      authScopes: {
+        isLoggedIn: true
+      },
+      resolve: () => {
+        return 'Hello world!';
+      }
+    })
   })
 });
 

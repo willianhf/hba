@@ -1,5 +1,8 @@
 import { initContextCache } from '@pothos/core';
 import { ApolloServer } from 'apollo-server';
+import { ValidationError as YupValidationError } from 'yup';
+import { resolveRequestUserService } from '~/modules/users/services/ResolveRequestUser';
+import { ValidationInputError } from '~/shared/core/Error';
 import { schema } from './schema';
 
 export class Server {
@@ -8,12 +11,29 @@ export class Server {
   static async start() {
     const apolloServer = new ApolloServer({
       schema,
-      context: context => ({
+      context: async context => ({
         // Adding this will prevent any issues if you server implementation
         // copies or extends the context object before passing it to your resolvers
         ...initContextCache(),
-        userAgent: context.req.headers['user-agent']
-      })
+        userAgent: context.req.headers['user-agent'],
+        user: await resolveRequestUserService.execute({ bearerToken: context.req.headers.authorization })
+      }),
+      formatError: error => {
+        if (error.originalError instanceof YupValidationError) {
+          const yupError = error.originalError;
+          const isMultiple = yupError.inner.length > 1;
+
+          if (isMultiple) {
+            return new ValidationInputError(
+              error.originalError.inner.map(inner => ({ field: inner.path, message: inner.message }))
+            );
+          }
+
+          return new ValidationInputError({ field: yupError.path, message: yupError.message });
+        }
+
+        return error;
+      }
     });
     await apolloServer.listen(this.PORT);
 

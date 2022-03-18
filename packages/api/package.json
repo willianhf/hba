@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@pothos/core": "^3.3.3",
+    "@pothos/plugin-scope-auth": "^3.4.2",
     "@pothos/plugin-simple-objects": "^3.0.3",
     "@prisma/client": "^3.4.1",
     "apollo-server": "^3.4.0",

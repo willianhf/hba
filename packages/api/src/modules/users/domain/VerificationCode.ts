@@ -1,4 +1,3 @@
-import { Result } from '~/shared/core';
 import { ValueObject } from '~/shared/domain';
 
 interface VerificationCodeProps {
@@ -50,11 +49,11 @@ export class VerificationCode extends ValueObject<VerificationCodeProps> {
     return { ...props, expiresAt: new Date(props.expiresAt) };
   }
 
-  public static create(serialized?: string): Result<VerificationCode> {
+  public static create(serialized?: string): VerificationCode {
     if (serialized) {
       const deserialized = VerificationCode.deserialize(serialized);
 
-      return Result.ok(new VerificationCode(deserialized));
+      return new VerificationCode(deserialized);
     }
 
     const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
@@ -69,6 +68,6 @@ export class VerificationCode extends ValueObject<VerificationCodeProps> {
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getHours() + this.expireInMinutes);
 
-    return Result.ok(new VerificationCode({ code, expiresAt }));
+    return new VerificationCode({ code, expiresAt });
   }
 }

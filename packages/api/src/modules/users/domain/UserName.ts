@@ -1,6 +1,5 @@
-import { object, string, ValidationError } from 'yup';
+import { object, string } from 'yup';
 import { ValueObject } from '~/shared/domain';
-import { Result } from '~/shared/core';
 
 interface UserNameProps {
   name: string;
@@ -23,21 +22,9 @@ export class UserName extends ValueObject<UserNameProps> {
     return this.props.name;
   }
 
-  public static create(props: UserNameProps): Result<UserName> {
-    try {
-      const validProps = this.schema.validateSync(props);
+  public static create(props: UserNameProps): UserName {
+    const validProps = this.schema.validateSync(props);
 
-      return Result.ok(new UserName(validProps));
-    } catch (ex) {
-      if (ex instanceof ValidationError) {
-        return Result.fail(ex.errors[0]);
-      }
-
-      if (ex instanceof Error) {
-        return Result.fail<UserName>(ex.message);
-      }
-
-      return Result.fail<UserName>('Unexpected error');
-    }
+    return new UserName(validProps);
   }
 }

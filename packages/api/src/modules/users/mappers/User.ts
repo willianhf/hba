@@ -14,8 +14,8 @@ export class UserMap extends Mapper<User> {
 
     const user = User.create(
       {
-        username: username.getValue(),
-        password: password.getValue(),
+        username: username,
+        password: password,
         isVerified: persisted.isVerified,
         isAdmin: persisted.isAdmin,
         createdAt: persisted.createdAt
@@ -23,11 +23,7 @@ export class UserMap extends Mapper<User> {
       id
     );
 
-    if (user.isFailure()) {
-      throw new Error(user.error.toString());
-    }
-
-    return user.getValue();
+    return user;
   }
 
   public static async toPersistence(domain: User): Promise<ToPersistUser> {
