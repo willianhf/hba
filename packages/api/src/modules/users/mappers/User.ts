@@ -3,7 +3,7 @@ import { UniqueIdentifier } from '~/shared/domain';
 import { PersistedUser, ToPersistUser } from '../database';
 import { User, UserName, UserPassword } from '../domain';
 
-export class UserMap extends Mapper<User> {
+export class UserMapper extends Mapper<User> {
   public static toDomain(persisted: PersistedUser): User {
     const id = new UniqueIdentifier(persisted.id);
     const username = UserName.create({ name: persisted.username });

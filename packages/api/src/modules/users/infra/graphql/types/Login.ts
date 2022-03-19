@@ -1,21 +1,9 @@
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
-import { ApplicationErrorRef } from '~/shared/infra/graphql/types';
 
-const JWTRef = schemaBuilder.simpleObject('JWT', {
+export const LoginResult = schemaBuilder.simpleObject('LoginResult', {
   fields: t => ({
     token: t.string()
   })
-});
-
-export const LoginResult = schemaBuilder.unionType('LoginResult', {
-  types: [JWTRef, ApplicationErrorRef],
-  resolveType: result => {
-    if ('hasError' in result) {
-      return ApplicationErrorRef;
-    }
-
-    return JWTRef;
-  }
 });
 
 export const LoginInput = schemaBuilder.inputType('LoginInput', {

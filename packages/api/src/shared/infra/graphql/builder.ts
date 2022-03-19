@@ -4,6 +4,11 @@ import SimpleObjectsPlugin from '@pothos/plugin-simple-objects';
 import { AuthenticationError, ForbiddenError } from 'apollo-server';
 import { User } from '~/modules/users/domain';
 
+type Context = {
+  userAgent: string;
+  user: User | null;
+};
+
 type SchemaBuilderConfig = {
   Scalars: {
     Date: {
@@ -11,13 +16,14 @@ type SchemaBuilderConfig = {
       Output: Date;
     };
   };
-  Context: {
-    userAgent: string;
-    user: User | null;
-  };
+  Context: Context;
   AuthScopes: {
     isLoggedIn: boolean;
     isAdmin: boolean;
+  };
+  AuthContexts: {
+    isLoggedIn: Context & { user: User };
+    isAdmin: Context & { user: User };
   };
 };
 

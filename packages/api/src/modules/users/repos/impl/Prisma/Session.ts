@@ -1,5 +1,5 @@
 import { Session } from '~/modules/users/domain';
-import { SessionMapper } from '~/modules/users/mappers/Session';
+import { SessionMapper } from '~/modules/users/mappers';
 import { UniqueIdentifier } from '~/shared/domain';
 import { prisma } from '~/shared/infra/database';
 import { SessionRepository } from '../../';

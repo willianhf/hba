@@ -1,7 +1,7 @@
 import { prisma } from '~/shared/infra/database';
 import { User, UserName } from '~/modules/users/domain';
 import { UserRepository } from '../..';
-import { UserMap } from '~/modules/users/mappers';
+import { UserMapper } from '~/modules/users/mappers';
 import { UniqueIdentifier } from '~/shared/domain';
 
 export class PrismaUserRepository implements UserRepository {
@@ -11,7 +11,7 @@ export class PrismaUserRepository implements UserRepository {
     });
 
     if (persistedUser) {
-      return UserMap.toDomain(persistedUser);
+      return UserMapper.toDomain(persistedUser);
     }
 
     return null;
@@ -23,17 +23,17 @@ export class PrismaUserRepository implements UserRepository {
     });
 
     if (persistedUser) {
-      return UserMap.toDomain(persistedUser);
+      return UserMapper.toDomain(persistedUser);
     }
 
     return null;
   }
 
   public async save(user: User): Promise<User> {
-    const persistanceProps = await UserMap.toPersistence(user);
+    const persistanceProps = await UserMapper.toPersistence(user);
 
     const persistedUser = await prisma.user.create({ data: persistanceProps });
-    const domainUser = UserMap.toDomain(persistedUser);
+    const domainUser = UserMapper.toDomain(persistedUser);
 
     return domainUser;
   }

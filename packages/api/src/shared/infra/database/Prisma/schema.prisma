@@ -18,7 +18,8 @@ model User {
   isAdmin    Boolean  @default(false)
   createdAt  DateTime @default(now())
 
-  sessions Session[]
+  sessions     Session[]
+  verification Verification?
 }
 
 model Session {
@@ -26,6 +27,16 @@ model Session {
   userId    String
   userAgent String
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Verification {
+  id        String   @id @default(uuid())
+  code      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String   @unique
 
   user User @relation(fields: [userId], references: [id])
 }
