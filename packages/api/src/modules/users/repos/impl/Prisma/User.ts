@@ -7,7 +7,7 @@ import { UniqueIdentifier } from '~/shared/domain';
 export class PrismaUserRepository implements UserRepository {
   public async getUserById(userId: UniqueIdentifier): Promise<User | null> {
     const persistedUser = await prisma.user.findFirst({
-      where: { id: userId.toValue() },
+      where: { id: userId.toValue() }
     });
 
     if (persistedUser) {
@@ -19,7 +19,7 @@ export class PrismaUserRepository implements UserRepository {
 
   public async getUserByUsername(username: UserName): Promise<User | null> {
     const persistedUser = await prisma.user.findFirst({
-      where: { username: username.value },
+      where: { username: username.value }
     });
 
     if (persistedUser) {
@@ -40,10 +40,17 @@ export class PrismaUserRepository implements UserRepository {
 
   public async exists(username: UserName): Promise<boolean> {
     const persistedUser = await prisma.user.findFirst({
-      where: { username: username.value },
+      where: { username: username.value, isVerified: true },
       select: { id: true }
     });
 
     return !!persistedUser;
+  }
+
+  public async verify(userId: UniqueIdentifier): Promise<void> {
+    await prisma.user.update({
+      where: { id: userId.toValue() },
+      data: { isVerified: true }
+    });
   }
 }

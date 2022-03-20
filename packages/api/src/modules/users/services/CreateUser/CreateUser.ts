@@ -21,6 +21,8 @@ export class CreateUserService implements Service<CreateUserDTO, User> {
     }
 
     const user = User.create({ username, password });
+    await user.getHabboProfile();
+
     const persistedUser = await this.userRepository.save(user);
 
     return persistedUser;

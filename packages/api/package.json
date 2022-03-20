@@ -15,6 +15,7 @@
     "apollo-server": "^3.4.0",
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
+    "got": "npm:got-cjs",
     "graphql": "15.7.2",
     "jsonwebtoken": "^8.5.1",
     "yup": "^0.32.11"
@@ -33,7 +34,7 @@
     "prisma": "^3.4.1",
     "ts-node-dev": "^1.1.8",
     "tsconfig-paths": "^3.11.0",
-    "typescript": "^4.4.4"
+    "typescript": "^4.6.2"
   },
   "prisma": {
     "schema": "./src/shared/infra/database/prisma/schema.prisma"

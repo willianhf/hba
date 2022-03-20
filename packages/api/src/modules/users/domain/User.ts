@@ -1,6 +1,7 @@
 import { UniqueIdentifier } from '~/shared/domain';
 import { PersistableEntity } from '~/shared/domain/Entity';
-import { OptionalExceptFor } from '~/types/common';
+import { Nullish, OptionalExceptFor } from '~/types/common';
+import { HabboAPIFacade, HabboProfile } from '../facades/HabboAPI';
 import { UserName } from './UserName';
 import { UserPassword } from './UserPassword';
 
@@ -15,6 +16,8 @@ export interface UserProps {
 type CreateUserProps = OptionalExceptFor<UserProps, 'username' | 'password'>;
 
 export class User extends PersistableEntity<UserProps, UniqueIdentifier> {
+  private habboProfile?: HabboProfile;
+
   private constructor(props: UserProps, id?: UniqueIdentifier) {
     super(props, id);
   }
@@ -50,5 +53,14 @@ export class User extends PersistableEntity<UserProps, UniqueIdentifier> {
 
   get createdAt(): Date | undefined {
     return this.props.createdAt;
+  }
+
+  public async getHabboProfile(): Promise<HabboProfile> {
+    if (!this.habboProfile) {
+      const fetchedHabboProfile = await HabboAPIFacade.fetchProfile(this.username.value);
+      this.habboProfile = fetchedHabboProfile;
+    }
+
+    return this.habboProfile;
   }
 }

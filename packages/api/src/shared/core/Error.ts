@@ -22,6 +22,12 @@ interface ErrorFieldFormat {
 export class ValidationInputError extends ApplicationError {
   public constructor(fields: ErrorFieldFormat | ErrorFieldFormat[]) {
     const assertedFields = Array.isArray(fields) ? fields : [fields];
-    super('VALIDATION_INPUT_ERROR', 'ValidationInputError', 'Invalid input provided.', { fields: assertedFields });
+    super('VALIDATION_INPUT_ERROR', 'Validation input', 'The input provided was invalid.', { fields: assertedFields });
+  }
+}
+
+export class EntityNotFoundError extends ApplicationError {
+  public constructor(message?: string) {
+    super('ENTITY_NOT_FOUND_ERROR', 'Entity not found', message ?? 'The requested entity was not found.');
   }
 }
