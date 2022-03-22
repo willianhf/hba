@@ -1,10 +1,10 @@
 import { confirmUserVerificationService } from '~/modules/users/services/ConfirmUserVerification';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
-import { ConfirmUserVerificationResult } from '../types/ConfirmUserVerification';
+import { EmptyRef } from '~/shared/infra/graphql/types/Empty';
 
 schemaBuilder.mutationField('confirmUserVerification', t =>
   t.authField({
-    type: ConfirmUserVerificationResult,
+    type: EmptyRef,
     authScopes: {
       isLoggedIn: true
     },

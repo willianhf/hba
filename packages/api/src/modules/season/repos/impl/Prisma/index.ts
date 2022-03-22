@@ -1,0 +1,1 @@
+export { PrismaSeasonRepository } from './Season';

@@ -1,18 +1,8 @@
+import '~/modules/season/infra/graphql/resolvers';
 import '~/modules/users/infra/graphql/resolvers';
 import { schemaBuilder } from './builder';
 
 schemaBuilder.mutationType({});
-schemaBuilder.queryType({
-  fields: t => ({
-    hello: t.string({
-      authScopes: {
-        isLoggedIn: true
-      },
-      resolve: () => {
-        return 'Hello world!';
-      }
-    })
-  })
-});
+schemaBuilder.queryType({});
 
 export const schema = schemaBuilder.toSchema({});

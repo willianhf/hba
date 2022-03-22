@@ -46,7 +46,6 @@ model Season {
   id        Int     @id @default(autoincrement())
   name      String  @unique
   isCurrent Boolean @default(false)
-  userId    String?
 
   userSeasons UserSeason[]
   games       Game[]
