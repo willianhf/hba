@@ -1,5 +1,5 @@
 import got from 'got';
-import { ApplicationError, EntityNotFoundError } from '~/shared/core/Error';
+import { EntityNotFoundError } from '~/shared/core/Error';
 
 export interface HabboProfile {
   name: string;
