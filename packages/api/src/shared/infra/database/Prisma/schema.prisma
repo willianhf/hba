@@ -20,7 +20,7 @@ model User {
 
   sessions     Session[]
   verification Verification?
-  userSeasons  UserSeason[]
+  players      Player[]
 }
 
 model Session {
@@ -47,9 +47,9 @@ model Season {
   name      String  @unique
   isCurrent Boolean @default(false)
 
-  userSeasons UserSeason[]
-  games       Game[]
-  rosters     TeamRoster[]
+  players Player[]
+  games   Game[]
+  rosters TeamRoster[]
 }
 
 model NBAPlayer {
@@ -57,14 +57,14 @@ model NBAPlayer {
   firstName String
   lastName  String
 
-  userSeasons UserSeason[]
+  players Player[]
 }
 
 model Position {
-  id          String @id @unique
-  name        String @unique
+  id   String @id @unique
+  name String @unique
 
-  userSeasons UserSeason[]
+  players Player[]
 }
 
 enum ApprovalStatus {
@@ -73,7 +73,7 @@ enum ApprovalStatus {
   DENIED
 }
 
-model UserSeason {
+model Player {
   id          String         @id @unique @default(uuid())
   userId      String
   seasonId    Int
@@ -81,34 +81,34 @@ model UserSeason {
   positionId  String
   status      ApprovalStatus @default(IDLE)
 
-  user             User              @relation(fields: [userId], references: [id])
-  season           Season            @relation(fields: [seasonId], references: [id])
-  nbaPlayer        NBAPlayer         @relation(fields: [nbaPlayerId], references: [id])
-  position         Position          @relation(fields: [positionId], references: [id])
+  user             User          @relation(fields: [userId], references: [id])
+  season           Season        @relation(fields: [seasonId], references: [id])
+  nbaPlayer        NBAPlayer     @relation(fields: [nbaPlayerId], references: [id])
+  position         Position      @relation(fields: [positionId], references: [id])
   roster           TeamRoster?
   gameStats        GameStats[]
-  icons            UserSeasonIcons[]
+  icons            PlayerIcons[]
   playerOfTheGames GameResult[]
 
   @@unique([userId, seasonId, nbaPlayerId])
 }
 
 model Icon {
-  id          String @id @unique
-  name        String @unique
+  id   String @id @unique
+  name String @unique
 
-  userSeasonIcons UserSeasonIcons[]
+  playerIcons PlayerIcons[]
 }
 
-model UserSeasonIcons {
-  userSeasonId String
-  iconId       String
+model PlayerIcons {
+  playerId String
+  iconId   String
 
-  userSeason UserSeason @relation(fields: [userSeasonId], references: [id])
-  icon       Icon       @relation(fields: [iconId], references: [id])
+  player Player @relation(fields: [playerId], references: [id])
+  icon   Icon   @relation(fields: [iconId], references: [id])
 
-  @@id([userSeasonId, iconId])
-  @@unique([userSeasonId, iconId])
+  @@id([playerId, iconId])
+  @@unique([playerId, iconId])
 }
 
 enum Conference {
@@ -129,17 +129,17 @@ model NBATeam {
 }
 
 model TeamRoster {
-  nbaTeamId    String
-  seasonId     Int
-  userSeasonId String  @unique
-  isCaptain    Boolean @default(false)
+  nbaTeamId String
+  seasonId  Int
+  playerId  String  @unique
+  isCaptain Boolean @default(false)
 
-  nbaTeam    NBATeam    @relation(fields: [nbaTeamId], references: [id])
-  season     Season     @relation(fields: [seasonId], references: [id])
-  userSeason UserSeason @relation(fields: [userSeasonId], references: [id])
+  nbaTeam NBATeam @relation(fields: [nbaTeamId], references: [id])
+  season  Season  @relation(fields: [seasonId], references: [id])
+  player  Player  @relation(fields: [playerId], references: [id])
 
-  @@id([nbaTeamId, seasonId, userSeasonId])
-  @@unique([nbaTeamId, seasonId, userSeasonId])
+  @@id([nbaTeamId, seasonId, playerId])
+  @@unique([nbaTeamId, seasonId, playerId])
 }
 
 enum GameKind {
@@ -174,26 +174,26 @@ model GameResult {
   releasedAt        DateTime
   playerOfTheGameId String
 
-  game            Game       @relation(fields: [gameId], references: [id])
-  playerOfTheGame UserSeason @relation(fields: [playerOfTheGameId], references: [id])
+  game            Game   @relation(fields: [gameId], references: [id])
+  playerOfTheGame Player @relation(fields: [playerOfTheGameId], references: [id])
 }
 
 model GameStats {
-  gameId       String
-  userSeasonId String
-  points       Int    @default(0) @db.SmallInt
-  assists      Int    @default(0) @db.SmallInt
-  steals       Int    @default(0) @db.SmallInt
-  rebounds     Int    @default(0) @db.SmallInt
-  blocks       Int    @default(0) @db.SmallInt
-  turnovers    Int    @default(0) @db.SmallInt
-  fouls        Int    @default(0) @db.SmallInt
+  gameId    String
+  playerId  String
+  points    Int    @default(0) @db.SmallInt
+  assists   Int    @default(0) @db.SmallInt
+  steals    Int    @default(0) @db.SmallInt
+  rebounds  Int    @default(0) @db.SmallInt
+  blocks    Int    @default(0) @db.SmallInt
+  turnovers Int    @default(0) @db.SmallInt
+  fouls     Int    @default(0) @db.SmallInt
 
-  game Game       @relation(fields: [gameId], references: [id])
-  user UserSeason @relation(fields: [userSeasonId], references: [id])
+  game   Game   @relation(fields: [gameId], references: [id])
+  player Player @relation(fields: [playerId], references: [id])
 
-  @@id([gameId, userSeasonId])
-  @@unique([gameId, userSeasonId])
+  @@id([gameId, playerId])
+  @@unique([gameId, playerId])
 }
 
 model GameSerie {
