@@ -11,13 +11,15 @@ export class Server {
   static async start() {
     const apolloServer = new ApolloServer({
       schema,
-      context: async context => ({
-        // Adding this will prevent any issues if you server implementation
-        // copies or extends the context object before passing it to your resolvers
-        ...initContextCache(),
-        userAgent: context.req.headers['user-agent'],
-        user: await resolveRequestUserService.execute({ bearerToken: context.req.headers.authorization })
-      }),
+      context: async context => {
+        return {
+          // Adding this will prevent any issues if you server implementation
+          // copies or extends the context object before passing it to your resolvers
+          ...initContextCache(),
+          userAgent: context.req.headers['user-agent'],
+          user: await resolveRequestUserService.execute({ bearerToken: context.req.headers.authorization })
+        };
+      },
       formatError: error => {
         if (error.originalError instanceof YupValidationError) {
           const yupError = error.originalError;
