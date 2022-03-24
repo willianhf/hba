@@ -1,5 +1,5 @@
 import { PersistableEntity } from '~/shared/domain/Entity';
-import { IncIdentifier } from '~/shared/domain/IncIdentifier';
+import { IncIdentifier } from '~/shared/domain';
 
 interface SeasonProps {
   name: string;

@@ -87,7 +87,7 @@ model Player {
   position         Position      @relation(fields: [positionId], references: [id])
   roster           TeamRoster?
   gameStats        GameStats[]
-  icons            PlayerIcons[]
+  icons            PlayerIcon[]
   playerOfTheGames GameResult[]
 
   @@unique([userId, seasonId, nbaPlayerId])
@@ -97,10 +97,10 @@ model Icon {
   id   String @id @unique
   name String @unique
 
-  playerIcons PlayerIcons[]
+  playerIcons PlayerIcon[]
 }
 
-model PlayerIcons {
+model PlayerIcon {
   playerId String
   iconId   String
 

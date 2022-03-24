@@ -1,5 +1,5 @@
-import got from 'got';
-import { UnexpectedError } from '~/shared/core/Error';
+import got, { HTTPError } from 'got';
+import { EntityNotFoundError, UnexpectedError } from '~/shared/core/Error';
 import { UniqueIdentifier } from '~/shared/domain';
 import { NBAPlayer } from '../domain/NBAPlayer';
 
@@ -19,7 +19,7 @@ export class NBAAPIFacade {
     prefixUrl: this.hostname
   });
 
-  public static async fetchPlayers(search: string): Promise<NBAPlayer[]> {
+  public static async fetchPlayersByName(search: string): Promise<NBAPlayer[]> {
     try {
       const response = await this.httpClient.get('players.json').json<NBAAPIPlayersResponse>();
 
@@ -38,6 +38,28 @@ export class NBAAPIFacade {
       return players;
     } catch (error) {
       throw new UnexpectedError();
+    }
+  }
+
+  public static async fetchPlayerById(nbaPlayerId: UniqueIdentifier): Promise<NBAPlayer> {
+    try {
+      const response = await this.httpClient.get(`players.json`).json<NBAAPIPlayersResponse>();
+
+      const player = response.league.standard.find(player => player.personId === nbaPlayerId.toValue());
+      if (!player) {
+        throw new EntityNotFoundError('The provided NBA player does not exist');
+      }
+
+      return new NBAPlayer(
+        { firstName: player.firstName, lastName: player.lastName },
+        new UniqueIdentifier(player.personId)
+      );
+    } catch (error) {
+      if (error instanceof HTTPError) {
+        throw new UnexpectedError();
+      }
+
+      throw error;
     }
   }
 }

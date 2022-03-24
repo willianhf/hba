@@ -1,5 +1,5 @@
 import { Mapper } from '~/shared/core/Mapper';
-import { IncIdentifier } from '~/shared/domain/IncIdentifier';
+import { IncIdentifier } from '~/shared/domain';
 import { PersistedSeason, ToPersistSeason } from '../database';
 import { Season } from '../domain/Season';
 

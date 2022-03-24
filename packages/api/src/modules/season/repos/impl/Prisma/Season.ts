@@ -1,6 +1,7 @@
 import { Season } from '~/modules/season/domain/Season';
 import { SeasonMapper } from '~/modules/season/mappers';
-import { IncIdentifier } from '~/shared/domain/IncIdentifier';
+import { EntityNotFoundError } from '~/shared/core/Error';
+import { IncIdentifier } from '~/shared/domain';
 import { prisma } from '~/shared/infra/database';
 import { SeasonRepository } from '../..';
 
@@ -11,10 +12,10 @@ export class PrismaSeasonRepository implements SeasonRepository {
     return prismaSeasons.map(SeasonMapper.toDomain);
   }
 
-  public async findCurrent(): Promise<Season | null> {
+  public async findCurrent(): Promise<Season> {
     const prismaSeason = await prisma.season.findFirst({ where: { isCurrent: true } });
     if (!prismaSeason) {
-      return null;
+      throw new EntityNotFoundError('There is no current season');
     }
 
     return SeasonMapper.toDomain(prismaSeason);

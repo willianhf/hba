@@ -14,7 +14,6 @@ schemaBuilder.queryFields(t => ({
   }),
   findCurrent: t.authField({
     type: SeasonRef,
-    nullable: true,
     authScopes: {
       isLoggedIn: true
     },

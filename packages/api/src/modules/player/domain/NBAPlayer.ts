@@ -11,11 +11,11 @@ export class NBAPlayer extends PersistableEntity<NBAPlayerProps, UniqueIdentifie
     super(props, id);
   }
 
-  get firstName(): string {
+  public get firstName(): string {
     return this.props.firstName;
   }
 
-  get lastName(): string {
+  public get lastName(): string {
     return this.props.lastName;
   }
 }

@@ -1,4 +1,4 @@
-import { NBAPlayer } from '~/modules/users/domain/NBAPlayer';
+import { NBAPlayer } from '~/modules/player/domain/NBAPlayer';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
 
 export const NBAPlayerRef = schemaBuilder.objectRef<NBAPlayer>('NBAPlayer');

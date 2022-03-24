@@ -1,4 +1,4 @@
-import { NBAAPIFacade } from '~/modules/users/facades/NBAAPI';
+import { NBAAPIFacade } from '~/modules/player/facades/NBAAPI';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
 import { NBAPlayerRef } from '../types/NBAPlayer';
 
@@ -12,7 +12,7 @@ schemaBuilder.queryField('listNBAPlayers', t =>
       search: t.arg({ type: 'String', required: true })
     },
     resolve: async (_parent, args) => {
-      return NBAAPIFacade.fetchPlayers(args.search);
+      return NBAAPIFacade.fetchPlayersByName(args.search);
     }
   })
 );
