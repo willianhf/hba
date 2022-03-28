@@ -15,6 +15,10 @@ export class HabboAPIFacade {
     try {
       const response = await this.httpClient.get<HabboProfile>(`habbos/com.br/${nickname}`);
 
+      if (response.body.name.toLowerCase() !== nickname.toLowerCase()) {
+        throw new EntityNotFoundError('Habbo profile not found.');
+      }
+
       return {
         name: response.body.name,
         motto: response.body.motto,
@@ -22,6 +26,16 @@ export class HabboAPIFacade {
       };
     } catch (error) {
       throw new EntityNotFoundError('Habbo profile not found.');
+    }
+  }
+
+  public static async exists(nickname: string): Promise<boolean> {
+    try {
+      await this.fetchProfile(nickname);
+
+      return true;
+    } catch (error) {
+      return false;
     }
   }
 }

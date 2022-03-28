@@ -116,6 +116,7 @@ type Position implements Node {
 
 type Query {
   currentSeason: Season!
+  habboProfileExists(username: String!): Boolean!
   icons: [Icon!]!
   nbaPlayers(search: String!): [NBAPlayer!]!
   node(id: ID!): Node
