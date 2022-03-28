@@ -2,8 +2,8 @@ import { NBAAPIFacade } from '~/modules/player/facades/NBAAPI';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
 import { NBAPlayerRef } from '../types/NBAPlayer';
 
-schemaBuilder.queryField('listNBAPlayers', t =>
-  t.authField({
+schemaBuilder.queryField('nbaPlayers', t =>
+  t.field({
     type: [NBAPlayerRef],
     authScopes: {
       isLoggedIn: true

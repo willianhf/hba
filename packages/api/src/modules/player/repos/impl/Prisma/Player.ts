@@ -15,6 +15,19 @@ export class PrismaPlayerRepository implements PlayerRepository {
     return PlayerMapper.toDomain(prismaPlayer);
   }
 
+  public async findById(id: UniqueIdentifier): Promise<Player | null> {
+    const prismaPlayer = await prisma.player.findFirst({
+      where: { id: id.toValue() },
+      ...playerWithIcons
+    });
+
+    if (!prismaPlayer) {
+      return null;
+    }
+
+    return PlayerMapper.toDomain(prismaPlayer);
+  }
+
   public async canRequestPlayer(userId: UniqueIdentifier, seasonId: IncIdentifier): Promise<boolean> {
     const prismaPlayer = await prisma.player.findFirst({
       where: {

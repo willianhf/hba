@@ -1,77 +1,145 @@
+input ConfirmUserVerificationInput {
+  clientMutationId: ID
+}
+
+type ConfirmUserVerificationPayload {
+  clientMutationId: ID
+  itWorked: Boolean!
+}
+
 input CreatePlayerInput {
+  clientMutationId: ID
   iconsIds: [String!]!
   nbaPlayerId: String!
   positionId: String!
 }
 
+type CreatePlayerPayload {
+  clientMutationId: ID
+  player: Player!
+}
+
+input CreateSeasonInput {
+  clientMutationId: ID
+  isCurrent: Boolean!
+  name: String!
+}
+
+type CreateSeasonPayload {
+  clientMutationId: ID
+  season: Season!
+}
+
 input CreateUserInput {
+  clientMutationId: ID
   password: String!
   username: String!
 }
 
-type CreateUserVerificationResult {
+type CreateUserPayload {
+  clientMutationId: ID
+  user: User!
+}
+
+input CreateUserVerificationInput {
+  clientMutationId: ID
+}
+
+type CreateUserVerificationPayload {
+  clientMutationId: ID
   verificationCode: String!
 }
 
 scalar Date
 
-type Empty {
-  _: Boolean!
-}
-
-type Icon {
+type Icon implements Node {
   id: ID!
   name: String!
 }
 
 input LoginInput {
+  clientMutationId: ID
   password: String!
   username: String!
 }
 
-type LoginResult {
+type LoginPayload {
+  clientMutationId: ID
   token: String!
 }
 
-type Mutation {
-  confirmUserVerification: Empty!
-  createPlayer(input: CreatePlayerInput!): Player!
-  createSeason(isCurrent: Boolean!, name: String!): Season!
-  createUser(input: CreateUserInput!): User!
-  createUserVerification: CreateUserVerificationResult!
-  login(input: LoginInput!): LoginResult!
-  makeSeasonCurrent(seasonId: ID!): Empty!
+input MakeSeasonCurrentInput {
+  clientMutationId: ID
+  seasonId: ID!
 }
 
-type NBAPlayer {
+type MakeSeasonCurrentPayload {
+  clientMutationId: ID
+  itWorked: Boolean!
+}
+
+type Mutation {
+  confirmUserVerification(input: ConfirmUserVerificationInput!): ConfirmUserVerificationPayload!
+  createPlayer(input: CreatePlayerInput!): CreatePlayerPayload!
+  createSeason(input: CreateSeasonInput!): CreateSeasonPayload!
+  createUser(input: CreateUserInput!): CreateUserPayload!
+  createUserVerification(input: CreateUserVerificationInput!): CreateUserVerificationPayload!
+  login(input: LoginInput!): LoginPayload!
+  makeSeasonCurrent(input: MakeSeasonCurrentInput!): MakeSeasonCurrentPayload!
+}
+
+type NBAPlayer implements Node {
   firstName: String!
   id: ID!
   lastName: String!
 }
 
-type Player {
+interface Node {
   id: ID!
 }
 
-type Position {
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type Player implements Node {
+  id: ID!
+}
+
+type Position implements Node {
   id: ID!
   name: String!
 }
 
 type Query {
-  findAll: [Season!]!
-  findCurrent: Season!
-  listIcons: [Icon!]!
-  listNBAPlayers(search: String!): [NBAPlayer!]!
-  listPositions: [Position!]!
+  currentSeason: Season!
+  icons: [Icon!]!
+  nbaPlayers(search: String!): [NBAPlayer!]!
+  node(id: ID!): Node
+  nodes(ids: [ID!]!): [Node]!
+  positions: [Position!]!
+  seasons(after: String, before: String, first: Int, last: Int): QuerySeasonsConnection!
 }
 
-type Season {
+type QuerySeasonsConnection {
+  edges: [QuerySeasonsConnectionEdge]!
+  pageInfo: PageInfo!
+}
+
+type QuerySeasonsConnectionEdge {
+  cursor: String!
+  node: Season!
+}
+
+type Season implements Node {
   id: ID!
   name: String!
 }
 
-type User {
+type User implements Node {
   createdAt: Date
   id: ID!
   isAdmin: Boolean!

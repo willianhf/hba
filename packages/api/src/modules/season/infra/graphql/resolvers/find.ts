@@ -1,18 +1,20 @@
+import { resolveArrayConnection } from '@pothos/plugin-relay';
 import { prismaSeasonRepository } from '~/modules/season/repos';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
 import { SeasonRef } from '../types/Season';
 
 schemaBuilder.queryFields(t => ({
-  findAll: t.authField({
-    type: [SeasonRef],
+  seasons: t.connection({
+    type: SeasonRef,
     authScopes: {
       isLoggedIn: true
     },
-    resolve: async () => {
-      return prismaSeasonRepository.findAll();
+    resolve: async (_root, args) => {
+      const seasons = await prismaSeasonRepository.findAll();
+      return resolveArrayConnection({ args }, seasons);
     }
   }),
-  findCurrent: t.authField({
+  currentSeason: t.field({
     type: SeasonRef,
     authScopes: {
       isLoggedIn: true

@@ -1,6 +1,7 @@
 import SchemaBuilder from '@pothos/core';
 import ScopeAuthPlugin from '@pothos/plugin-scope-auth';
 import SimpleObjectsPlugin from '@pothos/plugin-simple-objects';
+import RelayPlugin from '@pothos/plugin-relay';
 import { AuthenticationError, ForbiddenError } from 'apollo-server';
 import { User } from '~/modules/users/domain';
 
@@ -28,7 +29,7 @@ type SchemaBuilderConfig = {
 };
 
 export const schemaBuilder = new SchemaBuilder<SchemaBuilderConfig>({
-  plugins: [ScopeAuthPlugin, SimpleObjectsPlugin],
+  plugins: [ScopeAuthPlugin, SimpleObjectsPlugin, RelayPlugin],
   authScopes: async context => ({
     isLoggedIn: !!context.user,
     isAdmin: !!context.user?.isAdmin
@@ -47,6 +48,10 @@ export const schemaBuilder = new SchemaBuilder<SchemaBuilderConfig>({
 
       return new AuthenticationError('You must be logged in to perform this action.');
     }
+  },
+  relayOptions: {
+    clientMutationId: 'optional',
+    cursorType: 'String'
   }
 });
 

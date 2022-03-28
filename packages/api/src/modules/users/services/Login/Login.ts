@@ -12,9 +12,7 @@ interface LoginDTO {
   userAgent: string;
 }
 
-interface Output {
-  token: JWTToken;
-}
+type Output = JWTToken;
 
 export class LoginService implements Service<LoginDTO, Output> {
   constructor(private readonly userRepository: UserRepository, private readonly sessionRepository: SessionRepository) {}
@@ -48,6 +46,6 @@ export class LoginService implements Service<LoginDTO, Output> {
       sessionId: persistedSession.getId().toValue()
     });
 
-    return { token: jwtToken };
+    return jwtToken;
   }
 }
