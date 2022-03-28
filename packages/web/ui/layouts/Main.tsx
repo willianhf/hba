@@ -15,7 +15,7 @@ export function MainLayout(props: MainLayoutProps) {
         <title>{props.title ?? DEFAULT_TITLE}</title>
       </Head>
       <HeaderNavigation />
-      {props.children}
+      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{props.children}</div>
     </>
   );
 }

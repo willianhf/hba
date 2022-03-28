@@ -7,7 +7,7 @@ export default function Document() {
         <meta charSet="utf-8" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <body>
+      <body className="bg-gray-100 antialiased font-sans">
         <Main />
         <NextScript />
       </body>
