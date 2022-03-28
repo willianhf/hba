@@ -1,0 +1,81 @@
+input CreatePlayerInput {
+  iconsIds: [String!]!
+  nbaPlayerId: String!
+  positionId: String!
+}
+
+input CreateUserInput {
+  password: String!
+  username: String!
+}
+
+type CreateUserVerificationResult {
+  verificationCode: String!
+}
+
+scalar Date
+
+type Empty {
+  _: Boolean!
+}
+
+type Icon {
+  id: ID!
+  name: String!
+}
+
+input LoginInput {
+  password: String!
+  username: String!
+}
+
+type LoginResult {
+  token: String!
+}
+
+type Mutation {
+  confirmUserVerification: Empty!
+  createPlayer(input: CreatePlayerInput!): Player!
+  createSeason(isCurrent: Boolean!, name: String!): Season!
+  createUser(input: CreateUserInput!): User!
+  createUserVerification: CreateUserVerificationResult!
+  login(input: LoginInput!): LoginResult!
+  makeSeasonCurrent(seasonId: ID!): Empty!
+}
+
+type NBAPlayer {
+  firstName: String!
+  id: ID!
+  lastName: String!
+}
+
+type Player {
+  id: ID!
+}
+
+type Position {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  findAll: [Season!]!
+  findCurrent: Season!
+  listIcons: [Icon!]!
+  listNBAPlayers(search: String!): [NBAPlayer!]!
+  listPositions: [Position!]!
+}
+
+type Season {
+  id: ID!
+  name: String!
+}
+
+type User {
+  createdAt: Date
+  id: ID!
+  isAdmin: Boolean!
+  isVerified: Boolean!
+  password: String!
+  username: String!
+}
