@@ -1,3 +1,4 @@
+import { useModal } from '@/hooks';
 import { Popover, Transition } from '@headlessui/react';
 import {
   ChartBarIcon,
@@ -9,12 +10,10 @@ import {
   XIcon
 } from '@heroicons/react/outline';
 import { Fragment } from 'react';
-import { useModal } from '@/hooks';
 import { Brand } from '../Brand';
 import { Button } from '../Button';
 import { Link } from '../Link';
 import { SignupModal } from './SignupModal';
-import { Suspense } from 'react';
 
 interface NavigationItem {
   title: string;

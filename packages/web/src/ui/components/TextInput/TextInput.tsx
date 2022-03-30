@@ -1,10 +1,10 @@
+import { InheritableElementProps } from '@/types/helpers';
 import { ExclamationCircleIcon, EyeIcon, EyeOffIcon, QuestionMarkCircleIcon } from '@heroicons/react/outline';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { InheritableElementProps } from '@/types/helpers';
 import { Button } from '../Button';
-import { Tooltip } from '../Tooltip';
 import { Spinner } from '../Spinner';
+import { Tooltip } from '../Tooltip';
 
 interface Props {
   label: string;
@@ -42,7 +42,7 @@ function TextInputRoot({
         className={clsx(
           'relative flex rounded-md shadow-sm border border-gray-300 overflow-hidden pr-3',
           isFocused && 'ring-1 ring-blue-600 border-blue-600',
-          hasError && 'text-rose-600 border-rose-600 ring-rose-600',
+          hasError && 'text-rose-600 border-rose-600 ring-rose-600'
         )}
       >
         <input

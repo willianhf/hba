@@ -1,10 +1,14 @@
-import { useDebounce, useFetchQuery } from '@/hooks';
+import { useDebounce, useRefetchableQuery } from '@/hooks';
+import { UseRefetchableQueryArgs } from '@/hooks/useRefetchableQuery';
 import { useEffect, useState } from 'react';
-import { graphql, usePreloadedQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import { Button } from '../Button';
 import { Modal } from '../Modal';
 import { TextInput } from '../TextInput';
-import { SignupModalHabboProfileExistsQuery } from './__generated__/SignupModalHabboProfileExistsQuery.graphql';
+import {
+  SignupModalHabboProfileExistsQuery,
+  SignupModalHabboProfileExistsQuery$variables
+} from './__generated__/SignupModalHabboProfileExistsQuery.graphql';
 
 interface ModalProps {
   isOpen: boolean;
@@ -18,6 +22,8 @@ const HABBO_PROFILE_EXISTS_QUERY = graphql`
 `;
 
 export function SignupModal(props: ModalProps) {
+  const [refetchProfile, isPending, args] = useRefetchableQuery({ username: '' });
+
   return (
     <Modal
       isOpen={props.isOpen}
@@ -26,7 +32,7 @@ export function SignupModal(props: ModalProps) {
       body={
         <form>
           <div className="space-y-2">
-            <UsernameInput />
+            <UsernameInput args={args} isPending={isPending} refetchProfile={refetchProfile} />
             <TextInput.Password label="Senha" name="password" />
             <TextInput.Password label="Confirmar senha" name="confirm-password" />
           </div>
@@ -45,18 +51,29 @@ export function SignupModal(props: ModalProps) {
   );
 }
 
-function UsernameInput() {
-  const [username, setUsername] = useState('');
-  const [debouncedUsername] = useDebounce(username);
+interface UsernameInputProps {
+  args: UseRefetchableQueryArgs<SignupModalHabboProfileExistsQuery$variables>;
+  refetchProfile: (variables: SignupModalHabboProfileExistsQuery$variables) => void;
+  isPending: boolean;
+}
 
-  const [queryReference, fetchHabboProfileExists, isFetching] =
-    useFetchQuery<SignupModalHabboProfileExistsQuery>(HABBO_PROFILE_EXISTS_QUERY);
+function UsernameInput(props: UsernameInputProps) {
+  const [username, setUsername] = useState('');
+  const debouncedUsername = useDebounce(username);
+
+  const data = useLazyLoadQuery<SignupModalHabboProfileExistsQuery>(
+    HABBO_PROFILE_EXISTS_QUERY,
+    props.args.variables,
+    props.args.options
+  );
 
   useEffect(() => {
     if (debouncedUsername) {
-      fetchHabboProfileExists({ username: debouncedUsername });
+      props.refetchProfile({ username: debouncedUsername });
     }
-  }, [debouncedUsername, fetchHabboProfileExists]);
+  }, [debouncedUsername]);
+
+  const hasError = debouncedUsername && !data.habboProfileExists;
 
   return (
     <TextInput
@@ -64,18 +81,8 @@ function UsernameInput() {
       name="username"
       tooltip="Você deve utilizar o mesmo nome de usuário da sua conta do Habbo."
       onChange={({ target }) => setUsername(target.value)}
-      isLoading={isFetching}
-      error={queryReference && <NotFoundHabboUsernameError queryReference={queryReference} />}
+      isLoading={props.isPending}
+      error={hasError ? 'Nome de usuário não encontrado no Habbo.' : undefined}
     />
   );
-}
-
-function NotFoundHabboUsernameError(props: any) {
-  const data = usePreloadedQuery<SignupModalHabboProfileExistsQuery>(HABBO_PROFILE_EXISTS_QUERY, props.queryReference);
-
-  if (!data || data.habboProfileExists) {
-    return null;
-  }
-
-  return <span>Nome de usuário não encontrado no Habbo.</span>;
 }
