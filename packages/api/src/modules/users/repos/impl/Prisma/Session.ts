@@ -35,4 +35,10 @@ export class PrismaSessionRepository implements SessionRepository {
 
     return userSessions.map(SessionMapper.toDomain);
   }
+
+  public async delete(session: Session): Promise<void> {
+    await prisma.session.delete({
+      where: { id: session.getId().toValue() }
+    });
+  }
 }

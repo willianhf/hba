@@ -1,8 +1,10 @@
+import { PolymorphicComponentProps } from '@/types/helpers';
 import clsx from 'clsx';
-import { PolymorphicComponentProps } from '~/types/helpers';
+import { useMemo } from 'react';
+import { Spinner } from './Spinner';
 
 const styling = {
-  base: 'text-base font-medium',
+  base: 'text-base font-medium disabled:opacity-80 disabled:cursor-default',
   colorSchemes: {
     base: {
       solid: null,
@@ -23,7 +25,10 @@ const styling = {
   }
 };
 
-type Props =
+type Props = {
+  isLoading?: boolean;
+  isDisabled?: boolean;
+} & (
   | {
       variant: 'link';
       colorScheme?: keyof typeof styling['colorSchemes'];
@@ -31,7 +36,8 @@ type Props =
   | {
       variant?: keyof typeof styling['variants'];
       colorScheme: keyof typeof styling['colorSchemes'];
-    };
+    }
+);
 
 type ButtonProps<Component extends React.ElementType> = PolymorphicComponentProps<Component, Props>;
 
@@ -41,6 +47,8 @@ export function Button<Component extends React.ElementType = 'button'>({
   className,
   colorScheme = 'base',
   variant = 'solid',
+  isLoading,
+  isDisabled,
   ...props
 }: ButtonProps<Component>) {
   const Component = as ?? 'button';
@@ -52,9 +60,22 @@ export function Button<Component extends React.ElementType = 'button'>({
     styling.variants[variant]
   ]);
 
+  const handleDisabled = useMemo(() => {
+    if (isLoading) {
+      return true;
+    }
+
+    return isDisabled;
+  }, [isLoading, isDisabled]);
+
   return (
-    <Component className={classes} {...props}>
+    <Component className={classes} disabled={handleDisabled} {...props}>
       {children}
+      {isLoading && (
+        <div className="ml-2">
+          <Spinner className="text-white" />
+        </div>
+      )}
     </Component>
   );
 }

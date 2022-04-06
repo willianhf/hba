@@ -4,16 +4,16 @@ import { EntityNotFoundError } from '~/shared/core/Error';
 export interface HabboProfile {
   name: string;
   motto: string;
-  habbo_id: string;
+  uniqueId: string;
 }
 
 export class HabboAPIFacade {
-  private static readonly hostname = 'https://api.habboapi.net';
+  private static readonly hostname = 'https://www.habbo.com.br/api/public/';
   private static readonly httpClient = got.extend({ prefixUrl: this.hostname });
 
   public static async fetchProfile(nickname: string): Promise<HabboProfile> {
     try {
-      const response = await this.httpClient.get(`habbos/com.br/${nickname}`).json<HabboProfile>();
+      const response = await this.httpClient.get(`users?name=${nickname}`).json<HabboProfile>();
 
       if (response.name.toLowerCase() !== nickname.toLowerCase()) {
         throw new EntityNotFoundError('Habbo profile not found.');
@@ -22,7 +22,7 @@ export class HabboAPIFacade {
       return {
         name: response.name,
         motto: response.motto,
-        habbo_id: response.habbo_id
+        uniqueId: response.uniqueId
       };
     } catch (error) {
       throw new EntityNotFoundError('Habbo profile not found.');

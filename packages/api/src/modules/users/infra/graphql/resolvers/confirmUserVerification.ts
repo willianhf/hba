@@ -1,5 +1,7 @@
 import { confirmUserVerificationService } from '~/modules/users/services/ConfirmUserVerification';
+import { ApplicationError, AuthenticationError } from '~/shared/core/Error';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
+import { UserRef } from '../types/User';
 
 schemaBuilder.relayMutationField(
   'confirmUserVerification',
@@ -8,15 +10,19 @@ schemaBuilder.relayMutationField(
     authScopes: {
       isLoggedIn: true
     },
+    errors: {
+      types: [AuthenticationError, ApplicationError]
+    },
     resolve: async (_parent, _args, context) => {
       await confirmUserVerificationService.execute({ user: context.user! });
 
-      return { itWorked: true };
+      return { itWorked: true, user: context.user! };
     }
   },
   {
     outputFields: t => ({
-      itWorked: t.boolean({ resolve: parent => parent.itWorked })
+      itWorked: t.boolean({ resolve: result => result.itWorked }),
+      user: t.field({ type: UserRef, resolve: result => result.user })
     })
   }
 );

@@ -17,11 +17,6 @@ export class CreateUserVerificationService implements Service<CreateUserVerifica
   public async execute(dto: CreateUserVerificationDTO): Promise<CreateUserVerificationResult> {
     const currentVerification = await this.verificationRepository.findByUser(dto.user);
     if (currentVerification) {
-      if (currentVerification.verificationCode.isExpired()) {
-        currentVerification.refreshVerificationCode();
-        await this.verificationRepository.update(currentVerification);
-      }
-
       return { verificationCode: currentVerification.verificationCode.code };
     }
 

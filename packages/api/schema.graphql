@@ -1,3 +1,21 @@
+type ApplicationError implements BaseError {
+  code: String!
+  message: String!
+  name: String!
+}
+
+type AuthenticationError implements BaseError {
+  code: String!
+  message: String!
+  name: String!
+}
+
+interface BaseError {
+  code: String!
+  message: String!
+  name: String!
+}
+
 input ConfirmUserVerificationInput {
   clientMutationId: ID
 }
@@ -5,6 +23,7 @@ input ConfirmUserVerificationInput {
 type ConfirmUserVerificationPayload {
   clientMutationId: ID
   itWorked: Boolean!
+  user: User!
 }
 
 input CreatePlayerInput {
@@ -38,7 +57,10 @@ input CreateUserInput {
 
 type CreateUserPayload {
   clientMutationId: ID
+  jwtToken: String!
+  sessionId: String!
   user: User!
+  verificationCode: String!
 }
 
 input CreateUserVerificationInput {
@@ -51,6 +73,17 @@ type CreateUserVerificationPayload {
 }
 
 scalar Date
+
+type ErrorField {
+  field: String
+  message: String!
+}
+
+type ForbiddenError implements BaseError {
+  code: String!
+  message: String!
+  name: String!
+}
 
 type Icon implements Node {
   id: ID!
@@ -65,7 +98,20 @@ input LoginInput {
 
 type LoginPayload {
   clientMutationId: ID
+  sessionId: String!
   token: String!
+  user: User!
+  verificationCode: String
+}
+
+input LogoutInput {
+  clientMutationId: ID
+  sessionId: String!
+}
+
+type LogoutPayload {
+  clientMutationId: ID
+  itWorked: Boolean!
 }
 
 input MakeSeasonCurrentInput {
@@ -79,14 +125,23 @@ type MakeSeasonCurrentPayload {
 }
 
 type Mutation {
-  confirmUserVerification(input: ConfirmUserVerificationInput!): ConfirmUserVerificationPayload!
+  confirmUserVerification(input: ConfirmUserVerificationInput!): MutationConfirmUserVerificationResult!
   createPlayer(input: CreatePlayerInput!): CreatePlayerPayload!
   createSeason(input: CreateSeasonInput!): CreateSeasonPayload!
-  createUser(input: CreateUserInput!): CreateUserPayload!
+  createUser(input: CreateUserInput!): MutationCreateUserResult!
   createUserVerification(input: CreateUserVerificationInput!): CreateUserVerificationPayload!
-  login(input: LoginInput!): LoginPayload!
+  login(input: LoginInput!): MutationLoginResult!
+  logout(input: LogoutInput!): MutationLogoutResult!
   makeSeasonCurrent(input: MakeSeasonCurrentInput!): MakeSeasonCurrentPayload!
 }
+
+union MutationConfirmUserVerificationResult = ApplicationError | AuthenticationError | ConfirmUserVerificationPayload
+
+union MutationCreateUserResult = CreateUserPayload | ValidationInputError
+
+union MutationLoginResult = ApplicationError | LoginPayload
+
+union MutationLogoutResult = ApplicationError | AuthenticationError | LogoutPayload
 
 type NBAPlayer implements Node {
   firstName: String!
@@ -147,4 +202,11 @@ type User implements Node {
   isVerified: Boolean!
   password: String!
   username: String!
+}
+
+type ValidationInputError implements BaseError {
+  code: String!
+  fields: [ErrorField!]!
+  message: String!
+  name: String!
 }

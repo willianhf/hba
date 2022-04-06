@@ -1,17 +1,28 @@
+import { EntityNotFoundError, ValidationInputError } from '~/shared/core/Error';
 import { Service } from '~/shared/core/Service';
-import { User, UserName, UserPassword } from '../../domain';
+import { JWTToken, User, UserName, UserPassword } from '../../domain';
 import { UserRepository } from '../../repos';
+import { createUserVerificationService } from '../CreateUserVerification';
+import { loginService } from '../Login';
 import { UsernameTakenError } from './Errors';
 
 interface CreateUserDTO {
   username: string;
   password: string;
+  userAgent: string;
 }
 
-export class CreateUserService implements Service<CreateUserDTO, User> {
+interface CreateUserResult {
+  verificationCode: string;
+  jwtToken: JWTToken;
+  user: User;
+  sessionId: string;
+}
+
+export class CreateUserService implements Service<CreateUserDTO, CreateUserResult> {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async execute(dto: CreateUserDTO): Promise<User> {
+  async execute(dto: CreateUserDTO): Promise<CreateUserResult> {
     const username = UserName.create({ name: dto.username });
     const password = UserPassword.create({ value: dto.password });
 
@@ -21,10 +32,34 @@ export class CreateUserService implements Service<CreateUserDTO, User> {
     }
 
     const user = User.create({ username, password });
-    await user.getHabboProfile();
+    try {
+      await user.getHabboProfile();
+    } catch (ex) {
+      if (ex instanceof EntityNotFoundError) {
+        throw new ValidationInputError({
+          field: 'username',
+          message: `O usuário "${dto.username}" não existe no Habbo.`
+        });
+      }
+
+      throw ex;
+    }
 
     const persistedUser = await this.userRepository.save(user);
 
-    return persistedUser;
+    const loginResult = await loginService.execute({
+      username: dto.username,
+      password: dto.password,
+      userAgent: dto.userAgent
+    });
+
+    const userVerificationResult = await createUserVerificationService.execute({ user: persistedUser });
+
+    return {
+      jwtToken: loginResult.token,
+      verificationCode: userVerificationResult.verificationCode,
+      user: persistedUser,
+      sessionId: loginResult.sessionId
+    };
   }
 }

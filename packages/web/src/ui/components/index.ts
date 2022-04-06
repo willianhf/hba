@@ -1,8 +1,12 @@
 export { Brand } from './Brand';
-export { HeaderNavigation } from './HeaderNavigation';
+export { Navigation } from './Navigation';
 export { Link } from './Link';
 export { Button } from './Button';
 export { TextInput } from './TextInput';
 export { Modal } from './Modal';
 export { Tooltip } from './Tooltip';
 export { Spinner } from './Spinner';
+export { Form } from './Form';
+export { Error } from './Error';
+export { Authenticated } from './Authenticated';
+export { Guest } from './Guest';

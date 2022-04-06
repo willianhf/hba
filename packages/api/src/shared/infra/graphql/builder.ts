@@ -1,9 +1,10 @@
 import SchemaBuilder from '@pothos/core';
+import ErrorsPlugin from '@pothos/plugin-errors';
+import RelayPlugin from '@pothos/plugin-relay';
 import ScopeAuthPlugin from '@pothos/plugin-scope-auth';
 import SimpleObjectsPlugin from '@pothos/plugin-simple-objects';
-import RelayPlugin from '@pothos/plugin-relay';
-import { AuthenticationError, ForbiddenError } from 'apollo-server';
 import { User } from '~/modules/users/domain';
+import { AuthenticationError, ForbiddenError } from '~/shared/core/Error';
 
 type Context = {
   userAgent: string;
@@ -29,7 +30,7 @@ type SchemaBuilderConfig = {
 };
 
 export const schemaBuilder = new SchemaBuilder<SchemaBuilderConfig>({
-  plugins: [ScopeAuthPlugin, SimpleObjectsPlugin, RelayPlugin],
+  plugins: [SimpleObjectsPlugin, RelayPlugin, ErrorsPlugin, ScopeAuthPlugin],
   authScopes: async context => ({
     isLoggedIn: !!context.user,
     isAdmin: !!context.user?.isAdmin
@@ -41,17 +42,20 @@ export const schemaBuilder = new SchemaBuilder<SchemaBuilderConfig>({
 
         if ('scope' in failure) {
           if (failure.scope === 'isAdmin') {
-            return new ForbiddenError('You must be an admin to perform this action.');
+            return new ForbiddenError();
           }
         }
       }
 
-      return new AuthenticationError('You must be logged in to perform this action.');
+      return new AuthenticationError();
     }
   },
   relayOptions: {
     clientMutationId: 'optional',
     cursorType: 'String'
+  },
+  errorOptions: {
+    directResult: true
   }
 });
 

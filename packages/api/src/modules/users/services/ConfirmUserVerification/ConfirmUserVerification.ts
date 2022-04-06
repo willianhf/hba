@@ -24,13 +24,10 @@ export class ConfirmUserVerificationService
       throw new EntityNotFoundError();
     }
 
-    if (verification.verificationCode.isExpired()) {
-      throw new VerificationError('Verification code is expired.');
-    }
-
     const habboUser = await dto.user.getHabboProfile();
-    if (habboUser.motto !== verification.verificationCode.code) {
-      throw new VerificationError('Habbo user with invalid verification code at the motto.');
+    console.log(habboUser.motto);
+    if (!habboUser.motto.toLowerCase().includes(verification.verificationCode.code.toLowerCase())) {
+      throw new VerificationError('A missão não contém o código de verificação.');
     }
 
     await this.userRepository.verify(dto.user.getId());

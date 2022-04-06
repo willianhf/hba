@@ -1,10 +1,10 @@
-import { ApplicationError } from '~/shared/core/Error';
 import { Service } from '~/shared/core/Service';
-import { JWTToken, Session, UserName } from '../../domain';
+import { JWTToken, Session, User, UserName } from '../../domain';
 import { JWTFacade } from '../../facades/JWT';
 import { UserRepository } from '../../repos';
 import { SessionRepository } from '../../repos/Session';
-import { ActiveSessionError, InvalidCredentialsError } from './Errors';
+import { createUserVerificationService } from '../CreateUserVerification';
+import { InvalidCredentialsError } from './Errors';
 
 interface LoginDTO {
   username: string;
@@ -12,12 +12,17 @@ interface LoginDTO {
   userAgent: string;
 }
 
-type Output = JWTToken;
+type LoginResult = {
+  token: JWTToken;
+  verificationCode: string | null;
+  sessionId: string;
+  user: User;
+};
 
-export class LoginService implements Service<LoginDTO, Output> {
+export class LoginService implements Service<LoginDTO, LoginResult> {
   constructor(private readonly userRepository: UserRepository, private readonly sessionRepository: SessionRepository) {}
 
-  public async execute(dto: LoginDTO): Promise<Output> {
+  public async execute(dto: LoginDTO): Promise<LoginResult> {
     const username = UserName.create({ name: dto.username });
     const user = await this.userRepository.getUserByUsername(username);
     if (!user) {
@@ -29,23 +34,28 @@ export class LoginService implements Service<LoginDTO, Output> {
       throw new InvalidCredentialsError();
     }
 
-    const userSessions = await this.sessionRepository.getByUserId(user.getId());
-    const hasActiveSession = userSessions.some(session => session.userAgent === dto.userAgent);
-    if (hasActiveSession) {
-      throw new ActiveSessionError();
-    }
-
     const session = Session.create({
       user,
       userAgent: dto.userAgent
     });
     const persistedSession = await this.sessionRepository.create(session);
 
-    const jwtToken = JWTFacade.sign({
+    const token = JWTFacade.sign({
       userId: user.getId().toValue(),
       sessionId: persistedSession.getId().toValue()
     });
 
-    return jwtToken;
+    let verificationCode = null;
+    if (!user.isVerified) {
+      const userVerificationResult = await createUserVerificationService.execute({ user });
+      verificationCode = userVerificationResult.verificationCode;
+    }
+
+    return {
+      token,
+      verificationCode,
+      user,
+      sessionId: persistedSession.getId().toValue()
+    };
   }
 }

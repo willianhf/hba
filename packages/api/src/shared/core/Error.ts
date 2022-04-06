@@ -31,3 +31,15 @@ export class EntityNotFoundError extends ApplicationError {
     super('ENTITY_NOT_FOUND_ERROR', 'Entity not found', message ?? 'The requested entity was not found.');
   }
 }
+
+export class AuthenticationError extends ApplicationError {
+  public constructor() {
+    super('UNAUTHENTICATED', 'Authentication error', 'You must be logged in to perform this action..');
+  }
+}
+
+export class ForbiddenError extends ApplicationError {
+  public constructor() {
+    super('FORBIDDEN', 'Forbidden error', 'You must be an admin to perform this action.');
+  }
+}
