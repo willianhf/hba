@@ -25,7 +25,6 @@ export class ConfirmUserVerificationService
     }
 
     const habboUser = await dto.user.getHabboProfile();
-    console.log(habboUser.motto);
     if (!habboUser.motto.toLowerCase().includes(verification.verificationCode.code.toLowerCase())) {
       throw new VerificationError('A missão não contém o código de verificação.');
     }
