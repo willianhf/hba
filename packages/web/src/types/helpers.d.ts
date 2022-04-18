@@ -36,3 +36,9 @@ export type PolymorphicComponentProps<C extends React.ElementType, Props = {}> =
   C,
   Props & AsProp<C>
 >;
+
+export type Writable<T> = { -readonly [P in keyof T]: Writable<T[P]> };
+
+export type DeepNonNullable<T> = {
+  [K in keyof T]: NonNullable<DeepNonNullable<T[K]>>;
+};

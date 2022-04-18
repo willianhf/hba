@@ -16,9 +16,6 @@ schemaBuilder.queryFields(t => ({
   }),
   currentSeason: t.field({
     type: SeasonRef,
-    authScopes: {
-      isLoggedIn: true
-    },
     resolve: async () => {
       return prismaSeasonRepository.findCurrent();
     }

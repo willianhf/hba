@@ -12,6 +12,9 @@ schemaBuilder.node(NBAPlayerRef, {
   isTypeOf: nbaPlayer => nbaPlayer instanceof NBAPlayer,
   fields: t => ({
     firstName: t.string({ resolve: nbaPlayer => nbaPlayer.firstName }),
-    lastName: t.string({ resolve: nbaPlayer => nbaPlayer.lastName })
+    lastName: t.string({ resolve: nbaPlayer => nbaPlayer.lastName }),
+    imageUrl: t.string({
+      resolve: nbaPlayer => `https://cdn.nba.com/headshots/nba/latest/1040x760/${nbaPlayer.getId()}.png`
+    })
   })
 });

@@ -30,7 +30,7 @@ function TextInputRoot({
   tooltip,
   ...props
 }: TextInputProps) {
-  const [{ onChange: formikOnChange, onBlur: formikOnBlur, ...field }, meta] = useField<'input'>({ name });
+  const [{ onChange: formikOnChange, onBlur: formikOnBlur, ...field }, meta] = useField({ name });
   const [isFocused, onFocus, onBlur] = useElementFocus();
 
   const hasError = useMemo(() => {

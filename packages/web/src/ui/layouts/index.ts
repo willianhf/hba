@@ -1,2 +1,1 @@
-export { LandingLayout } from './Landing';
-export { DashboardLayout } from './Dashboard';
+export { Layout } from './Layout';

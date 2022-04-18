@@ -1,3 +1,4 @@
+import { decodeGlobalID } from '@pothos/plugin-relay';
 import { prismaSeasonRepository, SeasonRepository } from '~/modules/season/repos';
 import { User } from '~/modules/users/domain';
 import { EntityNotFoundError, ValidationInputError } from '~/shared/core/Error';
@@ -24,12 +25,12 @@ class CreatePlayerService implements Service<CreatePlayerDTO, Player> {
   ) {}
 
   public async execute(dto: CreatePlayerDTO): Promise<Player> {
-    const nbaPlayerId = new UniqueIdentifier(dto.nbaPlayerId);
+    const nbaPlayerId = new UniqueIdentifier(decodeGlobalID(dto.nbaPlayerId).id);
     await findNBAPlayerService.execute({ nbaPlayerId });
 
     const currentSeason = await this.seasonRepository.findCurrent();
 
-    const positionId = new UniqueIdentifier(dto.positionId);
+    const positionId = new UniqueIdentifier(decodeGlobalID(dto.positionId).id);
     const position = await this.positionRepository.findById(positionId);
     if (!position) {
       throw new EntityNotFoundError('The provided position does not exist');
@@ -39,7 +40,7 @@ class CreatePlayerService implements Service<CreatePlayerDTO, Player> {
       throw new ValidationInputError({ field: 'iconIds', message: `It's obrigatory to provide two iconIds` });
     }
 
-    const iconIds = dto.iconsIds.map(id => new UniqueIdentifier(id));
+    const iconIds = dto.iconsIds.map(id => new UniqueIdentifier(decodeGlobalID(id).id));
     await Promise.all(
       iconIds.map(async iconId => {
         const icon = await this.iconRepository.findById(iconId);
@@ -54,8 +55,8 @@ class CreatePlayerService implements Service<CreatePlayerDTO, Player> {
     const canRequestPlayer = await this.playerRepository.canRequestPlayer(dto.user.getId(), currentSeason.getId());
     if (!canRequestPlayer) {
       throw new ValidationInputError({
-        field: 'nbaPlayerId',
-        message: 'You already have an on-going player request or an accepted player'
+        field: 'player',
+        message: 'Você já tem uma inscrição ativa ou aprovada pra essa temporada.'
       });
     }
 
@@ -63,7 +64,7 @@ class CreatePlayerService implements Service<CreatePlayerDTO, Player> {
     if (!isNBAPlayerAvailable) {
       throw new ValidationInputError({
         field: 'nbaPlayerId',
-        message: 'The provided player is already selected by someone else'
+        message: 'O jogador escolhido já foi escolhido por outra pessoa.'
       });
     }
 

@@ -28,6 +28,7 @@ const styling = {
 type Props = {
   isLoading?: boolean;
   isDisabled?: boolean;
+  fillParent?: boolean;
 } & (
   | {
       variant: 'link';
@@ -49,6 +50,7 @@ export function Button<Component extends React.ElementType = 'button'>({
   variant = 'solid',
   isLoading,
   isDisabled,
+  fillParent,
   ...props
 }: ButtonProps<Component>) {
   const Component = as ?? 'button';
@@ -57,7 +59,8 @@ export function Button<Component extends React.ElementType = 'button'>({
     styling.base,
     className,
     styling.colorSchemes[colorScheme][variant],
-    styling.variants[variant]
+    styling.variants[variant],
+    fillParent && 'w-full'
   ]);
 
   const handleDisabled = useMemo(() => {

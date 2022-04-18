@@ -42,4 +42,8 @@ export class Player extends PersistableEntity<PlayerProps, UniqueIdentifier> {
   public get iconIds(): UniqueIdentifier[] {
     return this.props.iconIds;
   }
+
+  public get status(): ApprovalStatus {
+    return this.props.approvalStatus;
+  }
 }

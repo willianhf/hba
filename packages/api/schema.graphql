@@ -4,6 +4,12 @@ type ApplicationError implements BaseError {
   name: String!
 }
 
+enum ApprovalStatus {
+  ACCEPTED
+  DENIED
+  IDLE
+}
+
 type AuthenticationError implements BaseError {
   code: String!
   message: String!
@@ -126,7 +132,7 @@ type MakeSeasonCurrentPayload {
 
 type Mutation {
   confirmUserVerification(input: ConfirmUserVerificationInput!): MutationConfirmUserVerificationResult!
-  createPlayer(input: CreatePlayerInput!): CreatePlayerPayload!
+  createPlayer(input: CreatePlayerInput!): MutationCreatePlayerResult!
   createSeason(input: CreateSeasonInput!): CreateSeasonPayload!
   createUser(input: CreateUserInput!): MutationCreateUserResult!
   createUserVerification(input: CreateUserVerificationInput!): CreateUserVerificationPayload!
@@ -137,6 +143,8 @@ type Mutation {
 
 union MutationConfirmUserVerificationResult = ApplicationError | AuthenticationError | ConfirmUserVerificationPayload
 
+union MutationCreatePlayerResult = ApplicationError | AuthenticationError | CreatePlayerPayload | ValidationInputError
+
 union MutationCreateUserResult = CreateUserPayload | ValidationInputError
 
 union MutationLoginResult = ApplicationError | LoginPayload
@@ -146,6 +154,7 @@ union MutationLogoutResult = ApplicationError | AuthenticationError | LogoutPayl
 type NBAPlayer implements Node {
   firstName: String!
   id: ID!
+  imageUrl: String!
   lastName: String!
 }
 
@@ -161,7 +170,13 @@ type PageInfo {
 }
 
 type Player implements Node {
+  icons: [Icon!]!
   id: ID!
+  nbaPlayer: NBAPlayer
+  position: Position
+  season: Season
+  status: ApprovalStatus!
+  user: User
 }
 
 type Position implements Node {
@@ -170,7 +185,10 @@ type Position implements Node {
 }
 
 type Query {
+  canRequestPlayer: Boolean!
   currentSeason: Season!
+  findPlayers(seasonId: String!): [Player!]!
+  findUserPlayersBySeason: [Player!]!
   habboProfileExists(username: String!): Boolean!
   icons: [Icon!]!
   nbaPlayers(search: String!): [NBAPlayer!]!

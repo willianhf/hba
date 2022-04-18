@@ -29,15 +29,18 @@ export class PrismaPlayerRepository implements PlayerRepository {
   }
 
   public async canRequestPlayer(userId: UniqueIdentifier, seasonId: IncIdentifier): Promise<boolean> {
-    const prismaPlayer = await prisma.player.findFirst({
+    const prismaPlayers = await prisma.player.findMany({
       where: {
         userId: userId.toValue(),
-        seasonId: seasonId.toValue(),
-        OR: [{ status: ApprovalStatus.ACCEPTED }, { status: ApprovalStatus.IDLE }]
+        seasonId: seasonId.toValue()
       }
     });
 
-    return !prismaPlayer;
+    if (prismaPlayers.length === 0) {
+      return true;
+    }
+
+    return prismaPlayers.every(player => player.status === ApprovalStatus.DENIED);
   }
 
   public async isNBAPlayerAvailable(nbaPlayerId: UniqueIdentifier, seasonId: IncIdentifier): Promise<boolean> {
@@ -50,5 +53,34 @@ export class PrismaPlayerRepository implements PlayerRepository {
     });
 
     return !prismaPlayer;
+  }
+
+  public async findByUserAndSeason(userId: UniqueIdentifier, seasonId: IncIdentifier): Promise<Player[]> {
+    const prismaPlayers = await prisma.player.findMany({
+      where: {
+        userId: userId.toValue(),
+        seasonId: seasonId.toValue()
+      },
+      include: {
+        icons: true
+      }
+    });
+
+    return prismaPlayers.map(PlayerMapper.toDomain);
+  }
+
+  public async findAll(seasonId: IncIdentifier, userId?: UniqueIdentifier): Promise<Player[]> {
+    const prismaPlayers = await prisma.player.findMany({
+      where: {
+        seasonId: seasonId.toValue(),
+        status: ApprovalStatus.ACCEPTED,
+        NOT: userId ? { userId: userId.toValue() } : undefined
+      },
+      include: {
+        icons: true
+      }
+    });
+
+    return prismaPlayers.map(PlayerMapper.toDomain);
   }
 }

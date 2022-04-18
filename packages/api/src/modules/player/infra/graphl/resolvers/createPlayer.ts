@@ -1,4 +1,5 @@
 import { createPlayerService } from '~/modules/player/services/CreatePlayer';
+import { ApplicationError, AuthenticationError, ValidationInputError } from '~/shared/core/Error';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
 import { PlayerRef } from '../types/Player';
 
@@ -14,6 +15,9 @@ schemaBuilder.relayMutationField(
   {
     authScopes: {
       isLoggedIn: true
+    },
+    errors: {
+      types: [AuthenticationError, ApplicationError, ValidationInputError]
     },
     resolve: async (_parent, args, context) => {
       return createPlayerService.execute({ ...args.input, user: context.user! });
