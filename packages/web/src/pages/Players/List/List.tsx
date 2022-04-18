@@ -41,10 +41,12 @@ export function PlayersList() {
   const playersByPosition = groupBy(playersData.findPlayers.concat(), player => player.position?.name ?? '');
 
   return (
-    <div className='space-y-4'>
+    <div className="space-y-4">
       {Object.entries(playersByPosition).map(([position, players]) => (
         <div key={position}>
-          <Text variant="subtitle" className="block mb-1">{position}</Text>
+          <Text variant="subtitle" className="block mb-1">
+            {position}
+          </Text>
           {players.map(player => (
             <Card key={player.id} className="flex items-center w-full">
               <div>

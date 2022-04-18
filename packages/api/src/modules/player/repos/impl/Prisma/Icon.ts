@@ -20,13 +20,20 @@ export class PrismaIconRepository implements IconRepository {
   }
 
   public async findPlayerIcons(playerId: UniqueIdentifier): Promise<Icon[]> {
-    const prismaIcons = await prisma.icon.findMany({
+    const prismaPlayers = await prisma.player.findMany({
       where: {
-        playerIcons: {
-          every: { playerId: playerId.toValue() }
+        id: playerId.toValue()
+      },
+      select: {
+        icons: {
+          select: {
+            icon: true
+          }
         }
       }
     });
+
+    const prismaIcons = prismaPlayers.flatMap(player => player.icons).flatMap(playerIcon => playerIcon.icon);
 
     return prismaIcons.map(icon => new Icon(icon, new UniqueIdentifier(icon.id)));
   }
