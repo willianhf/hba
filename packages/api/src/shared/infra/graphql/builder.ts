@@ -1,6 +1,6 @@
 import SchemaBuilder from '@pothos/core';
 import ErrorsPlugin from '@pothos/plugin-errors';
-import RelayPlugin from '@pothos/plugin-relay';
+import RelayPlugin, { DefaultEdgesNullability } from '@pothos/plugin-relay';
 import ScopeAuthPlugin from '@pothos/plugin-scope-auth';
 import SimpleObjectsPlugin from '@pothos/plugin-simple-objects';
 import { User } from '~/modules/users/domain';
@@ -52,7 +52,11 @@ export const schemaBuilder = new SchemaBuilder<SchemaBuilderConfig>({
   },
   relayOptions: {
     clientMutationId: 'optional',
-    cursorType: 'String'
+    cursorType: 'String',
+    edgesFieldOptions: {
+      // @ts-ignore
+      nullable: false
+    }
   },
   errorOptions: {
     directResult: true

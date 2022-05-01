@@ -10,9 +10,9 @@ schemaBuilder.queryField('findPlayers', t =>
     args: {
       seasonId: t.arg({ type: 'String', required: true })
     },
-    resolve: async (_root, args, context) => {
+    resolve: async (_root, args) => {
       const seasonId = new IncIdentifier(+decodeGlobalID(args.seasonId).id);
-      return prismaPlayerRepository.findAll(seasonId, context.user?.getId());
+      return prismaPlayerRepository.findAll(seasonId);
     }
   })
 );

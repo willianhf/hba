@@ -1,16 +1,19 @@
+import { useElementFocus } from '@/hooks';
 import { Combobox as HeadlessCombobox } from '@headlessui/react';
 import { SelectorIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
 import { useField } from 'formik';
 import { useRef } from 'react';
-import { Spinner } from './Spinner';
-import { Text } from './Text';
+import { Spinner } from '../Spinner';
+import { Text } from '../Text';
+import { Props as OptionProps } from './Option';
 
 interface Props<Option> {
   name: string;
   label: string;
+  renderItem: (optionProps: OptionProps<Option>) => React.ReactNode;
   options: Readonly<Option[]>;
-  getDisplayValue: (option: Option | null) => string;
+  getDisplayValue: (option: Option) => string;
   getValue: (option: Option | null) => any;
   search: string;
   onSearchChange: (search: string) => void;
@@ -37,6 +40,7 @@ export function Combobox<Option>(props: Props<Option>) {
   }
 
   const inputId = inputRef.current?.id;
+  const [isFocused, onFocus, onBlur] = useElementFocus();
 
   return (
     <HeadlessCombobox value={field.value} onChange={handleChange}>
@@ -49,7 +53,9 @@ export function Combobox<Option>(props: Props<Option>) {
             <div
               className={clsx(
                 'shadow-sm border border-gray-300 overflow-hidden relative',
-                open ? 'rounded-t-md' : 'rounded-md'
+                open ? 'rounded-t-md' : 'rounded-md',
+                isFocused && 'ring-1 ring-blue-600 border-blue-600',
+                hasError && 'border-rose-600 ring-rose-600'
               )}
             >
               <HeadlessCombobox.Input
@@ -58,7 +64,9 @@ export function Combobox<Option>(props: Props<Option>) {
                 className="w-full border-none focus:ring-0 py-2 pl-3 pr-10 text-sm text-gray-900 placeholder:text-gray-500"
                 displayValue={props.getDisplayValue}
                 onChange={event => props.onSearchChange(event.target.value)}
+                autoComplete="off"
                 ref={inputRef}
+                {...{ onFocus, onBlur }}
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                 {props.isLoading && <Spinner />}
@@ -67,7 +75,7 @@ export function Combobox<Option>(props: Props<Option>) {
                 </HeadlessCombobox.Button>
               </div>
             </div>
-            {!props.isLoading && (
+            {hasSearch && (
               <HeadlessCombobox.Options className="z-10 absolute w-full p-1 overflow-auto text-sm bg-white rounded-b-md shadow-sm border border-gray-300 border-t-0 max-h-64">
                 {isEmpty ? (
                   <div className="cursor-default select-none px-2 py-1 text-gray-900">Nenhum resultado encontrado</div>
@@ -78,16 +86,9 @@ export function Combobox<Option>(props: Props<Option>) {
                       className="outline-none select-none mb-1"
                       value={option}
                     >
-                      {({ selected, active }) => (
-                        <div
-                          className={clsx(
-                            'rounded-md p-2 bg-white cursor-pointer',
-                            (selected || active) && 'bg-gray-100'
-                          )}
-                        >
-                          <span className="truncate">{props.getDisplayValue(option)}</span>
-                        </div>
-                      )}
+                      {optionProps =>
+                        props.renderItem({ ...optionProps, option, getDisplayValue: props.getDisplayValue })
+                      }
                     </HeadlessCombobox.Option>
                   ))
                 )}

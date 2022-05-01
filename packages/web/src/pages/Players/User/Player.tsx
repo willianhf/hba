@@ -7,7 +7,6 @@ import { PlayerFragment_player$key } from './__generated__/PlayerFragment_player
 
 const PLAYER_FRAGMENT = graphql`
   fragment PlayerFragment_player on Player {
-    id
     status
     nbaPlayer {
       firstName
@@ -23,11 +22,11 @@ const PLAYER_FRAGMENT = graphql`
 `;
 
 interface Props {
-  player: PlayerFragment_player$key;
+  playerRef: PlayerFragment_player$key;
 }
 
 export function Player(props: Props) {
-  const player = useFragment(PLAYER_FRAGMENT, props.player);
+  const player = useFragment(PLAYER_FRAGMENT, props.playerRef);
 
   return (
     <Card className="inline-block w-full">

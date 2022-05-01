@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ab8143aa95dbb07765962871cf7b2c15>>
+ * @generated SignedSource<<0cd023c719e666356c7136721cc9cfbf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,10 +9,10 @@
 // @ts-nocheck
 
 import { ConcreteRequest, Query } from 'relay-runtime';
-export type ListPlayers_findAllQuery$variables = {
+export type PlayersList_findPlayersQuery$variables = {
   seasonId: string;
 };
-export type ListPlayers_findAllQuery$data = {
+export type PlayersList_findPlayersQuery$data = {
   readonly findPlayers: ReadonlyArray<{
     readonly id: string;
     readonly icons: ReadonlyArray<{
@@ -32,9 +32,9 @@ export type ListPlayers_findAllQuery$data = {
     } | null;
   }>;
 };
-export type ListPlayers_findAllQuery = {
-  variables: ListPlayers_findAllQuery$variables;
-  response: ListPlayers_findAllQuery$data;
+export type PlayersList_findPlayersQuery = {
+  variables: PlayersList_findPlayersQuery$variables;
+  response: PlayersList_findPlayersQuery$data;
 };
 
 const node: ConcreteRequest = (function(){
@@ -112,7 +112,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ListPlayers_findAllQuery",
+    "name": "PlayersList_findPlayersQuery",
     "selections": [
       {
         "alias": null,
@@ -173,7 +173,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ListPlayers_findAllQuery",
+    "name": "PlayersList_findPlayersQuery",
     "selections": [
       {
         "alias": null,
@@ -232,16 +232,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "4b493f18fd6388803c2f9451b8869db1",
+    "cacheID": "20f03f33057d76ce652b0f7466a50331",
     "id": null,
     "metadata": {},
-    "name": "ListPlayers_findAllQuery",
+    "name": "PlayersList_findPlayersQuery",
     "operationKind": "query",
-    "text": "query ListPlayers_findAllQuery(\n  $seasonId: String!\n) {\n  findPlayers(seasonId: $seasonId) {\n    id\n    icons {\n      name\n      id\n    }\n    nbaPlayer {\n      firstName\n      lastName\n      imageUrl\n      id\n    }\n    position {\n      id\n      name\n    }\n    user {\n      username\n      id\n    }\n  }\n}\n"
+    "text": "query PlayersList_findPlayersQuery(\n  $seasonId: String!\n) {\n  findPlayers(seasonId: $seasonId) {\n    id\n    icons {\n      name\n      id\n    }\n    nbaPlayer {\n      firstName\n      lastName\n      imageUrl\n      id\n    }\n    position {\n      id\n      name\n    }\n    user {\n      username\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c42236bdfad5126aa08a3040b1728222";
+(node as any).hash = "4d4bd48d7d42907f981ed25b11b4c326";
 
 export default node;

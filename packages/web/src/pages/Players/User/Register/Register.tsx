@@ -1,11 +1,15 @@
-import { Icon, Position, useDebounce, useIcons, usePositions } from '@/hooks';
+import { Icon, Position, useAuth, useDebounce, useIcons, usePositions } from '@/hooks';
 import { parseErrorsFromAPI } from '@/lib/formik';
 import { DeepNonNullable } from '@/types/helpers';
 import { Button, Card, Combobox, Form, Select, Text } from '@/ui/components';
+import { ComboboxOption } from '@/ui/components/Combobox/Option';
+import clsx from 'clsx';
 import { FormikHelpers } from 'formik';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { graphql, useMutation } from 'react-relay';
+import { useNavigate } from 'react-router';
+import { ConnectionHandler } from 'relay-runtime';
 import { match } from 'ts-pattern';
 import * as Yup from 'yup';
 import { useNBAPlayers, type NBAPlayer } from './useNBAPlayers';
@@ -30,12 +34,16 @@ const playerRegisterSchema = Yup.object().shape({
 });
 
 const CREATE_PLAYER_MUTATION = graphql`
-  mutation Register_createPlayerMutation($input: CreatePlayerInput!) {
+  mutation Register_createPlayerMutation($input: CreatePlayerInput!, $connections: [ID!]!) {
     createPlayer(input: $input) {
       __typename
       ... on CreatePlayerPayload {
-        player {
+        player @prependNode(connections: $connections, edgeTypeName: "UserPlayersConnectionEdge") {
           id
+          ...PlayerFragment_player
+          user {
+            canRequestPlayer
+          }
         }
       }
       ... on ValidationInputError {
@@ -63,10 +71,14 @@ export function UserPlayerRegister() {
   const icons = useIcons();
   const positions = usePositions();
 
-  const [commit, isInFlight] = useMutation<Register_createPlayerMutation>(CREATE_PLAYER_MUTATION);
+  const [createPlayer, isInFlight] = useMutation<Register_createPlayerMutation>(CREATE_PLAYER_MUTATION);
+
+  const navigate = useNavigate();
+  const auth = useAuth();
 
   function onCreatePlayerSuccess() {
     toast.success('Inscrição enviada com sucesso. Agora é só aguardar a aprovação de um administrador.');
+    navigate('/players', { replace: true });
   }
 
   function onCreatePlayerFailure(message: string) {
@@ -77,13 +89,16 @@ export function UserPlayerRegister() {
     values: DeepNonNullable<PlayerRegisterFormValues>,
     helpers: FormikHelpers<PlayerRegisterFormValues>
   ) {
-    commit({
+    const playersConnectionId = ConnectionHandler.getConnectionID(auth.user.id, 'Players_players');
+
+    createPlayer({
       variables: {
         input: {
           nbaPlayerId: values.player.id,
           positionId: values.position?.id,
           iconsIds: values.icons.map(icon => icon.id)
-        }
+        },
+        connections: [playersConnectionId]
       },
       onCompleted: data => {
         match(data.createPlayer)
@@ -97,12 +112,12 @@ export function UserPlayerRegister() {
 
   return (
     <div>
-      <Text as="h2" className="mb-1" variant="subtitle">
+      <Text as="h1" className="mb-1" variant="title">
         Inscreva-se
       </Text>
       <Card>
         <Form initialValues={initialFormValues} onSubmit={onSubmit} validationSchema={playerRegisterSchema}>
-          <div className="space-y-2">
+          <div className="space-y-2 mb-4">
             <Combobox
               label="Jogador"
               name="player"
@@ -113,6 +128,19 @@ export function UserPlayerRegister() {
               search={debouncedPlayerSearch}
               onSearchChange={setPlayerSearch}
               isLoading={isNBAPlayersLoading}
+              renderItem={optionProps => (
+                <div
+                  className={clsx(
+                    'rounded-md p-2 bg-white cursor-pointer flex items-center',
+                    (optionProps.selected || optionProps.active) && 'bg-gray-100'
+                  )}
+                >
+                  <div className="h-8 w-8 rounded-full overflow-hidden bg-gray-100 relative z-0 mr-2">
+                    <img src={optionProps.option.imageUrl} className="h-8 object-cover absolute bottom-0" />
+                  </div>
+                  <Text className="truncate">{optionProps.getDisplayValue(optionProps.option)}</Text>
+                </div>
+              )}
             />
             <Select
               label="Posição"
@@ -131,10 +159,10 @@ export function UserPlayerRegister() {
               getValue={option => option?.id}
               isMultiple
             />
-            <Button type="submit" colorScheme="blue" fillParent isLoading={isInFlight}>
-              Inscrever-se
-            </Button>
           </div>
+          <Button type="submit" colorScheme="blue" fillParent isLoading={isInFlight}>
+            Inscrever-se
+          </Button>
         </Form>
       </Card>
     </div>

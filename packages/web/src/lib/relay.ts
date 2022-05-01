@@ -5,9 +5,10 @@ const fetchRelay: FetchFunction = async (requestParams, variables) => {
     'content-type': 'application/json'
   };
 
-  const token = localStorage.getItem('token');
-  if (token) {
-    headers.authorization = `Bearer ${JSON.parse(token)}`;
+  const serializedToken = localStorage.getItem('token');
+  if (serializedToken) {
+    const token = JSON.parse(serializedToken);
+    headers.authorization = `Bearer ${token}`;
   }
 
   const response = await fetch('http://localhost:4000/graphql', {

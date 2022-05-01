@@ -55,11 +55,11 @@ export class PrismaPlayerRepository implements PlayerRepository {
     return !prismaPlayer;
   }
 
-  public async findByUserAndSeason(userId: UniqueIdentifier, seasonId: IncIdentifier): Promise<Player[]> {
+  public async findByUserAndSeason(userId: UniqueIdentifier, seasonId?: IncIdentifier): Promise<Player[]> {
     const prismaPlayers = await prisma.player.findMany({
       where: {
         userId: userId.toValue(),
-        seasonId: seasonId.toValue()
+        seasonId: seasonId?.toValue()
       },
       include: {
         icons: true
@@ -69,12 +69,11 @@ export class PrismaPlayerRepository implements PlayerRepository {
     return prismaPlayers.map(PlayerMapper.toDomain);
   }
 
-  public async findAll(seasonId: IncIdentifier, userId?: UniqueIdentifier): Promise<Player[]> {
+  public async findAll(seasonId: IncIdentifier): Promise<Player[]> {
     const prismaPlayers = await prisma.player.findMany({
       where: {
         seasonId: seasonId.toValue(),
         status: ApprovalStatus.ACCEPTED,
-        NOT: userId ? { userId: userId.toValue() } : undefined
       },
       include: {
         icons: true

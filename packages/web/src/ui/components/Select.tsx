@@ -19,7 +19,6 @@ export function Select<Option>(props: Props<Option>) {
   const [field, meta, helpers] = useField<any>(props.name);
 
   const isEmpty = props.options.length === 0;
-
   const hasError = !!meta.error && meta.touched;
 
   function isMultiple(value: any): value is Option[] {
@@ -87,7 +86,9 @@ export function Select<Option>(props: Props<Option>) {
           <div
             className={clsx(
               'shadow-sm border border-gray-300 overflow-hidden relative',
-              open ? 'rounded-t-md' : 'rounded-md'
+              open ? 'rounded-t-md' : 'rounded-md',
+              open && 'ring-1 ring-blue-600 border-blue-600 border-b-0',
+              hasError && 'border-rose-600 ring-rose-600'
             )}
           >
             <Listbox.Button className="text-left border-none outline-none py-1 pl-3 pr-10 w-full">

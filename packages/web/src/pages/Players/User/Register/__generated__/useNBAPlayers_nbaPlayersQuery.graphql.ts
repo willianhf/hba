@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<89684b6223846b2544dcd33f549f126e>>
+ * @generated SignedSource<<23300d248078059171dce57a1e9dea56>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type useNBAPlayers_nbaPlayersQuery$data = {
     readonly id: string;
     readonly firstName: string;
     readonly lastName: string;
+    readonly imageUrl: string;
   }>;
 };
 export type useNBAPlayers_nbaPlayersQuery = {
@@ -67,6 +68,19 @@ v1 = [
         "kind": "ScalarField",
         "name": "lastName",
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": [
+          {
+            "kind": "Literal",
+            "name": "size",
+            "value": "Small"
+          }
+        ],
+        "kind": "ScalarField",
+        "name": "imageUrl",
+        "storageKey": "imageUrl(size:\"Small\")"
       }
     ],
     "storageKey": null
@@ -90,16 +104,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "5fae8121ce4c9ed7d5c4c2f618c0b002",
+    "cacheID": "4b5dba7e3b55ee178c084e3ff8294a22",
     "id": null,
     "metadata": {},
     "name": "useNBAPlayers_nbaPlayersQuery",
     "operationKind": "query",
-    "text": "query useNBAPlayers_nbaPlayersQuery(\n  $search: String!\n) {\n  nbaPlayers(search: $search) {\n    id\n    firstName\n    lastName\n  }\n}\n"
+    "text": "query useNBAPlayers_nbaPlayersQuery(\n  $search: String!\n) {\n  nbaPlayers(search: $search) {\n    id\n    firstName\n    lastName\n    imageUrl(size: Small)\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4aa6d157420c35e8e5920dbf856accaa";
+(node as any).hash = "3c3454adf692b52ee28a58d414630fae";
 
 export default node;

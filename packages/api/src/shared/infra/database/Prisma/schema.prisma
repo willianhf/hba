@@ -104,7 +104,7 @@ model PlayerIcon {
   playerId String
   iconId   String
 
-  player Player @relation(fields: [playerId], references: [id])
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
   icon   Icon   @relation(fields: [iconId], references: [id])
 
   @@id([playerId, iconId])

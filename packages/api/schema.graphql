@@ -96,6 +96,11 @@ type Icon implements Node {
   name: String!
 }
 
+enum ImageSize {
+  Large
+  Small
+}
+
 input LoginInput {
   clientMutationId: ID
   password: String!
@@ -154,7 +159,7 @@ union MutationLogoutResult = ApplicationError | AuthenticationError | LogoutPayl
 type NBAPlayer implements Node {
   firstName: String!
   id: ID!
-  imageUrl: String!
+  imageUrl(size: ImageSize = Large): String!
   lastName: String!
 }
 
@@ -185,10 +190,9 @@ type Position implements Node {
 }
 
 type Query {
-  canRequestPlayer: Boolean!
   currentSeason: Season!
   findPlayers(seasonId: String!): [Player!]!
-  findUserPlayersBySeason: [Player!]!
+  findUserPlayersBySeason(after: String, before: String, first: Int, last: Int): QueryFindUserPlayersBySeasonConnection!
   habboProfileExists(username: String!): Boolean!
   icons: [Icon!]!
   nbaPlayers(search: String!): [NBAPlayer!]!
@@ -196,10 +200,21 @@ type Query {
   nodes(ids: [ID!]!): [Node]!
   positions: [Position!]!
   seasons(after: String, before: String, first: Int, last: Int): QuerySeasonsConnection!
+  user: User!
+}
+
+type QueryFindUserPlayersBySeasonConnection {
+  edges: [QueryFindUserPlayersBySeasonConnectionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type QueryFindUserPlayersBySeasonConnectionEdge {
+  cursor: String!
+  node: Player!
 }
 
 type QuerySeasonsConnection {
-  edges: [QuerySeasonsConnectionEdge]!
+  edges: [QuerySeasonsConnectionEdge!]!
   pageInfo: PageInfo!
 }
 
@@ -214,12 +229,24 @@ type Season implements Node {
 }
 
 type User implements Node {
+  canRequestPlayer: Boolean!
   createdAt: Date
   id: ID!
   isAdmin: Boolean!
   isVerified: Boolean!
   password: String!
+  players(after: String, before: String, first: Int, last: Int): UserPlayersConnection!
   username: String!
+}
+
+type UserPlayersConnection {
+  edges: [UserPlayersConnectionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type UserPlayersConnectionEdge {
+  cursor: String!
+  node: Player!
 }
 
 type ValidationInputError implements BaseError {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<86ec723e54ecfa7024075f94808844c1>>
+ * @generated SignedSource<<343dbc316375bb3936062aa596b98190>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,6 @@ import { Fragment, ReaderFragment } from 'relay-runtime';
 export type ApprovalStatus = "ACCEPTED" | "DENIED" | "IDLE" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type PlayerFragment_player$data = {
-  readonly id: string;
   readonly status: ApprovalStatus;
   readonly nbaPlayer: {
     readonly firstName: string;
@@ -47,13 +46,6 @@ return {
   "metadata": null,
   "name": "PlayerFragment_player",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
     {
       "alias": null,
       "args": null,
@@ -112,6 +104,6 @@ return {
 };
 })();
 
-(node as any).hash = "75839b21362b090907a49e1be59d01dc";
+(node as any).hash = "b3f1374d18d4f66be6dcbbdd3d424d9c";
 
 export default node;

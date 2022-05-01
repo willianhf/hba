@@ -5,9 +5,6 @@ import { PositionRef } from '../types/Position';
 schemaBuilder.queryField('positions', t =>
   t.field({
     type: [PositionRef],
-    authScopes: {
-      isLoggedIn: true
-    },
     resolve: async () => {
       return prismaPositionRepository.findAll();
     }

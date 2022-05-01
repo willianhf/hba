@@ -1,17 +1,14 @@
-import { Authenticated, Text } from '@/ui/components';
+import { Authenticated } from '@/ui/components';
 import { Suspense } from 'react';
-import { PlayersList } from './List';
-import { PlayersUser } from './User';
+import { PlayersList } from './PlayersList';
+import { UserPlayers } from './User';
 
 export function Players() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       <Authenticated>
-        <PlayersUser />
+        <UserPlayers />
       </Authenticated>
-      <Text as="h1" variant="title" className="mb-1">
-        Jogadores inscritos
-      </Text>
       <Suspense fallback={null}>
         <PlayersList />
       </Suspense>

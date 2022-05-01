@@ -14,6 +14,7 @@ const FIND_NBA_PLAYERS_QUERY = graphql`
       id
       firstName
       lastName
+      imageUrl(size: Small)
     }
   }
 `;
@@ -29,7 +30,7 @@ export function useNBAPlayers(search: string) {
     { skip: true }
   );
 
-  const debouncedData = useDebounce(data?.nbaPlayers ?? ([] as NBAPlayers), 1000);
+  const nbaPlayers = (data?.nbaPlayers ?? []) as NBAPlayers;
 
   useEffect(() => {
     if (search) {
@@ -37,5 +38,5 @@ export function useNBAPlayers(search: string) {
     }
   }, [search]);
 
-  return [debouncedData, isLoading, retry] as const;
+  return [nbaPlayers, isLoading, retry] as const;
 }
