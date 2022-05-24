@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -49,7 +46,7 @@ model Season {
 
   players Player[]
   games   Game[]
-  rosters TeamRoster[]
+  rosters Team[]
 }
 
 model NBAPlayer {
@@ -81,11 +78,11 @@ model Player {
   positionId  String
   status      ApprovalStatus @default(IDLE)
 
-  user             User          @relation(fields: [userId], references: [id])
-  season           Season        @relation(fields: [seasonId], references: [id])
-  nbaPlayer        NBAPlayer     @relation(fields: [nbaPlayerId], references: [id])
-  position         Position      @relation(fields: [positionId], references: [id])
-  roster           TeamRoster?
+  user             User         @relation(fields: [userId], references: [id])
+  season           Season       @relation(fields: [seasonId], references: [id])
+  nbaPlayer        NBAPlayer    @relation(fields: [nbaPlayerId], references: [id])
+  position         Position     @relation(fields: [positionId], references: [id])
+  rosters          TeamRoster[]
   gameStats        GameStats[]
   icons            PlayerIcon[]
   playerOfTheGames GameResult[]
@@ -123,23 +120,40 @@ model NBATeam {
   tricode    String     @unique @db.VarChar(3)
   nickname   String
 
-  seasonRosters TeamRoster[]
-  homeGames     Game[]       @relation(name: "homeGames")
-  awayGames     Game[]       @relation(name: "awayGames")
+  seasonTeams Team[]
+}
+
+model Team {
+  id             String         @id @unique @default(uuid())
+  nbaTeamId      String
+  seasonId       Int
+  approvalStatus ApprovalStatus @default(IDLE)
+
+  nbaTeam   NBATeam      @relation(fields: [nbaTeamId], references: [id])
+  season    Season       @relation(fields: [seasonId], references: [id])
+  roster    TeamRoster[]
+  homeGames Game[]       @relation(name: "homeGames")
+  awayGames Game[]       @relation(name: "awayGames")
+
+  @@unique([nbaTeamId, seasonId])
+}
+
+enum TeamRosterRole {
+  CAPTAIN
+  CO_CAPTAIN
+  PLAYER
 }
 
 model TeamRoster {
-  nbaTeamId String
-  seasonId  Int
-  playerId  String  @unique
-  isCaptain Boolean @default(false)
+  teamId   String
+  playerId String
+  role     TeamRosterRole @default(PLAYER)
 
-  nbaTeam NBATeam @relation(fields: [nbaTeamId], references: [id])
-  season  Season  @relation(fields: [seasonId], references: [id])
-  player  Player  @relation(fields: [playerId], references: [id])
+  team   Team   @relation(fields: [teamId], references: [id])
+  player Player @relation(fields: [playerId], references: [id])
 
-  @@id([nbaTeamId, seasonId, playerId])
-  @@unique([nbaTeamId, seasonId, playerId])
+  @@id([teamId, playerId])
+  @@unique([teamId, playerId])
 }
 
 enum GameKind {
@@ -150,20 +164,20 @@ enum GameKind {
 }
 
 model Game {
-  id            String    @id @unique @default(uuid())
-  seasonId      Int
-  homeNBATeamId String
-  awayNBATeamId String
-  scheduledTo   DateTime?
-  gameKind      GameKind
-  gameSerieId   String?
+  id          String    @id @unique @default(uuid())
+  seasonId    Int
+  homeTeamId  String
+  awayTeamId  String
+  scheduledTo DateTime?
+  gameKind    GameKind
+  gameSerieId String?
 
-  season      Season      @relation(fields: [seasonId], references: [id])
-  homeNBATeam NBATeam     @relation(fields: [homeNBATeamId], references: [id], name: "homeGames")
-  awayNBATeam NBATeam     @relation(fields: [awayNBATeamId], references: [id], name: "awayGames")
-  stats       GameStats[]
-  result      GameResult?
-  serie       GameSerie?  @relation(fields: [gameSerieId], references: [id])
+  season   Season      @relation(fields: [seasonId], references: [id])
+  homeTeam Team        @relation(fields: [homeTeamId], references: [id], name: "homeGames")
+  awayTeam Team        @relation(fields: [awayTeamId], references: [id], name: "awayGames")
+  stats    GameStats[]
+  result   GameResult?
+  serie    GameSerie?  @relation(fields: [gameSerieId], references: [id])
 }
 
 model GameResult {

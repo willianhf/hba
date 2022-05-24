@@ -16,7 +16,7 @@ import { IconRef } from './Icon';
 import { NBAPlayerRef } from './NBAPlayer';
 import { PositionRef } from './Position';
 
-const ApprovalStatusRef = schemaBuilder.enumType(ApprovalStatus, { name: 'ApprovalStatus' });
+export const ApprovalStatusRef = schemaBuilder.enumType(ApprovalStatus, { name: 'ApprovalStatus' });
 
 export const PlayerRef = schemaBuilder.objectRef<Player>('Player');
 schemaBuilder.node(PlayerRef, {

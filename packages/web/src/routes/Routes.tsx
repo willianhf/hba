@@ -1,6 +1,7 @@
 import { Home } from '@/pages';
 import { Players } from '@/pages/Players';
 import { UserPlayerRegister } from '@/pages/Players/User/Register';
+import { Teams } from '@/pages/Teams';
 import { Authenticated } from '@/ui/components';
 import { Layout } from '@/ui/layouts';
 import { Suspense } from 'react';
@@ -23,6 +24,9 @@ export function Routes() {
               </Suspense>
             }
           />
+        </Route>
+        <Route path="teams">
+          <Route index element={<Teams />} />
         </Route>
       </Route>
     </ReactRouterRoutes>

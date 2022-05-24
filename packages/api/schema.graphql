@@ -4,6 +4,17 @@ type ApplicationError implements BaseError {
   name: String!
 }
 
+input ApplyTeamInput {
+  clientMutationId: ID
+  coCaptainPlayerId: String!
+  nbaTeamId: String!
+}
+
+type ApplyTeamPayload {
+  clientMutationId: ID
+  team: Team!
+}
+
 enum ApprovalStatus {
   ACCEPTED
   DENIED
@@ -20,6 +31,11 @@ interface BaseError {
   code: String!
   message: String!
   name: String!
+}
+
+enum Conference {
+  EAST
+  WEST
 }
 
 input ConfirmUserVerificationInput {
@@ -136,6 +152,7 @@ type MakeSeasonCurrentPayload {
 }
 
 type Mutation {
+  applyTeam(input: ApplyTeamInput!): MutationApplyTeamResult!
   confirmUserVerification(input: ConfirmUserVerificationInput!): MutationConfirmUserVerificationResult!
   createPlayer(input: CreatePlayerInput!): MutationCreatePlayerResult!
   createSeason(input: CreateSeasonInput!): CreateSeasonPayload!
@@ -145,6 +162,8 @@ type Mutation {
   logout(input: LogoutInput!): MutationLogoutResult!
   makeSeasonCurrent(input: MakeSeasonCurrentInput!): MakeSeasonCurrentPayload!
 }
+
+union MutationApplyTeamResult = ApplicationError | ApplyTeamPayload | AuthenticationError | ValidationInputError
 
 union MutationConfirmUserVerificationResult = ApplicationError | AuthenticationError | ConfirmUserVerificationPayload
 
@@ -161,6 +180,15 @@ type NBAPlayer implements Node {
   id: ID!
   imageUrl(size: ImageSize = Large): String!
   lastName: String!
+}
+
+type NBATeam implements Node {
+  conference: Conference!
+  id: ID!
+  isAvailable: Boolean!
+  name: String!
+  nickname: String!
+  tricode: String!
 }
 
 interface Node {
@@ -196,6 +224,7 @@ type Query {
   habboProfileExists(username: String!): Boolean!
   icons: [Icon!]!
   nbaPlayers(search: String!): [NBAPlayer!]!
+  nbaTeams: [NBATeam!]!
   node(id: ID!): Node
   nodes(ids: [ID!]!): [Node]!
   positions: [Position!]!
@@ -226,6 +255,26 @@ type QuerySeasonsConnectionEdge {
 type Season implements Node {
   id: ID!
   name: String!
+}
+
+type Team implements Node {
+  id: ID!
+  nbaTeam: NBATeam!
+  rosters: [TeamRoster!]!
+  status: ApprovalStatus!
+}
+
+type TeamRoster implements Node {
+  id: ID!
+  player: Player!
+  role: TeamRosterRole!
+  team: Team!
+}
+
+enum TeamRosterRole {
+  CAPTAIN
+  CO_CAPTAIN
+  PLAYER
 }
 
 type User implements Node {

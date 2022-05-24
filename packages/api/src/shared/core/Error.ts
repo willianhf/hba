@@ -14,6 +14,12 @@ export class UnexpectedError extends ApplicationError {
   }
 }
 
+export class ValidationError extends ApplicationError {
+  public constructor(message: string) {
+    super('VALIDATION_ERROR', 'Validation error', message);
+  }
+}
+
 interface ErrorFieldFormat {
   field?: string;
   message: string;

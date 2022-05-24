@@ -40,6 +40,6 @@
   },
   "prisma": {
     "schema": "src/shared/infra/database/Prisma/schema.prisma",
-    "seed": "ts-node -r tsconfig-paths/register src/shared/infra/database/Prisma/seed.ts"
+    "seed": "ts-node -r tsconfig-paths/register src/shared/infra/database/Prisma/seed/index.ts"
   }
 }

@@ -15,15 +15,14 @@ export class PrismaPlayerRepository implements PlayerRepository {
     return PlayerMapper.toDomain(prismaPlayer);
   }
 
-  public async findById(id: UniqueIdentifier): Promise<Player | null> {
+  public async findById(id: UniqueIdentifier): Promise<Player> {
     const prismaPlayer = await prisma.player.findFirst({
-      where: { id: id.toValue() },
-      ...playerWithIcons
+      where: {
+        id: id.toValue()
+      },
+      ...playerWithIcons,
+      rejectOnNotFound: true
     });
-
-    if (!prismaPlayer) {
-      return null;
-    }
 
     return PlayerMapper.toDomain(prismaPlayer);
   }
@@ -73,7 +72,7 @@ export class PrismaPlayerRepository implements PlayerRepository {
     const prismaPlayers = await prisma.player.findMany({
       where: {
         seasonId: seasonId.toValue(),
-        status: ApprovalStatus.ACCEPTED,
+        status: ApprovalStatus.ACCEPTED
       },
       include: {
         icons: true
