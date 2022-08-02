@@ -7,7 +7,7 @@ export const SeasonRef = schemaBuilder.objectRef<Season>('Season');
 
 schemaBuilder.node(SeasonRef, {
   id: {
-    resolve: season => season.getId().toValue()
+    resolve: season => season.id.toValue()
   },
   loadOne: id => prismaSeasonRepository.findById(new IncIdentifier(+id)),
   isTypeOf: season => season instanceof Season,

@@ -14,7 +14,7 @@ export const TeamRef = schemaBuilder.objectRef<Team>('Team');
 
 schemaBuilder.node(TeamRef, {
   id: {
-    resolve: team => team.getId().toValue()
+    resolve: team => team.id.toValue()
   },
   loadOne: id => prismaTeamRepository.findById(new UniqueIdentifier(id)),
   isTypeOf: team => team instanceof Team,
@@ -25,7 +25,7 @@ schemaBuilder.node(TeamRef, {
     }),
     rosters: t.field({
       type: [TeamRosterRef],
-      resolve: team => prismaTeamRosterRepository.findByTeamId(team.getId())
+      resolve: team => prismaTeamRosterRepository.findByTeamId(team.id)
     }),
     nbaTeam: t.field({
       type: NBATeamRef,

@@ -1,8 +1,7 @@
 import { decodeGlobalID } from '@pothos/plugin-relay';
 import { prismaSeasonRepository, SeasonRepository } from '~/modules/season/repos';
 import { User } from '~/modules/users/domain';
-import { EntityNotFoundError, ValidationInputError } from '~/shared/core/Error';
-import { Service } from '~/shared/core/Service';
+import { EntityNotFoundError, IUseCase, ValidationInputError } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { Player } from '../domain/Player';
 import { IconRepository, PlayerRepository, PositionRepository } from '../repos';
@@ -16,7 +15,7 @@ interface CreatePlayerDTO {
   iconsIds: string[];
 }
 
-class CreatePlayerService implements Service<CreatePlayerDTO, Player> {
+class CreatePlayerService implements IUseCase<CreatePlayerDTO, Player> {
   public constructor(
     private readonly playerRepository: PlayerRepository,
     private readonly seasonRepository: SeasonRepository,
@@ -52,7 +51,7 @@ class CreatePlayerService implements Service<CreatePlayerDTO, Player> {
       })
     );
 
-    const canRequestPlayer = await this.playerRepository.canRequestPlayer(dto.user.getId(), currentSeason.getId());
+    const canRequestPlayer = await this.playerRepository.canRequestPlayer(dto.user.id, currentSeason.id);
     if (!canRequestPlayer) {
       throw new ValidationInputError({
         field: 'player',
@@ -60,7 +59,7 @@ class CreatePlayerService implements Service<CreatePlayerDTO, Player> {
       });
     }
 
-    const isNBAPlayerAvailable = await this.playerRepository.isNBAPlayerAvailable(nbaPlayerId, currentSeason.getId());
+    const isNBAPlayerAvailable = await this.playerRepository.isNBAPlayerAvailable(nbaPlayerId, currentSeason.id);
     if (!isNBAPlayerAvailable) {
       throw new ValidationInputError({
         field: 'nbaPlayerId',
@@ -69,8 +68,8 @@ class CreatePlayerService implements Service<CreatePlayerDTO, Player> {
     }
 
     const player = Player.create({
-      userId: dto.user.getId(),
-      seasonId: currentSeason.getId(),
+      userId: dto.user.id,
+      seasonId: currentSeason.id,
       nbaPlayerId,
       positionId,
       iconIds

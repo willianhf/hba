@@ -1,5 +1,5 @@
+import { IUseCase } from '~/shared/core';
 import { EntityNotFoundError } from '~/shared/core/Error';
-import { Service } from '~/shared/core/Service';
 import { User } from '../../domain';
 import { UserRepository, VerificationRepository } from '../../repos';
 import { VerificationError } from './Errors';
@@ -10,8 +10,8 @@ interface ConfirmUserVerificationDTO {
 
 type ConfirmUserVerificationResult = void;
 
-export class ConfirmUserVerificationService
-  implements Service<ConfirmUserVerificationDTO, ConfirmUserVerificationResult>
+export class ConfirmUserVerificationUseCase
+  implements IUseCase<ConfirmUserVerificationDTO, ConfirmUserVerificationResult>
 {
   public constructor(
     private readonly verificationRepository: VerificationRepository,
@@ -21,14 +21,14 @@ export class ConfirmUserVerificationService
   public async execute(dto: ConfirmUserVerificationDTO): Promise<ConfirmUserVerificationResult> {
     const verification = await this.verificationRepository.findByUser(dto.user);
     if (!verification) {
-      throw new EntityNotFoundError();
+      throw new EntityNotFoundError('The user does not have a verification');
     }
 
     const habboUser = await dto.user.getHabboProfile();
-    if (!habboUser.motto.toLowerCase().includes(verification.verificationCode.code.toLowerCase())) {
-      throw new VerificationError('A missão não contém o código de verificação.');
+    if (!habboUser.motto.toLowerCase().includes(verification.code.value.toLowerCase())) {
+      throw new VerificationError('A missão não contém o código de verificação válido.');
     }
 
-    await this.userRepository.verify(dto.user.getId());
+    await this.userRepository.verify(dto.user.id);
   }
 }

@@ -1,6 +1,5 @@
 import { Conference } from '@prisma/client';
-import { UniqueIdentifier } from '~/shared/domain';
-import { PersistableEntity } from '~/shared/domain/Entity';
+import { Entity, UniqueIdentifier } from '~/shared/domain';
 
 interface NBATeamProps {
   name: string;
@@ -9,7 +8,7 @@ interface NBATeamProps {
   nickname: string;
 }
 
-export class NBATeam extends PersistableEntity<NBATeamProps, UniqueIdentifier> {
+export class NBATeam extends Entity<NBATeamProps> {
   public constructor(props: NBATeamProps, id: UniqueIdentifier) {
     super(props, id);
   }

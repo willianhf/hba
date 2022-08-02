@@ -1,17 +1,17 @@
-import { decodeGlobalID, resolveArrayConnection } from '@pothos/plugin-relay';
+import { resolveArrayConnection } from '@pothos/plugin-relay';
 import { PlayerRef } from '~/modules/player/infra/graphl/types/Player';
 import { prismaPlayerRepository } from '~/modules/player/repos/impl/Prisma';
 import { prismaSeasonRepository } from '~/modules/season/repos';
 import { User } from '~/modules/users/domain';
 import { prismaUserRepository } from '~/modules/users/repos';
-import { IncIdentifier, UniqueIdentifier } from '~/shared/domain';
+import { UniqueIdentifier } from '~/shared/domain';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
 
 export const UserRef = schemaBuilder.objectRef<User>('User');
 
 schemaBuilder.node(UserRef, {
   id: {
-    resolve: user => user.getId().toValue()
+    resolve: user => user.id.toValue()
   },
   loadOne: id => prismaUserRepository.getUserById(new UniqueIdentifier(id)),
   isTypeOf: user => user instanceof User,
@@ -29,7 +29,7 @@ schemaBuilder.node(UserRef, {
       type: PlayerRef,
       resolve: async (user, args) => {
         const season = await prismaSeasonRepository.findCurrent();
-        const players = await prismaPlayerRepository.findByUserAndSeason(user.getId(), season.getId());
+        const players = await prismaPlayerRepository.findByUserAndSeason(user.id, season.id);
 
         return resolveArrayConnection({ args }, players);
       }
@@ -37,7 +37,7 @@ schemaBuilder.node(UserRef, {
     canRequestPlayer: t.boolean({
       resolve: async (user) => {
         const season = await prismaSeasonRepository.findCurrent();
-        return prismaPlayerRepository.canRequestPlayer(user.getId(), season.getId());
+        return prismaPlayerRepository.canRequestPlayer(user.id, season.id);
       }
     })
   })

@@ -1,12 +1,11 @@
-import { UniqueIdentifier } from '~/shared/domain';
-import { PersistableEntity } from '~/shared/domain/Entity';
+import { Entity, UniqueIdentifier } from '~/shared/domain';
 
 interface NBAPlayerProps {
   firstName: string;
   lastName: string;
 }
 
-export class NBAPlayer extends PersistableEntity<NBAPlayerProps, UniqueIdentifier> {
+export class NBAPlayer extends Entity<NBAPlayerProps> {
   public constructor(props: NBAPlayerProps, id: UniqueIdentifier) {
     super(props, id);
   }

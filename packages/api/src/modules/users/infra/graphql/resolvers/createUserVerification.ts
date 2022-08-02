@@ -1,5 +1,6 @@
-import { createUserVerificationService } from '~/modules/users/services/CreateUserVerification';
+import { createUserVerificationUseCase } from '~/modules/users/useCases/CreateUserVerification';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
+import { VerificationRef } from '../types';
 
 schemaBuilder.relayMutationField(
   'createUserVerification',
@@ -11,15 +12,12 @@ schemaBuilder.relayMutationField(
       isLoggedIn: true
     },
     resolve: async (_root, _args, context) => {
-      const result = await createUserVerificationService.execute({ user: context.user! });
-      return result;
+      return createUserVerificationUseCase.execute({ user: context.user! });
     }
   },
   {
     outputFields: t => ({
-      verificationCode: t.string({
-        resolve: result => result.verificationCode
-      })
+      verification: t.field({ type: VerificationRef, resolve: verification => verification })
     })
   }
 );

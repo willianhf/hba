@@ -1,5 +1,4 @@
-import { IncIdentifier, UniqueIdentifier } from '~/shared/domain';
-import { PersistableEntity } from '~/shared/domain/Entity';
+import { AggregateRoot, IncIdentifier, UniqueIdentifier } from '~/shared/domain';
 import { RequiredExceptFor } from '~/types/common';
 import { ApprovalStatus } from './ApprovalStatus';
 
@@ -14,9 +13,9 @@ interface PlayerProps {
 
 type CreatePlayerProps = RequiredExceptFor<PlayerProps, 'approvalStatus'>;
 
-export class Player extends PersistableEntity<PlayerProps, UniqueIdentifier> {
+export class Player extends AggregateRoot<PlayerProps> {
   private constructor(props: PlayerProps, id?: UniqueIdentifier) {
-    super(props, id);
+    super(props, id ?? new UniqueIdentifier());
   }
 
   public static create(props: CreatePlayerProps, id?: UniqueIdentifier): Player {
@@ -28,7 +27,7 @@ export class Player extends PersistableEntity<PlayerProps, UniqueIdentifier> {
   }
 
   public get seasonId(): IncIdentifier {
-    return this.props.seasonId
+    return this.props.seasonId;
   }
 
   public get nbaPlayerId(): UniqueIdentifier {

@@ -6,7 +6,7 @@ import { schemaBuilder } from '~/shared/infra/graphql/builder';
 export const PositionRef = schemaBuilder.objectRef<Position>('Position');
 schemaBuilder.node(PositionRef, {
   id: {
-    resolve: position => position.getId().toValue()
+    resolve: position => position.id.toValue()
   },
   loadOne: id => prismaPositionRepository.findById(new UniqueIdentifier(id)),
   isTypeOf: position => position instanceof Position,

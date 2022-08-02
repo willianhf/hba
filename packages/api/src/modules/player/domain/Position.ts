@@ -1,13 +1,12 @@
-import { UniqueIdentifier } from '~/shared/domain';
-import { PersistableEntity } from '~/shared/domain/Entity';
+import { Entity, UniqueIdentifier } from '~/shared/domain';
 
 interface PositionProps {
   name: string;
 }
 
-export class Position extends PersistableEntity<PositionProps, UniqueIdentifier> {
+export class Position extends Entity<PositionProps> {
   public constructor(props: PositionProps, id?: UniqueIdentifier) {
-    super(props, id);
+    super(props, id ?? new UniqueIdentifier());
   }
 
   public get name(): string {

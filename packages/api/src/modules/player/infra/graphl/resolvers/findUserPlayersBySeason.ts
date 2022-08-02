@@ -12,7 +12,7 @@ schemaBuilder.queryField('findUserPlayersBySeason', t =>
     type: PlayerRef,
     resolve: async (_root, args, context) => {
       const season = await prismaSeasonRepository.findCurrent();
-      const players = await prismaPlayerRepository.findByUserAndSeason(context.user!.getId(), season.getId());
+      const players = await prismaPlayerRepository.findByUserAndSeason(context.user!.id, season.id);
 
       return resolveArrayConnection({ args }, players);
     }

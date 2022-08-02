@@ -12,21 +12,17 @@ export class HabboAPIFacade {
   private static readonly httpClient = got.extend({ prefixUrl: this.hostname });
 
   public static async fetchProfile(nickname: string): Promise<HabboProfile> {
-    try {
-      const response = await this.httpClient.get(`users?name=${nickname}`).json<HabboProfile>();
+    const response = await this.httpClient.get(`users?name=${nickname}`).json<HabboProfile>();
 
-      if (response.name.toLowerCase() !== nickname.toLowerCase()) {
-        throw new EntityNotFoundError('Habbo profile not found.');
-      }
-
-      return {
-        name: response.name,
-        motto: response.motto,
-        uniqueId: response.uniqueId
-      };
-    } catch (error) {
+    if (response.name.toLowerCase() !== nickname.toLowerCase()) {
       throw new EntityNotFoundError('Habbo profile not found.');
     }
+
+    return {
+      name: response.name,
+      motto: response.motto,
+      uniqueId: response.uniqueId
+    };
   }
 
   public static async exists(nickname: string): Promise<boolean> {

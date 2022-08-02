@@ -6,7 +6,7 @@ import { schemaBuilder } from '~/shared/infra/graphql/builder';
 export const IconRef = schemaBuilder.objectRef<Icon>('Icon');
 schemaBuilder.node(IconRef, {
   id: {
-    resolve: icon => icon.getId().toValue()
+    resolve: icon => icon.id.toValue()
   },
   loadOne: id => prismaIconRepository.findById(new UniqueIdentifier(id)),
   isTypeOf: icon => icon instanceof Icon,

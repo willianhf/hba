@@ -1,11 +1,10 @@
-import { UniqueIdentifier } from '~/shared/domain';
-import { PersistableEntity } from '~/shared/domain/Entity';
+import { AggregateRoot, UniqueIdentifier } from '~/shared/domain';
 import { RequiredExceptFor } from '~/types/common';
 import { User } from '../User';
 import { VerificationCode } from './VerificationCode';
 
 interface VerificationProps {
-  verificationCode: VerificationCode;
+  code: VerificationCode;
   user: User;
   createdAt: Date;
   updatedAt: Date;
@@ -13,9 +12,9 @@ interface VerificationProps {
 
 type CreateVerificationProps = RequiredExceptFor<VerificationProps, 'createdAt' | 'updatedAt'>;
 
-export class Verification extends PersistableEntity<VerificationProps, UniqueIdentifier> {
+export class Verification extends AggregateRoot<VerificationProps> {
   private constructor(props: VerificationProps, id?: UniqueIdentifier) {
-    super(props, id);
+    super(props, id ?? new UniqueIdentifier());
   }
 
   public static create(props: CreateVerificationProps, id?: UniqueIdentifier) {
@@ -32,11 +31,11 @@ export class Verification extends PersistableEntity<VerificationProps, UniqueIde
   }
 
   public refreshVerificationCode(): void {
-    this.props.verificationCode = VerificationCode.create();
+    this.props.code = VerificationCode.create();
   }
 
-  get verificationCode(): VerificationCode {
-    return this.props.verificationCode;
+  get code(): VerificationCode {
+    return this.props.code;
   }
 
   get user(): User {

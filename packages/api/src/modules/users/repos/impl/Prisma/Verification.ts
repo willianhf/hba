@@ -5,18 +5,15 @@ import { prisma } from '~/shared/infra/database';
 import { VerificationRepository } from '../..';
 
 export class PrismaVerificationRepository implements VerificationRepository {
-  public async create(verification: Verification): Promise<Verification> {
+  public async create(verification: Verification): Promise<void> {
     const toPersist = VerificationMapper.toPersistence(verification);
 
-    const persistedVerification = await prisma.verification.create({ data: toPersist, include: { user: true } });
-    const domainVerification = VerificationMapper.toDomain(persistedVerification);
-
-    return domainVerification;
+    await prisma.verification.create({ data: toPersist, include: { user: true } });
   }
 
   public async findByUser(user: User): Promise<Verification | null> {
     const persistedVerification = await prisma.verification.findFirst({
-      where: { user: { id: user.getId().toValue() } },
+      where: { user: { id: user.id.toValue() } },
       include: { user: true }
     });
 
@@ -33,7 +30,7 @@ export class PrismaVerificationRepository implements VerificationRepository {
     const toPersist = VerificationMapper.toPersistence(verification);
 
     await prisma.verification.update({
-      where: { id: verification.getId().toValue() },
+      where: { id: verification.id.toValue() },
       data: toPersist
     });
   }

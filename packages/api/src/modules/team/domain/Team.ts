@@ -1,6 +1,5 @@
 import { ApprovalStatus } from '@prisma/client';
-import { IncIdentifier, UniqueIdentifier } from '~/shared/domain';
-import { PersistableEntity } from '~/shared/domain/Entity';
+import { AggregateRoot, IncIdentifier, UniqueIdentifier } from '~/shared/domain';
 
 interface TeamProps {
   nbaTeamId: UniqueIdentifier;
@@ -8,9 +7,9 @@ interface TeamProps {
   status?: ApprovalStatus;
 }
 
-export class Team extends PersistableEntity<TeamProps, UniqueIdentifier> {
+export class Team extends AggregateRoot<TeamProps> {
   public constructor(props: TeamProps, id?: UniqueIdentifier) {
-    super(props, id);
+    super(props, id ?? new UniqueIdentifier());
   }
 
   public get nbaTeamId(): UniqueIdentifier {

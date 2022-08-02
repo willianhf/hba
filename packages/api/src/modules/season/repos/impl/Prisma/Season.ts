@@ -55,7 +55,7 @@ export class PrismaSeasonRepository implements SeasonRepository {
     });
 
     await prisma.season.update({
-      where: { id: season.getId().toValue() },
+      where: { id: season.id.toValue() },
       data: { isCurrent: true }
     });
   }

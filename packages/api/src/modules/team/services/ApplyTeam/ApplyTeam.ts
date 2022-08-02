@@ -1,8 +1,6 @@
 import { TeamRosterRole } from '@prisma/client';
-import { ValidationError } from 'yup';
 import { SeasonRepository } from '~/modules/season/repos';
-import { ValidationInputError } from '~/shared/core/Error';
-import { Service } from '~/shared/core/Service';
+import { IUseCase, ValidationError, ValidationInputError } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { Team, TeamRoster } from '../../domain';
 import { TeamRepository, TeamRosterRepository } from '../../repos';
@@ -16,7 +14,7 @@ interface ApplyTeamDTO {
 
 type ApplyTeamResult = Team;
 
-export class ApplyTeamService implements Service<ApplyTeamDTO, ApplyTeamResult> {
+export class ApplyTeamService implements IUseCase<ApplyTeamDTO, ApplyTeamResult> {
   public constructor(
     private teamRepository: TeamRepository,
     private teamRosterRepository: TeamRosterRepository,
@@ -32,31 +30,28 @@ export class ApplyTeamService implements Service<ApplyTeamDTO, ApplyTeamResult> 
       throw new ValidationInputError({ field: 'nbaTeamId', message: 'Essa equipe já foi escolhida.' });
     }
 
-    const isCaptainInTeam = await this.teamRosterRepository.isPlayerInRoster(
-      dto.captainPlayerId,
-      currentSeason.getId()
-    );
+    const isCaptainInTeam = await this.teamRosterRepository.isPlayerInRoster(dto.captainPlayerId, currentSeason.id);
     if (isCaptainInTeam) {
       throw new ValidationError('Você já está em uma equipe.');
     }
 
     const coCaptainId = new UniqueIdentifier(dto.coCaptainPlayerId);
-    const isCoCaptainInTeam = await this.teamRosterRepository.isPlayerInRoster(coCaptainId, currentSeason.getId());
+    const isCoCaptainInTeam = await this.teamRosterRepository.isPlayerInRoster(coCaptainId, currentSeason.id);
     if (isCoCaptainInTeam) {
       throw new ValidationError('O subcapitão selecionado já está em uma equipe.');
     }
 
-    let team = new Team({ nbaTeamId, seasonId: currentSeason.getId() });
+    let team = new Team({ nbaTeamId, seasonId: currentSeason.id });
     team = await this.teamRepository.create(team);
 
     const teamRosterCaptain = new TeamRoster({
-      teamId: team.getId(),
+      teamId: team.id,
       playerId: dto.captainPlayerId,
       role: TeamRosterRole.CAPTAIN
     });
 
     const teamRosterCoCaptain = new TeamRoster({
-      teamId: team.getId(),
+      teamId: team.id,
       playerId: coCaptainId,
       role: TeamRosterRole.CO_CAPTAIN
     });

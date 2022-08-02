@@ -1,7 +1,8 @@
-import { UniqueIdentifier } from '~/shared/domain';
-import { PersistableEntity } from '~/shared/domain/Entity';
-import { Nullish, OptionalExceptFor } from '~/types/common';
+import { ValidationInputError } from '~/shared/core/Error';
+import { AggregateRoot, UniqueIdentifier } from '~/shared/domain';
+import { OptionalExceptFor } from '~/types/common';
 import { HabboAPIFacade, HabboProfile } from '../facades/HabboAPI';
+import { UserCreatedEvent } from './events';
 import { UserName } from './UserName';
 import { UserPassword } from './UserPassword';
 
@@ -15,11 +16,28 @@ export interface UserProps {
 
 type CreateUserProps = OptionalExceptFor<UserProps, 'username' | 'password'>;
 
-export class User extends PersistableEntity<UserProps, UniqueIdentifier> {
+export class User extends AggregateRoot<UserProps> {
   private habboProfile?: HabboProfile;
 
   private constructor(props: UserProps, id?: UniqueIdentifier) {
-    super(props, id);
+    super(props, id ?? new UniqueIdentifier());
+  }
+
+  public static async register(props: CreateUserProps): Promise<User> {
+    const user = User.create(props);
+
+    try {
+      await user.getHabboProfile();
+    } catch (ex) {
+      throw new ValidationInputError({
+        field: 'username',
+        message: `O usuário "${props.username.value}" não existe no Habbo.`
+      });
+    }
+
+    user.addDomainEvent(new UserCreatedEvent(user));
+
+    return user;
   }
 
   public static create(props: CreateUserProps, id?: UniqueIdentifier): User {

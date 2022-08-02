@@ -15,7 +15,7 @@ export class PrismaNBAPlayerRepository implements NBAPlayerRepository {
 
   public async create(nbaPlayer: NBAPlayer): Promise<NBAPlayer> {
     const toPersist = {
-      id: nbaPlayer.getId().toValue(),
+      id: nbaPlayer.id.toValue(),
       firstName: nbaPlayer.firstName,
       lastName: nbaPlayer.lastName
     };

@@ -1,22 +1,26 @@
-import { UnexpectedError } from '../core/Error';
 import { Identifier } from './Identifier';
+import { UniqueIdentifier } from './UniqueIdentifier';
 
-export abstract class Entity<Props> {
-  constructor(protected readonly props: Props) {
-    this.props = props;
-  }
-}
+export abstract class Entity<Props, TIdentifier extends Identifier<any> = UniqueIdentifier> {
+  constructor(protected readonly props: Props, protected readonly _id: TIdentifier) {}
 
-export abstract class PersistableEntity<Props, TIdentifier extends Identifier<any>> extends Entity<Props> {
-  constructor(protected readonly props: Props, protected readonly id?: TIdentifier) {
-    super(props);
+  get id() {
+    return this._id;
   }
 
-  public getId(): TIdentifier {
-    if (!this.id) {
-      throw new UnexpectedError('Entity is not persisted yet.');
+  public equals(object?: Entity<Props, TIdentifier>): boolean {
+    if (object === null || object === undefined) {
+      return false;
     }
 
-    return this.id;
+    if (this === object) {
+      return true;
+    }
+
+    if (!(object instanceof Entity)) {
+      return false;
+    }
+
+    return this._id.equals(object._id);
   }
 }

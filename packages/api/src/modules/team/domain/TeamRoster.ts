@@ -1,6 +1,5 @@
 import { TeamRosterRole } from '@prisma/client';
-import { ComposedIdentifier, UniqueIdentifier } from '~/shared/domain';
-import { PersistableEntity } from '~/shared/domain/Entity';
+import { AggregateRoot, ComposedIdentifier, UniqueIdentifier } from '~/shared/domain';
 
 interface TeamRosterProps {
   teamId: UniqueIdentifier;
@@ -13,9 +12,9 @@ export type TeamRosterIdentifier = ComposedIdentifier<{
   playerId: UniqueIdentifier;
 }>;
 
-export class TeamRoster extends PersistableEntity<TeamRosterProps, TeamRosterIdentifier> {
+export class TeamRoster extends AggregateRoot<TeamRosterProps, TeamRosterIdentifier> {
   public constructor(props: TeamRosterProps, id?: TeamRosterIdentifier) {
-    super(props, id);
+    super(props, id ?? new ComposedIdentifier({ teamId: props.teamId, playerId: props.playerId }));
   }
 
   public get teamId(): UniqueIdentifier {

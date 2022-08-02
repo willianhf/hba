@@ -11,7 +11,7 @@ export const ConferenceRef = schemaBuilder.enumType(Conference, { name: 'Confere
 
 schemaBuilder.node(NBATeamRef, {
   id: {
-    resolve: nbaTeam => nbaTeam.getId().toValue()
+    resolve: nbaTeam => nbaTeam.id.toValue()
   },
   loadOne: id => prismaNBATeamRepository.findById(new UniqueIdentifier(id)),
   isTypeOf: nbaTeam => nbaTeam instanceof NBATeam,
@@ -21,11 +21,11 @@ schemaBuilder.node(NBATeamRef, {
     tricode: t.string({ resolve: nbaTeam => nbaTeam.tricode }),
     nickname: t.string({ resolve: nbaTeam => nbaTeam.nickname }),
     isAvailable: t.boolean({
-      resolve: nbaTeam => isNBATeamAvailableService.execute({ nbaTeamId: nbaTeam.getId() })
+      resolve: nbaTeam => isNBATeamAvailableService.execute({ nbaTeamId: nbaTeam.id })
     }),
     imageUrl: t.string({
       resolve: nbaTeam => {
-        return `https://cdn.nba.com/logos/nba/${nbaTeam.getId()}/global/L/logo.svg`;
+        return `https://cdn.nba.com/logos/nba/${nbaTeam.id}/global/L/logo.svg`;
       }
     })
   })

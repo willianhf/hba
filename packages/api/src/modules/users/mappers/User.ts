@@ -6,7 +6,7 @@ import { User, UserName, UserPassword } from '../domain';
 export class UserMapper extends Mapper<User> {
   public static toDomain(persisted: PersistedUser): User {
     const id = new UniqueIdentifier(persisted.id);
-    const username = UserName.create({ name: persisted.username });
+    const username = UserName.create({ value: persisted.username });
     const password = UserPassword.create({
       value: persisted.password,
       isHashed: true
@@ -14,8 +14,8 @@ export class UserMapper extends Mapper<User> {
 
     const user = User.create(
       {
-        username: username,
-        password: password,
+        username,
+        password,
         isVerified: persisted.isVerified,
         isAdmin: persisted.isAdmin,
         createdAt: persisted.createdAt

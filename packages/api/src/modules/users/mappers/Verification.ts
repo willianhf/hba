@@ -7,8 +7,8 @@ import { UserMapper } from './User';
 export class VerificationMapper implements Mapper<Verification> {
   public static toPersistence(domain: Verification): ToPersistVerification {
     return {
-      code: domain.verificationCode.serialize(),
-      userId: domain.user.getId().toValue(),
+      code: domain.code.serialize(),
+      userId: domain.user.id.toValue(),
       createdAt: domain.createdAt,
       updatedAt: domain.updatedAt
     };
@@ -16,15 +16,15 @@ export class VerificationMapper implements Mapper<Verification> {
 
   public static toDomain(persisted: PersistedVerificationWithUser): Verification {
     const verificationId = new UniqueIdentifier(persisted.id);
-    const verificationCode = VerificationCode.create(persisted.code);
+    const code = VerificationCode.create(persisted.code);
     const user = UserMapper.toDomain(persisted.user);
 
     const verification = Verification.create(
       {
-        verificationCode,
+        code,
+        user,
         createdAt: persisted.createdAt,
-        updatedAt: persisted.updatedAt,
-        user
+        updatedAt: persisted.updatedAt
       },
       verificationId
     );

@@ -1,21 +1,20 @@
-import { PersistableEntity } from '~/shared/domain/Entity';
-import { IncIdentifier } from '~/shared/domain';
+import { AggregateRoot, IncIdentifier } from '~/shared/domain';
 
 interface SeasonProps {
   name: string;
   isCurrent: boolean;
 }
 
-export class Season extends PersistableEntity<SeasonProps, IncIdentifier> {
+export class Season extends AggregateRoot<SeasonProps, IncIdentifier> {
   public constructor(props: SeasonProps, id?: IncIdentifier) {
-    super(props, id);
+    super(props, id ?? new IncIdentifier());
   }
 
   get name(): string {
     return this.props.name;
   }
 
-  get isCurrent() : boolean {
+  get isCurrent(): boolean {
     return this.props.isCurrent;
   }
 

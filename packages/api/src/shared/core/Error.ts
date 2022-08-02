@@ -1,15 +1,26 @@
 import { ApolloError } from 'apollo-server';
 
 export class ApplicationError extends ApolloError {
-  constructor(code: string, title: string, description: string, extensions?: Record<string, any>) {
+  public constructor(code: string, title: string, description: string, extensions?: Record<string, any>) {
     super(description, code, extensions);
 
     Object.defineProperty(this, 'name', { value: title });
   }
+
+  public toPlainObject(): object {
+    return {
+      code: this.code,
+      name: this.name,
+      title: this.title,
+      description: this.message,
+      stackTrace: this.stack,
+      extensions: this.extensions
+    };
+  }
 }
 
 export class UnexpectedError extends ApplicationError {
-  constructor(description?: string) {
+  public constructor(description?: string) {
     super('UNEXPECTED_ERROR', 'Unexpected error', description ?? 'An unexpected error occurred.');
   }
 }

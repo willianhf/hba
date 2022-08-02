@@ -1,24 +1,28 @@
 import * as bcrypt from 'bcrypt';
-import { object, string, ValidationError } from 'yup';
-import { ValueObject } from '~/shared/domain';
+import { z } from 'zod';
 import config from '~/config';
+import { ValueObject } from '~/shared/domain';
 
-export interface UserPasswordProps {
-  value: string;
-  isHashed?: boolean;
-}
-
-export class UserPassword extends ValueObject<UserPasswordProps> {
-  public static readonly schema = object({
-    value: string()
-      .nullable()
-      .required('Password is null or undefined')
-      .when('$isHashed', {
-        is: (isHashed: boolean) => isHashed,
-        then: string().min(5, 'Password has to be at least ${min} characters')
-      })
+const userPasswordProps = z
+  .object({
+    value: z.string({ required_error: 'Voce deve informar uma senha' }),
+    isHashed: z.boolean().optional()
+  })
+  .superRefine((data, context) => {
+    if (!data.isHashed && data.value.length < 5) {
+      context.addIssue({
+        code: z.ZodIssueCode.too_small,
+        type: 'string',
+        inclusive: true,
+        minimum: 5,
+        message: 'A senha deve ter no minimo 5 caracteres'
+      });
+    }
   });
 
+type UserPasswordProps = z.infer<typeof userPasswordProps>;
+
+export class UserPassword extends ValueObject<UserPasswordProps> {
   private constructor(props: UserPasswordProps) {
     super(props);
   }
@@ -58,13 +62,8 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
   }
 
   public static create(props: UserPasswordProps): UserPassword {
-    this.schema.validateSync(props, {
-      context: { isHashed: props.isHashed }
-    });
+    const parsedProps = userPasswordProps.parse(props);
 
-    return new UserPassword({
-      value: props.value,
-      isHashed: props.isHashed
-    });
+    return new UserPassword(parsedProps);
   }
 }

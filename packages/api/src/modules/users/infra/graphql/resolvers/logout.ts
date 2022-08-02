@@ -1,4 +1,4 @@
-import { logoutService } from '~/modules/users/services/Logout';
+import { logoutService } from '~/modules/users/useCases/Logout';
 import { ApplicationError, AuthenticationError } from '~/shared/core/Error';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
 

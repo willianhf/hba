@@ -19,7 +19,7 @@ schemaBuilder.relayMutationField(
       types: [AuthenticationError, ApplicationError, ValidationError, ValidationInputError]
     },
     resolve: async (_parent, args, context) => {
-      return applyTeamService.execute({ ...args.input, captainPlayerId: context.user!.getId() });
+      return applyTeamService.execute({ ...args.input, captainPlayerId: context.user!.id });
     }
   },
   {

@@ -18,13 +18,10 @@ export class PrismaSessionRepository implements SessionRepository {
     return null;
   }
 
-  public async create(session: Session): Promise<Session> {
+  public async create(session: Session): Promise<void> {
     const toPersistSession = SessionMapper.toPersistance(session);
 
-    const persistedSession = await prisma.session.create({ data: toPersistSession, include: { user: true } });
-    const domainSession = SessionMapper.toDomain(persistedSession);
-
-    return domainSession;
+    await prisma.session.create({ data: toPersistSession, include: { user: true } });
   }
 
   public async getByUserId(userId: UniqueIdentifier): Promise<Session[]> {
@@ -38,7 +35,7 @@ export class PrismaSessionRepository implements SessionRepository {
 
   public async delete(session: Session): Promise<void> {
     await prisma.session.delete({
-      where: { id: session.getId().toValue() }
+      where: { id: session.id.toValue() }
     });
   }
 }

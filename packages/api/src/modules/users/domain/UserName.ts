@@ -1,30 +1,29 @@
-import { object, string } from 'yup';
+import { z } from 'zod';
 import { ValueObject } from '~/shared/domain';
 
-interface UserNameProps {
-  name: string;
-}
+const usernameProps = z.object({
+  value: z
+    .string({
+      required_error: 'Usuário é obrigatório'
+    })
+    .min(3, 'Usuário deve ter no mínimo 3 caracteres')
+    .max(25, 'Usuário deve ter no máximo 25 caracteres')
+});
 
-export class UserName extends ValueObject<UserNameProps> {
-  public static readonly schema = object({
-    name: string()
-      .nullable()
-      .required('Username is null or undefined')
-      .min(3, 'Username is not at least ${min} characters')
-      .max(25, 'Username greater than ${max} characters')
-  });
+type UsernameProps = z.infer<typeof usernameProps>;
 
-  private constructor(props: UserNameProps) {
+export class UserName extends ValueObject<UsernameProps> {
+  private constructor(props: UsernameProps) {
     super(props);
   }
 
   get value(): string {
-    return this.props.name;
+    return this.props.value;
   }
 
-  public static create(props: UserNameProps): UserName {
-    const validProps = this.schema.validateSync(props);
+  public static create(props: UsernameProps): UserName {
+    const parsedProps = usernameProps.parse(props);
 
-    return new UserName(validProps);
+    return new UserName(parsedProps);
   }
 }

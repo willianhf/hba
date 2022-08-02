@@ -1,4 +1,4 @@
-import { Service } from '~/shared/core/Service';
+import { IUseCase } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { NBAPlayer } from '../domain/NBAPlayer';
 import { NBAAPIFacade } from '../facades/NBAAPI';
@@ -9,7 +9,7 @@ interface FindNBAPlayerDTO {
   nbaPlayerId: UniqueIdentifier;
 }
 
-class FindNBAPlayerService implements Service<FindNBAPlayerDTO, NBAPlayer> {
+class FindNBAPlayerService implements IUseCase<FindNBAPlayerDTO, NBAPlayer> {
   public constructor(private readonly nbaPlayerRepository: NBAPlayerRepository) {}
 
   public async execute(dto: FindNBAPlayerDTO): Promise<NBAPlayer> {

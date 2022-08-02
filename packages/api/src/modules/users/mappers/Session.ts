@@ -23,7 +23,8 @@ export class SessionMapper extends Mapper<Session> {
 
   public static toPersistance(domain: Session): ToPersistSession {
     return {
-      userId: domain.user.getId().toValue(),
+      id: domain.id.toValue(),
+      userId: domain.user.id.toValue(),
       userAgent: domain.userAgent,
       createdAt: domain.createdAt
     };

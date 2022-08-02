@@ -1,7 +1,7 @@
-import { loginService } from '~/modules/users/services/Login';
+import { loginUseCase } from '~/modules/users/useCases/Login';
 import { ApplicationError } from '~/shared/core/Error';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
-import { UserRef } from '../types/User';
+import { SessionRef, UserRef, VerificationRef } from '../types';
 
 schemaBuilder.relayMutationField(
   'login',
@@ -16,15 +16,15 @@ schemaBuilder.relayMutationField(
       types: [ApplicationError]
     },
     resolve: async (_root, args, context) => {
-      return loginService.execute({ ...args.input, userAgent: context.userAgent });
+      return loginUseCase.execute({ ...args.input, userAgent: context.userAgent });
     }
   },
   {
     outputFields: t => ({
       token: t.string({ resolve: result => result.token }),
-      verificationCode: t.string({ resolve: result => result.verificationCode, nullable: true }),
+      verification: t.field({ type: VerificationRef, resolve: result => result.verification, nullable: true }),
       user: t.field({ type: UserRef, resolve: result => result.user }),
-      sessionId: t.string({ resolve: result => result.sessionId })
+      session: t.field({ type: SessionRef, resolve: result => result.session })
     })
   }
 );

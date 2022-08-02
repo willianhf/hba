@@ -1,4 +1,8 @@
-import { ApplicationError, AuthenticationError, ForbiddenError, ValidationInputError } from '~/shared/core/Error';
+import {
+  ApplicationError,
+  AuthenticationError,
+  ForbiddenError, ValidationError, ValidationInputError
+} from '~/shared/core';
 import { schemaBuilder } from '../builder';
 
 const ErrorInterface = schemaBuilder.interfaceRef<ApplicationError>('BaseError').implement({
@@ -19,6 +23,11 @@ const ErrorField = schemaBuilder.simpleObject('ErrorField', {
     field: t.string({ nullable: true }),
     message: t.string()
   })
+});
+
+schemaBuilder.objectType(ValidationError, {
+  name: 'ValidationError',
+  interfaces: [ErrorInterface]
 });
 
 schemaBuilder.objectType(ValidationInputError, {

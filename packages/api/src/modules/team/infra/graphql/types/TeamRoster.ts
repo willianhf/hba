@@ -12,7 +12,7 @@ export const TeamRosterRef = schemaBuilder.objectRef<TeamRoster>('TeamRoster');
 
 schemaBuilder.node(TeamRosterRef, {
   id: {
-    resolve: teamRoster => teamRoster.getId().toString()
+    resolve: teamRoster => teamRoster.id.toString()
   },
   isTypeOf: teamRoster => teamRoster instanceof TeamRoster,
   fields: t => ({

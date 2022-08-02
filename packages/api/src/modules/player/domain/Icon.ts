@@ -1,13 +1,12 @@
-import { UniqueIdentifier } from '~/shared/domain';
-import { PersistableEntity } from '~/shared/domain/Entity';
+import { Entity, UniqueIdentifier } from '~/shared/domain';
 
 interface IconProps {
   name: string;
 }
 
-export class Icon extends PersistableEntity<IconProps, UniqueIdentifier> {
+export class Icon extends Entity<IconProps> {
   public constructor(props: IconProps, id?: UniqueIdentifier) {
-    super(props, id);
+    super(props, id ?? new UniqueIdentifier());
   }
 
   public get name(): string {

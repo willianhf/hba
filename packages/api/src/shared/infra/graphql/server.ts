@@ -3,14 +3,17 @@ import { ApolloServer } from 'apollo-server';
 import { writeFileSync } from 'fs';
 import { lexicographicSortSchema, printSchema } from 'graphql';
 import { ValidationError as YupValidationError } from 'yup';
-import { resolveRequestUserService } from '~/modules/users/services/ResolveRequestUser';
+import { resolveRequestUserService } from '~/modules/users/useCases/ResolveRequestUser';
+import { Server } from '~/shared/core';
 import { ValidationInputError } from '~/shared/core/Error';
 import { schema } from './schema';
 
-export class Server {
-  public static readonly PORT = 4000;
+class GraphQLServer extends Server {
+  public port(): number {
+    return 4000;
+  }
 
-  public static async start() {
+  public async start(): Promise<void> {
     this.writeSchema();
 
     const apolloServer = new ApolloServer({
@@ -41,14 +44,16 @@ export class Server {
         return error;
       }
     });
-    await apolloServer.listen(this.PORT);
 
-    console.log(`Server started at http://127.0.0.1:${this.PORT}`);
+    await apolloServer.listen(this.port());
+    this.onStart();
   }
 
-  protected static writeSchema() {
+  protected writeSchema() {
     const schemaAsString = printSchema(lexicographicSortSchema(schema));
 
     writeFileSync('./schema.graphql', schemaAsString);
   }
 }
+
+export const graphqlServer = new GraphQLServer();

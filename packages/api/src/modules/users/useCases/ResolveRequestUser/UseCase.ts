@@ -1,4 +1,4 @@
-import { Service } from '~/shared/core/Service';
+import { IUseCase } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { JWTToken, User } from '../../domain';
 import { JWTFacade } from '../../facades/JWT';
@@ -10,7 +10,7 @@ interface ResolveRequestUserDTO {
 
 type ResolveRequestUserResponse = User | null;
 
-export class ResolveRequestUserService implements Service<ResolveRequestUserDTO, ResolveRequestUserResponse> {
+export class ResolveRequestUserUseCase implements IUseCase<ResolveRequestUserDTO, ResolveRequestUserResponse> {
   public constructor(private readonly sessionRepository: SessionRepository) {}
 
   public async execute(dto: ResolveRequestUserDTO): Promise<ResolveRequestUserResponse> {

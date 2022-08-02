@@ -1,5 +1,4 @@
-import { UniqueIdentifier } from '~/shared/domain';
-import { PersistableEntity } from '~/shared/domain/Entity';
+import { AggregateRoot, UniqueIdentifier } from '~/shared/domain';
 import { RequiredExceptFor } from '~/types/common';
 import { User } from './User';
 
@@ -11,9 +10,9 @@ interface SessionProps {
 
 type CreateSessionProps = RequiredExceptFor<SessionProps, 'createdAt'>;
 
-export class Session extends PersistableEntity<SessionProps, UniqueIdentifier> {
+export class Session extends AggregateRoot<SessionProps> {
   private constructor(props: SessionProps, id?: UniqueIdentifier) {
-    super(props, id);
+    super(props, id ?? new UniqueIdentifier());
   }
 
   public static create(props: CreateSessionProps, id?: UniqueIdentifier): Session {

@@ -1,4 +1,4 @@
-import { Service } from '~/shared/core/Service';
+import { IUseCase } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { TeamRepository } from '../../repos';
 
@@ -8,7 +8,7 @@ interface NBATeamAvailableDTO {
 
 type NBATeamAvailableResult = boolean;
 
-export class NBATeamAvailableService implements Service<NBATeamAvailableDTO, NBATeamAvailableResult> {
+export class NBATeamAvailableService implements IUseCase<NBATeamAvailableDTO, NBATeamAvailableResult> {
   public constructor(private teamRepository: TeamRepository) {}
 
   public async execute(dto: NBATeamAvailableDTO): Promise<boolean> {

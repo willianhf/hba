@@ -79,10 +79,8 @@ input CreateUserInput {
 
 type CreateUserPayload {
   clientMutationId: ID
-  jwtToken: String!
-  sessionId: String!
   user: User!
-  verificationCode: String!
+  verification: Verification!
 }
 
 input CreateUserVerificationInput {
@@ -91,7 +89,7 @@ input CreateUserVerificationInput {
 
 type CreateUserVerificationPayload {
   clientMutationId: ID
-  verificationCode: String!
+  verification: Verification!
 }
 
 scalar Date
@@ -125,10 +123,10 @@ input LoginInput {
 
 type LoginPayload {
   clientMutationId: ID
-  sessionId: String!
+  session: Session!
   token: String!
   user: User!
-  verificationCode: String
+  verification: Verification
 }
 
 input LogoutInput {
@@ -163,7 +161,7 @@ type Mutation {
   makeSeasonCurrent(input: MakeSeasonCurrentInput!): MakeSeasonCurrentPayload!
 }
 
-union MutationApplyTeamResult = ApplicationError | ApplyTeamPayload | AuthenticationError | ValidationInputError
+union MutationApplyTeamResult = ApplicationError | ApplyTeamPayload | AuthenticationError | ValidationError | ValidationInputError
 
 union MutationConfirmUserVerificationResult = ApplicationError | AuthenticationError | ConfirmUserVerificationPayload
 
@@ -185,6 +183,7 @@ type NBAPlayer implements Node {
 type NBATeam implements Node {
   conference: Conference!
   id: ID!
+  imageUrl: String!
   isAvailable: Boolean!
   name: String!
   nickname: String!
@@ -257,6 +256,13 @@ type Season implements Node {
   name: String!
 }
 
+type Session implements Node {
+  createdAt: Date!
+  id: ID!
+  user: User!
+  userAgent: String!
+}
+
 type Team implements Node {
   id: ID!
   nbaTeam: NBATeam!
@@ -298,9 +304,28 @@ type UserPlayersConnectionEdge {
   node: Player!
 }
 
+type ValidationError implements BaseError {
+  code: String!
+  message: String!
+  name: String!
+}
+
 type ValidationInputError implements BaseError {
   code: String!
   fields: [ErrorField!]!
   message: String!
   name: String!
+}
+
+type Verification implements Node {
+  code: VerificationCode!
+  createdAt: Date!
+  id: ID!
+  updatedAt: Date!
+  user: User!
+}
+
+type VerificationCode {
+  expiresAt: Date!
+  value: String!
 }

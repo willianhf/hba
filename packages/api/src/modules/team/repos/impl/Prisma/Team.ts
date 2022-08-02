@@ -39,7 +39,7 @@ export class PrismaTeamRepository implements TeamRepository {
     const prismaTeam = await prisma.team.findFirst({
       where: {
         nbaTeamId: nbaTeamId.toValue(),
-        seasonId: currentSeason.getId().toValue(),
+        seasonId: currentSeason.id.toValue(),
         approvalStatus: ApprovalStatus.ACCEPTED
       }
     });

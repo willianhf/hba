@@ -1,7 +1,7 @@
 import { ValueObject } from '~/shared/domain';
 
 interface VerificationCodeProps {
-  code: string;
+  value: string;
   expiresAt: Date;
 }
 
@@ -13,12 +13,8 @@ export class VerificationCode extends ValueObject<VerificationCodeProps> {
     super(props);
   }
 
-  get value(): VerificationCodeProps {
-    return this.props;
-  }
-
-  get code(): string {
-    return this.props.code;
+  get value(): string {
+    return this.props.value;
   }
 
   get expiresAt(): Date {
@@ -36,7 +32,7 @@ export class VerificationCode extends ValueObject<VerificationCodeProps> {
       return false;
     }
 
-    return this.code.toUpperCase() === code.toUpperCase();
+    return this.value.toUpperCase() === code.toUpperCase();
   }
 
   public serialize(): string {
@@ -68,6 +64,6 @@ export class VerificationCode extends ValueObject<VerificationCodeProps> {
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getHours() + this.expireInMinutes);
 
-    return new VerificationCode({ code, expiresAt });
+    return new VerificationCode({ value: code, expiresAt });
   }
 }

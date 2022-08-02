@@ -9,7 +9,7 @@ schemaBuilder.queryField('user', t =>
       isLoggedIn: true
     },
     resolve: async (_root, _args, context) => {
-      const user = await prismaUserRepository.getUserById(context.user.getId());
+      const user = await prismaUserRepository.getUserById(context.user.id);
       return user!;
     }
   })

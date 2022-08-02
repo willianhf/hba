@@ -21,7 +21,7 @@ export const ApprovalStatusRef = schemaBuilder.enumType(ApprovalStatus, { name: 
 export const PlayerRef = schemaBuilder.objectRef<Player>('Player');
 schemaBuilder.node(PlayerRef, {
   id: {
-    resolve: player => player.getId().toValue()
+    resolve: player => player.id.toValue()
   },
   loadOne: id => prismaPlayerRepository.findById(new UniqueIdentifier(id)),
   isTypeOf: player => player instanceof Player,
@@ -33,7 +33,7 @@ schemaBuilder.node(PlayerRef, {
     }),
     icons: t.field({
       type: [IconRef],
-      resolve: player => prismaIconRepository.findPlayerIcons(player.getId())
+      resolve: player => prismaIconRepository.findPlayerIcons(player.id)
     }),
     position: t.field({
       type: PositionRef,

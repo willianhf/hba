@@ -1,7 +1,7 @@
-import { createUserService } from '~/modules/users/services/CreateUser';
+import { createUserUseCase } from '~/modules/users/useCases/CreateUser';
 import { ValidationInputError } from '~/shared/core/Error';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
-import { UserRef } from '../types/User';
+import { UserRef, VerificationRef } from '../types';
 
 schemaBuilder.relayMutationField(
   'createUser',
@@ -15,16 +15,14 @@ schemaBuilder.relayMutationField(
     errors: {
       types: [ValidationInputError]
     },
-    resolve: async (_root, args, context) => {
-      return createUserService.execute({ ...args.input, userAgent: context.userAgent });
+    resolve: async (_root, args) => {
+      return createUserUseCase.execute(args.input);
     }
   },
   {
     outputFields: t => ({
-      verificationCode: t.string({ resolve: result => result.verificationCode }),
-      jwtToken: t.string({ resolve: result => result.jwtToken }),
-      user: t.field({ type: UserRef, resolve: result => result.user }),
-      sessionId: t.string({ resolve: result => result.sessionId })
+      verification: t.field({ type: VerificationRef, resolve: result => result.verification }),
+      user: t.field({ type: UserRef, resolve: result => result.user })
     })
   }
 );
