@@ -10,12 +10,19 @@ interface ModalProps {
   children?: never;
   body: React.ReactNode;
   footer?: React.ReactNode;
+  initialFocus?: React.MutableRefObject<any>;
 }
 
-export function Modal({ title, isOpen, onClose, body, footer }: ModalProps) {
+export function Modal({ title, isOpen, onClose, body, footer, initialFocus }: ModalProps) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" open={isOpen} onClose={onClose}>
+      <Dialog
+        as="div"
+        className="fixed inset-0 z-10 overflow-y-auto"
+        open={isOpen}
+        onClose={onClose}
+        initialFocus={initialFocus}
+      >
         <div className="min-h-screen px-4 text-center">
           <Transition.Child
             as={Fragment}

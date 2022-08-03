@@ -1,10 +1,10 @@
 import { Text } from '@/ui/components';
 import { graphql, useFragment } from 'react-relay';
-import { Player } from './Player';
-import { PlayersList_user$key } from './__generated__/PlayersList_user.graphql';
+import { Player } from '../Player';
+import { ListUserPlayers_user$key } from './__generated__/ListUserPlayers_user.graphql';
 
 const USER_PLAYERS_LIST_FRAGMENT = graphql`
-  fragment PlayersList_user on User {
+  fragment ListUserPlayers_user on User {
     players(
       first: 2147483647 # max GraphQLInt
     ) @connection(key: "Players_players") {
@@ -20,7 +20,7 @@ const USER_PLAYERS_LIST_FRAGMENT = graphql`
 `;
 
 interface Props {
-  userRef: PlayersList_user$key;
+  userRef: ListUserPlayers_user$key;
 }
 
 export function UserPlayersList(props: Props) {
@@ -33,7 +33,7 @@ export function UserPlayersList(props: Props) {
       {hasSentPlayers && (
         <div>
           <Text as="h1" variant="title" className="mb-2">
-            Inscrições enviadas
+            Suas inscrições
           </Text>
           <div className="space-y-2">
             {players.edges.map(edge => (
@@ -45,3 +45,4 @@ export function UserPlayersList(props: Props) {
     </>
   );
 }
+

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<724f77fa19d73450ecacc0ff9b6d63e3>>
+ * @generated SignedSource<<b5136514f0adc7f942716776c6ffeb32>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,8 +20,14 @@ export type FormLoginMutation$variables = {
 export type FormLoginMutation$data = {
   readonly login: {
     readonly __typename: "LoginPayload";
-    readonly sessionId: string;
-    readonly verificationCode: string | null;
+    readonly session: {
+      readonly id: string;
+    };
+    readonly verification: {
+      readonly code: {
+        readonly value: string;
+      };
+    } | null;
     readonly token: string;
     readonly user: {
       readonly id: string;
@@ -55,132 +61,166 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
-      }
-    ],
-    "concreteType": null,
-    "kind": "LinkedField",
-    "name": "login",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "__typename",
-        "storageKey": null
-      },
-      {
-        "kind": "InlineFragment",
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "sessionId",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "verificationCode",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "token",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "User",
-            "kind": "LinkedField",
-            "name": "user",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "username",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "isAdmin",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "isVerified",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "type": "LoginPayload",
-        "abstractKey": null
-      },
-      {
-        "kind": "InlineFragment",
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "code",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "message",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          }
-        ],
-        "type": "ApplicationError",
-        "abstractKey": null
-      }
-    ],
-    "storageKey": null
+    "kind": "Variable",
+    "name": "input",
+    "variableName": "input"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Session",
+  "kind": "LinkedField",
+  "name": "session",
+  "plural": false,
+  "selections": [
+    (v3/*: any*/)
+  ],
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "VerificationCode",
+  "kind": "LinkedField",
+  "name": "code",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "value",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "token",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "User",
+  "kind": "LinkedField",
+  "name": "user",
+  "plural": false,
+  "selections": [
+    (v3/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "username",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "isAdmin",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "isVerified",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v8 = {
+  "kind": "InlineFragment",
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "code",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "message",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "name",
+      "storageKey": null
+    }
+  ],
+  "type": "ApplicationError",
+  "abstractKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "FormLoginMutation",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": null,
+        "kind": "LinkedField",
+        "name": "login",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          {
+            "kind": "InlineFragment",
+            "selections": [
+              (v4/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Verification",
+                "kind": "LinkedField",
+                "name": "verification",
+                "plural": false,
+                "selections": [
+                  (v5/*: any*/)
+                ],
+                "storageKey": null
+              },
+              (v6/*: any*/),
+              (v7/*: any*/)
+            ],
+            "type": "LoginPayload",
+            "abstractKey": null
+          },
+          (v8/*: any*/)
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Mutation",
     "abstractKey": null
   },
@@ -189,19 +229,56 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "FormLoginMutation",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": null,
+        "kind": "LinkedField",
+        "name": "login",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          {
+            "kind": "InlineFragment",
+            "selections": [
+              (v4/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Verification",
+                "kind": "LinkedField",
+                "name": "verification",
+                "plural": false,
+                "selections": [
+                  (v5/*: any*/),
+                  (v3/*: any*/)
+                ],
+                "storageKey": null
+              },
+              (v6/*: any*/),
+              (v7/*: any*/)
+            ],
+            "type": "LoginPayload",
+            "abstractKey": null
+          },
+          (v8/*: any*/)
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "8c062b84d8f88f81bed8abe4528cfa2e",
+    "cacheID": "644873043f3099db7337be2804933260",
     "id": null,
     "metadata": {},
     "name": "FormLoginMutation",
     "operationKind": "mutation",
-    "text": "mutation FormLoginMutation(\n  $input: LoginInput!\n) {\n  login(input: $input) {\n    __typename\n    ... on LoginPayload {\n      sessionId\n      verificationCode\n      token\n      user {\n        id\n        username\n        isAdmin\n        isVerified\n      }\n    }\n    ... on ApplicationError {\n      code\n      message\n      name\n    }\n  }\n}\n"
+    "text": "mutation FormLoginMutation(\n  $input: LoginInput!\n) {\n  login(input: $input) {\n    __typename\n    ... on LoginPayload {\n      session {\n        id\n      }\n      verification {\n        code {\n          value\n        }\n        id\n      }\n      token\n      user {\n        id\n        username\n        isAdmin\n        isVerified\n      }\n    }\n    ... on ApplicationError {\n      code\n      message\n      name\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "26c99105ed370bc70c8c5d997af21769";
+(node as any).hash = "04334640ee7a1a0b864d4fcd77d1c336";
 
 export default node;

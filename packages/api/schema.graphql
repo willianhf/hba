@@ -79,6 +79,8 @@ input CreateUserInput {
 
 type CreateUserPayload {
   clientMutationId: ID
+  session: Session!
+  token: String!
   user: User!
   verification: Verification!
 }
@@ -228,7 +230,7 @@ type Query {
   nodes(ids: [ID!]!): [Node]!
   positions: [Position!]!
   seasons(after: String, before: String, first: Int, last: Int): QuerySeasonsConnection!
-  user: User!
+  user: QueryUserResult!
 }
 
 type QueryFindUserPlayersBySeasonConnection {
@@ -251,14 +253,16 @@ type QuerySeasonsConnectionEdge {
   node: Season!
 }
 
+union QueryUserResult = AuthenticationError | User
+
 type Season implements Node {
   id: ID!
   name: String!
 }
 
-type Session implements Node {
+type Session {
   createdAt: Date!
-  id: ID!
+  id: String!
   user: User!
   userAgent: String!
 }

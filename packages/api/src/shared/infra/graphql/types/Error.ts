@@ -1,7 +1,9 @@
 import {
   ApplicationError,
   AuthenticationError,
-  ForbiddenError, ValidationError, ValidationInputError
+  ForbiddenError,
+  ValidationError,
+  ValidationInputError
 } from '~/shared/core';
 import { schemaBuilder } from '../builder';
 

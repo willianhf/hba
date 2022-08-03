@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks';
 import { parseErrorsFromAPI } from '@/lib/formik';
-import { FormikErrors, FormikHelpers } from 'formik';
+import { FormikHelpers } from 'formik';
 import { graphql, useMutation } from 'react-relay';
 import { match } from 'ts-pattern';
 import * as Yup from 'yup';
@@ -15,9 +15,15 @@ const SIGNUP_MUTATION = graphql`
     createUser(input: $input) {
       __typename
       ... on CreateUserPayload {
-        jwtToken
-        verificationCode
-        sessionId
+        token
+        verification {
+          code {
+            value
+          }
+        }
+        session {
+          id
+        }
         user {
           id
           username
@@ -64,14 +70,6 @@ export function SignupForm() {
     confirmPassword: ''
   };
 
-  function onSignupSuccess(user: any, token: string, sessionId: string, verificationCode: string) {
-    auth.onLogin(user, token, sessionId, verificationCode);
-  }
-
-  function onSignupError(helpers: FormikHelpers<SignupFormValues>, errors: FormikErrors<SignupFormValues>) {
-    helpers.setErrors(errors);
-  }
-
   function onSubmit(values: SignupFormValues, helpers: FormikHelpers<SignupFormValues>) {
     commit({
       variables: {
@@ -83,11 +81,9 @@ export function SignupForm() {
       onCompleted: data => {
         match(data.createUser)
           .with({ __typename: 'CreateUserPayload' }, createUser =>
-            onSignupSuccess(createUser.user, createUser.jwtToken, createUser.sessionId, createUser.verificationCode)
+            auth.onLogin(createUser.user, createUser.token, createUser.session.id, createUser.verification.code.value)
           )
-          .with({ __typename: 'ValidationInputError' }, error =>
-            onSignupError(helpers, parseErrorsFromAPI(error.fields))
-          )
+          .with({ __typename: 'ValidationInputError' }, error => helpers.setErrors(parseErrorsFromAPI(error.fields)))
           .run();
       }
     });

@@ -1,4 +1,3 @@
-import { useAuth } from '@/hooks';
 import { Menu, Popover, Transition } from '@headlessui/react';
 import {
   ChartBarIcon,
@@ -12,6 +11,7 @@ import {
 } from '@heroicons/react/solid';
 import clsx from 'clsx';
 import { Fragment } from 'react';
+import { useLocation } from 'react-router';
 import { Authenticated } from '../Authenticated';
 import { Brand } from '../Brand';
 import { Button } from '../Button';
@@ -56,6 +56,30 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   }
 ];
 
+interface NavigationItemProps {
+  href: string;
+  title: string;
+  icon: any;
+}
+
+function NavigationItem(props: NavigationItemProps) {
+  const location = useLocation();
+  const isFocused = location.pathname.startsWith(props.href);
+
+  return (
+    <Button
+      key={props.href}
+      as={Link}
+      variant="link"
+      href={props.href}
+      className={clsx('flex items-center hover:text-gray-200 px-3 py-2 rounded-md', isFocused && 'bg-blue-800 text-gray-200')}
+    >
+      <props.icon className="flex-shrink-0 h-5 w-5" aria-hidden="true" />
+      <span className="ml-2">{props.title}</span>
+    </Button>
+  );
+}
+
 export function Navigation() {
   return (
     <>
@@ -77,16 +101,7 @@ export function Navigation() {
             </div>
             <nav className="hidden md:flex space-x-6">
               {NAVIGATION_ITEMS.map(item => (
-                <Button
-                  key={item.href}
-                  as={Link}
-                  variant="link"
-                  href={item.href}
-                  className="flex items-center hover:text-gray-200"
-                >
-                  <item.icon className="flex-shrink-0 h-5 w-5" aria-hidden="true" />
-                  <span className="ml-2">{item.title}</span>
-                </Button>
+                <NavigationItem href={item.href} title={item.title} icon={item.icon} />
               ))}
             </nav>
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">

@@ -14,8 +14,14 @@ const LOGIN_MUTATION = graphql`
     login(input: $input) {
       __typename
       ... on LoginPayload {
-        sessionId
-        verificationCode
+        session {
+          id
+        }
+        verification {
+          code {
+            value
+          }
+        }
         token
         user {
           id
@@ -53,14 +59,6 @@ export function LoginForm() {
     password: ''
   };
 
-  function onLoginSuccess(user: any, token: string, sessionId: string, verificationCode: string | null) {
-    auth.onLogin(user, token, sessionId, verificationCode);
-  }
-
-  function onLoginFailure(message: string, helpers: FormikHelpers<LoginFormValues>) {
-    helpers.setFieldError('password', message);
-  }
-
   function onSubmit(values: LoginFormValues, helpers: FormikHelpers<LoginFormValues>) {
     commit({
       variables: {
@@ -72,13 +70,14 @@ export function LoginForm() {
       onCompleted: data => {
         match(data.login)
           .with({ __typename: 'LoginPayload' }, login =>
-            onLoginSuccess(login.user, login.token, login.sessionId, login.verificationCode)
+            auth.onLogin(login.user, login.token, login.session.id, login.verification?.code.value)
           )
-          .with({ __typename: 'ApplicationError' }, error => onLoginFailure(error.message, helpers))
+          .with({ __typename: 'ApplicationError' }, error => helpers.setFieldError('password', error.message))
           .run();
       }
     });
   }
+
   return (
     <Form initialValues={initialValues} onSubmit={onSubmit} validationSchema={loginSchema}>
       <div className="space-y-2">

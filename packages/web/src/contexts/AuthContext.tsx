@@ -9,7 +9,7 @@ export interface AuthContextType {
   user: any;
   verificationCode: string | null;
   isLoggedIn: boolean;
-  onLogin(user: any, token: string, sessionId: string, verificationCode: string | null): void;
+  onLogin(user: any, token: string, sessionId: string, verificationCode?: string): void;
   onLogout(): void;
   onVerified(user: any): void;
   isLogoutPending: boolean;
@@ -48,7 +48,7 @@ export function AuthProvider(props: Props) {
 
   const isLoggedIn = !!user;
 
-  function onLogin(user: any, token: string, sessionId: string, verificationCode: string | null) {
+  function onLogin(user: any, token: string, sessionId: string, verificationCode?: string) {
     if (verificationCode) {
       setVerificationCode(verificationCode);
       navigate('?form=verification', { replace: true });
@@ -76,6 +76,7 @@ export function AuthProvider(props: Props) {
             setUser(null);
             setToken(null);
             setVerificationCode(null);
+            setSessionId(null);
           })
           .run();
       }
