@@ -72,7 +72,10 @@ function NavigationItem(props: NavigationItemProps) {
       as={Link}
       variant="link"
       href={props.href}
-      className={clsx('flex items-center hover:text-gray-200 px-3 py-2 rounded-md', isFocused && 'bg-blue-800 text-gray-200')}
+      className={clsx(
+        'flex items-center hover:text-gray-200 px-3 py-2 rounded-md',
+        isFocused && 'bg-blue-800 text-gray-200'
+      )}
     >
       <props.icon className="flex-shrink-0 h-5 w-5" aria-hidden="true" />
       <span className="ml-2">{props.title}</span>
@@ -101,7 +104,7 @@ export function Navigation() {
             </div>
             <nav className="hidden md:flex space-x-6">
               {NAVIGATION_ITEMS.map(item => (
-                <NavigationItem href={item.href} title={item.title} icon={item.icon} />
+                <NavigationItem key={item.href} href={item.href} title={item.title} icon={item.icon} />
               ))}
             </nav>
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
