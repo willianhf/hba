@@ -1,4 +1,3 @@
-import { useElementFocus } from '@/hooks';
 import { Combobox as HeadlessCombobox } from '@headlessui/react';
 import { SelectorIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
@@ -30,8 +29,8 @@ export function Combobox<Option>(props: Props<Option>) {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const hasSearch = props.search.length > 0 && !props.isLoading;
-  const isEmpty = props.options.length === 0 && hasSearch;
+  const isEmpty = props.options.length === 0;
+  const shouldDisplayOptions = !props.isLoading && !!props.search;
 
   const hasError = !props.isLoading && !!meta.error && meta.touched;
 
@@ -40,7 +39,6 @@ export function Combobox<Option>(props: Props<Option>) {
   }
 
   const inputId = inputRef.current?.id;
-  const [isFocused, onFocus, onBlur] = useElementFocus();
 
   return (
     <HeadlessCombobox value={field.value} onChange={handleChange}>
@@ -52,43 +50,58 @@ export function Combobox<Option>(props: Props<Option>) {
             </Text>
             <div
               className={clsx(
-                'shadow-sm border border-gray-300 overflow-hidden relative',
-                open ? 'rounded-t-md' : 'rounded-md',
-                isFocused && 'ring-1 ring-blue-600 border-blue-600',
+                'shadow-sm border-2 border-gray-300 overflow-hidden relative',
+                'flex items-center',
+                'py-2 pl-3 pr-10',
+                (open && shouldDisplayOptions) ? 'rounded-t-md' : 'rounded-md',
                 hasError && 'border-rose-600 ring-rose-600'
               )}
             >
+              {props.isLoading && <Spinner className="mr-1" />}
               <HeadlessCombobox.Input
                 name={props.name}
                 placeholder={props.inputPlaceholder}
-                className="w-full border-none focus:ring-0 py-2 pl-3 pr-10 text-sm text-gray-900 placeholder:text-gray-500"
+                className={clsx(
+                  'border-none rounded-md focus:ring-0',
+                  'p-0 ml-1 w-full',
+                  'text-sm text-gray-900 placeholder:text-gray-500'
+                )}
                 displayValue={props.getDisplayValue}
                 onChange={event => props.onSearchChange(event.target.value)}
                 autoComplete="off"
                 ref={inputRef}
-                {...{ onFocus, onBlur }}
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                {props.isLoading && <Spinner />}
                 <HeadlessCombobox.Button className="ml-1">
                   <SelectorIcon className="w-5 h-5 text-gray-400 hover:text-gray-600" aria-hidden="true" />
                 </HeadlessCombobox.Button>
               </div>
             </div>
-            {hasSearch && (
-              <HeadlessCombobox.Options className="z-10 absolute w-full p-1 overflow-auto text-sm bg-white rounded-b-md shadow-sm border border-gray-300 border-t-0 max-h-64">
+            {shouldDisplayOptions && (
+              <HeadlessCombobox.Options
+                className={clsx(
+                  'z-10 absolute overflow-auto bg-white shadow-sm',
+                  'rounded-b-md border-2 border-gray-300 border-t-0',
+                  'max-h-64 w-full p-1 space-y-1'
+                )}
+              >
                 {isEmpty ? (
                   <div className="cursor-default select-none px-2 py-1 text-gray-900">Nenhum resultado encontrado</div>
                 ) : (
                   props.options.map(option => (
-                    <HeadlessCombobox.Option
-                      key={props.getValue(option)}
-                      className="outline-none select-none mb-1"
-                      value={option}
-                    >
-                      {optionProps =>
-                        props.renderItem({ ...optionProps, option, getDisplayValue: props.getDisplayValue })
-                      }
+                    <HeadlessCombobox.Option key={props.getValue(option)} value={option}>
+                      {optionProps => (
+                        <div
+                          className={clsx(
+                            'outline-none select-none cursor-pointer',
+                            'px-3 py-1',
+                            'rounded-md',
+                            (optionProps.active || optionProps.selected) && 'bg-gray-100/75'
+                          )}
+                        >
+                          {props.renderItem({ ...optionProps, option, getDisplayValue: props.getDisplayValue })}
+                        </div>
+                      )}
                     </HeadlessCombobox.Option>
                   ))
                 )}
