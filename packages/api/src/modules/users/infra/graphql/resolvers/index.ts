@@ -5,3 +5,4 @@ import './confirmUserVerification';
 import './habboProfileExists';
 import './logout';
 import './user';
+import './search';

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { Spinner } from './Spinner';
 
 const styling = {
-  base: 'text-base font-medium disabled:opacity-80 disabled:cursor-default',
+  base: 'text-base font-medium disabled:opacity-80 disabled:cursor-not-allowed',
   colorSchemes: {
     base: {
       solid: null,
@@ -49,11 +49,18 @@ export function Button<Component extends React.ElementType = 'button'>({
   colorScheme = 'base',
   variant = 'solid',
   isLoading,
-  isDisabled,
   fillParent,
   ...props
 }: ButtonProps<Component>) {
   const Component = as ?? 'button';
+
+  const isDisabled = useMemo(() => {
+    if (isLoading) {
+      return true;
+    }
+
+    return !!props.isDisabled;
+  }, [isLoading, props.isDisabled]);
 
   const classes = clsx([
     styling.base,
@@ -63,16 +70,8 @@ export function Button<Component extends React.ElementType = 'button'>({
     fillParent && 'w-full'
   ]);
 
-  const handleDisabled = useMemo(() => {
-    if (isLoading) {
-      return true;
-    }
-
-    return isDisabled;
-  }, [isLoading, isDisabled]);
-
   return (
-    <Component className={classes} disabled={handleDisabled} {...props}>
+    <Component className={classes} disabled={isDisabled} {...props}>
       {children}
       {isLoading && (
         <div className="ml-2">

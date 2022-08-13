@@ -7,7 +7,7 @@ import {
 } from '~/shared/core';
 import { schemaBuilder } from '../builder';
 
-const ErrorInterface = schemaBuilder.interfaceRef<ApplicationError>('BaseError').implement({
+export const ErrorInterface = schemaBuilder.interfaceRef<ApplicationError>('BaseError').implement({
   fields: t => ({
     name: t.exposeString('name'),
     message: t.exposeString('message'),

@@ -14,7 +14,7 @@ interface ApplyTeamDTO {
 
 type ApplyTeamResult = Team;
 
-export class ApplyTeamService implements IUseCase<ApplyTeamDTO, ApplyTeamResult> {
+export class ApplyTeamUseCase implements IUseCase<ApplyTeamDTO, ApplyTeamResult> {
   public constructor(
     private teamRepository: TeamRepository,
     private teamRosterRepository: TeamRosterRepository,

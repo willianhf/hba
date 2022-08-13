@@ -1,1 +1,0 @@
-export { UserPlayerRegister } from './Register';

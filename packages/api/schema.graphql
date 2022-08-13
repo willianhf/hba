@@ -1,3 +1,9 @@
+type AlreadyInTeamRosterError implements BaseError {
+  code: String!
+  message: String!
+  name: String!
+}
+
 type ApplicationError implements BaseError {
   code: String!
   message: String!
@@ -151,6 +157,12 @@ type MakeSeasonCurrentPayload {
   itWorked: Boolean!
 }
 
+type MissingAcceptedPlayerError implements BaseError {
+  code: String!
+  message: String!
+  name: String!
+}
+
 type Mutation {
   applyTeam(input: ApplyTeamInput!): MutationApplyTeamResult!
   confirmUserVerification(input: ConfirmUserVerificationInput!): MutationConfirmUserVerificationResult!
@@ -229,6 +241,7 @@ type Query {
   node(id: ID!): Node
   nodes(ids: [ID!]!): [Node]!
   positions: [Position!]!
+  searchUsers(search: String!): QuerySearchUsersResult!
   seasons(after: String, before: String, first: Int, last: Int): QuerySeasonsConnection!
   user: QueryUserResult!
 }
@@ -241,6 +254,12 @@ type QueryFindUserPlayersBySeasonConnection {
 type QueryFindUserPlayersBySeasonConnectionEdge {
   cursor: String!
   node: Player!
+}
+
+union QuerySearchUsersResult = AuthenticationError | QuerySearchUsersSuccess
+
+type QuerySearchUsersSuccess {
+  data: [User!]!
 }
 
 type QuerySeasonsConnection {
@@ -288,6 +307,7 @@ enum TeamRosterRole {
 }
 
 type User implements Node {
+  canApplyTeam: UserCanApplyTeamResult!
   canRequestPlayer: Boolean!
   createdAt: Date
   id: ID!
@@ -296,6 +316,12 @@ type User implements Node {
   password: String!
   players(after: String, before: String, first: Int, last: Int): UserPlayersConnection!
   username: String!
+}
+
+union UserCanApplyTeamResult = AlreadyInTeamRosterError | MissingAcceptedPlayerError | UserCanApplyTeamSuccess
+
+type UserCanApplyTeamSuccess {
+  data: Boolean!
 }
 
 type UserPlayersConnection {

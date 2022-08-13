@@ -4,8 +4,10 @@ import { prismaPlayerRepository } from '~/modules/player/repos/impl/Prisma';
 import { prismaSeasonRepository } from '~/modules/season/repos';
 import { User } from '~/modules/users/domain';
 import { prismaUserRepository } from '~/modules/users/repos';
+import { CanApplyTeamErrors, canApplyTeamUseCase } from '~/modules/users/useCases/CanApplyTeam';
 import { UniqueIdentifier } from '~/shared/domain';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
+import { ErrorInterface } from '~/shared/infra/graphql/types/Error';
 
 export const UserRef = schemaBuilder.objectRef<User>('User');
 
@@ -35,10 +37,29 @@ schemaBuilder.node(UserRef, {
       }
     }),
     canRequestPlayer: t.boolean({
-      resolve: async (user) => {
+      resolve: async user => {
         const season = await prismaSeasonRepository.findCurrent();
         return prismaPlayerRepository.canRequestPlayer(user.id, season.id);
       }
+    }),
+    canApplyTeam: t.boolean({
+      errors: {
+        types: [CanApplyTeamErrors.AlreadyInTeamRosterError, CanApplyTeamErrors.MissingAcceptedPlayerError],
+        directResult: false
+      },
+      resolve: async user => {
+        return canApplyTeamUseCase.execute({ userId: user.id });
+      }
     })
   })
+});
+
+schemaBuilder.objectType(CanApplyTeamErrors.AlreadyInTeamRosterError, {
+  name: 'AlreadyInTeamRosterError',
+  interfaces: [ErrorInterface]
+});
+
+schemaBuilder.objectType(CanApplyTeamErrors.MissingAcceptedPlayerError, {
+  name: 'MissingAcceptedPlayerError',
+  interfaces: [ErrorInterface]
 });

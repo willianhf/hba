@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<77900fb7bdd1ed536890560261144e02>>
+ * @generated SignedSource<<aa29d4e17605b497d69179fa718eb97f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,55 +10,40 @@
 
 import { ConcreteRequest, Query } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type PlayersQuery$variables = {};
-export type PlayersQuery$data = {
+export type ProfileQuery$variables = {};
+export type ProfileQuery$data = {
   readonly user: {
-    readonly code?: string;
-    readonly " $fragmentSpreads": FragmentRefs<"SignUpBanner_user" | "ListUserPlayers_user">;
+    readonly " $fragmentSpreads": FragmentRefs<"Players_user">;
   };
 };
-export type PlayersQuery = {
-  variables: PlayersQuery$variables;
-  response: PlayersQuery$data;
+export type ProfileQuery = {
+  variables: ProfileQuery$variables;
+  response: ProfileQuery$data;
 };
 
 const node: ConcreteRequest = (function(){
 var v0 = {
-  "kind": "InlineFragment",
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "code",
-      "storageKey": null
-    }
-  ],
-  "type": "AuthenticationError",
-  "abstractKey": null
-},
-v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "__typename",
   "storageKey": null
 },
-v2 = [
+v1 = [
   {
     "kind": "Literal",
     "name": "first",
     "value": 2147483647
   }
 ],
-v3 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v4 = [
+v3 = [
   {
     "alias": null,
     "args": null,
@@ -66,14 +51,14 @@ v4 = [
     "name": "name",
     "storageKey": null
   },
-  (v3/*: any*/)
+  (v2/*: any*/)
 ];
 return {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "PlayersQuery",
+    "name": "ProfileQuery",
     "selections": [
       {
         "alias": null,
@@ -83,19 +68,13 @@ return {
         "name": "user",
         "plural": false,
         "selections": [
-          (v0/*: any*/),
           {
             "kind": "InlineFragment",
             "selections": [
               {
                 "args": null,
                 "kind": "FragmentSpread",
-                "name": "SignUpBanner_user"
-              },
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "ListUserPlayers_user"
+                "name": "Players_user"
               }
             ],
             "type": "User",
@@ -112,7 +91,7 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "PlayersQuery",
+    "name": "ProfileQuery",
     "selections": [
       {
         "alias": null,
@@ -122,21 +101,13 @@ return {
         "name": "user",
         "plural": false,
         "selections": [
-          (v1/*: any*/),
           (v0/*: any*/),
           {
             "kind": "InlineFragment",
             "selections": [
               {
                 "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "canRequestPlayer",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": (v2/*: any*/),
+                "args": (v1/*: any*/),
                 "concreteType": "UserPlayersConnection",
                 "kind": "LinkedField",
                 "name": "players",
@@ -158,7 +129,7 @@ return {
                         "name": "node",
                         "plural": false,
                         "selections": [
-                          (v3/*: any*/),
+                          (v2/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -188,7 +159,7 @@ return {
                                 "name": "lastName",
                                 "storageKey": null
                               },
-                              (v3/*: any*/)
+                              (v2/*: any*/)
                             ],
                             "storageKey": null
                           },
@@ -199,7 +170,7 @@ return {
                             "kind": "LinkedField",
                             "name": "position",
                             "plural": false,
-                            "selections": (v4/*: any*/),
+                            "selections": (v3/*: any*/),
                             "storageKey": null
                           },
                           {
@@ -209,10 +180,10 @@ return {
                             "kind": "LinkedField",
                             "name": "icons",
                             "plural": true,
-                            "selections": (v4/*: any*/),
+                            "selections": (v3/*: any*/),
                             "storageKey": null
                           },
-                          (v1/*: any*/)
+                          (v0/*: any*/)
                         ],
                         "storageKey": null
                       },
@@ -268,12 +239,19 @@ return {
               },
               {
                 "alias": null,
-                "args": (v2/*: any*/),
+                "args": (v1/*: any*/),
                 "filters": null,
                 "handle": "connection",
                 "key": "Players_players",
                 "kind": "LinkedHandle",
                 "name": "players"
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "canRequestPlayer",
+                "storageKey": null
               }
             ],
             "type": "User",
@@ -282,7 +260,7 @@ return {
           {
             "kind": "InlineFragment",
             "selections": [
-              (v3/*: any*/)
+              (v2/*: any*/)
             ],
             "type": "Node",
             "abstractKey": "__isNode"
@@ -293,16 +271,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7531d3512774ce38d89acefd1fe4dd5b",
+    "cacheID": "75c581bac584746f1fc6e41ee5d5086a",
     "id": null,
     "metadata": {},
-    "name": "PlayersQuery",
+    "name": "ProfileQuery",
     "operationKind": "query",
-    "text": "query PlayersQuery {\n  user {\n    __typename\n    ... on AuthenticationError {\n      code\n    }\n    ... on User {\n      ...SignUpBanner_user\n      ...ListUserPlayers_user\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n}\n\nfragment ListUserPlayers_user on User {\n  players(first: 2147483647) {\n    edges {\n      node {\n        id\n        ...PlayerFragment_player\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment PlayerFragment_player on Player {\n  status\n  nbaPlayer {\n    firstName\n    lastName\n    id\n  }\n  position {\n    name\n    id\n  }\n  icons {\n    name\n    id\n  }\n}\n\nfragment SignUpBanner_user on User {\n  canRequestPlayer\n}\n"
+    "text": "query ProfileQuery {\n  user {\n    __typename\n    ... on User {\n      ...Players_user\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n}\n\nfragment PlayerFragment_player on Player {\n  status\n  nbaPlayer {\n    firstName\n    lastName\n    id\n  }\n  position {\n    name\n    id\n  }\n  icons {\n    name\n    id\n  }\n}\n\nfragment Players_user on User {\n  players(first: 2147483647) {\n    edges {\n      node {\n        id\n        ...PlayerFragment_player\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  canRequestPlayer\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2a75a1325d07ca24d23a692086ab1696";
+(node as any).hash = "e3eddc3749ad81aaa9da107679dc5738";
 
 export default node;

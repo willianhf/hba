@@ -1,10 +1,9 @@
 import { relayEnvironment } from '@/lib/relay';
 import { Writable } from '@/types/helpers';
 import { graphql, loadQuery, usePreloadedQuery } from 'react-relay';
-import { useQuery } from 'relay-hooks';
 import {
-  usePositions_positionsQuery,
-  usePositions_positionsQuery$data
+    usePositions_positionsQuery,
+    usePositions_positionsQuery$data
 } from './__generated__/usePositions_positionsQuery.graphql';
 
 type Positions = Writable<usePositions_positionsQuery$data['positions']>;

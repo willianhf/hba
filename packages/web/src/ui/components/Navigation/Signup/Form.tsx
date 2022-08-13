@@ -105,7 +105,7 @@ export function SignupForm() {
           Cadastrar
         </Button>
         <div className="text-gray-800">ou</div>
-        <Button as={Link} href="?form=login" variant="link" colorScheme="blue">
+        <Button as={Link} to="?form=login" variant="link" colorScheme="blue">
           Entrar
         </Button>
       </div>

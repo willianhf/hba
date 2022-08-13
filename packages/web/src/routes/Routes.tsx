@@ -1,10 +1,10 @@
 import { Home } from '@/pages';
 import { Players } from '@/pages/Players';
-import { UserPlayerRegister } from '@/pages/Players/User/Register';
+import { Profile } from '@/pages/Profile';
+import { ApplyPlayer } from '@/pages/Profile/Players/Apply';
 import { Teams } from '@/pages/Teams';
 import { Authenticated } from '@/ui/components';
 import { Layout } from '@/ui/layouts';
-import { Suspense } from 'react';
 import { Route, Routes as ReactRouterRoutes } from 'react-router-dom';
 
 export function Routes() {
@@ -14,19 +14,20 @@ export function Routes() {
         <Route index element={<Home />} />
         <Route path="players">
           <Route index element={<Players />} />
-          <Route
-            path="register"
-            element={
-              <Suspense fallback={null}>
-                <Authenticated redirect>
-                  <UserPlayerRegister />
-                </Authenticated>
-              </Suspense>
-            }
-          />
         </Route>
         <Route path="teams">
           <Route index element={<Teams />} />
+        </Route>
+        <Route path="profile">
+          <Route path=":username" element={<Profile />} />
+          <Route
+            path=":username/apply"
+            element={
+              <Authenticated>
+                <ApplyPlayer />
+              </Authenticated>
+            }
+          />
         </Route>
       </Route>
     </ReactRouterRoutes>

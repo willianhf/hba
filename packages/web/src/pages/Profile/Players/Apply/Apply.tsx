@@ -1,11 +1,10 @@
-import { Icon, Position, useAuth, useDebounce, useIcons, usePositions } from '@/hooks';
+import { Icon, Position, useAuth, useDebounce, useIcons, usePositions, usePreviousPath } from '@/hooks';
 import { parseErrorsFromAPI } from '@/lib/formik';
 import { DeepNonNullable } from '@/types/helpers';
-import { Button, Card, Combobox, Form, Select, Text } from '@/ui/components';
-import { ComboboxOption } from '@/ui/components/Combobox/Option';
+import { BackButton, Button, Card, Combobox, Form, Select, Text } from '@/ui/components';
 import clsx from 'clsx';
 import { FormikHelpers } from 'formik';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { graphql, useMutation } from 'react-relay';
 import { useNavigate } from 'react-router';
@@ -13,7 +12,7 @@ import { ConnectionHandler } from 'relay-runtime';
 import { match } from 'ts-pattern';
 import * as Yup from 'yup';
 import { useNBAPlayers, type NBAPlayer } from './useNBAPlayers';
-import { Register_createPlayerMutation } from './__generated__/Register_createPlayerMutation.graphql';
+import { Apply_createPlayerMutation } from './__generated__/Apply_createPlayerMutation.graphql';
 
 interface PlayerRegisterFormValues {
   player: NBAPlayer | null;
@@ -34,7 +33,7 @@ const playerRegisterSchema = Yup.object().shape({
 });
 
 const CREATE_PLAYER_MUTATION = graphql`
-  mutation Register_createPlayerMutation($input: CreatePlayerInput!, $connections: [ID!]!) {
+  mutation Apply_createPlayerMutation($input: CreatePlayerInput!, $connections: [ID!]!) {
     createPlayer(input: $input) {
       __typename
       ... on CreatePlayerPayload {
@@ -63,7 +62,7 @@ const CREATE_PLAYER_MUTATION = graphql`
   }
 `;
 
-export function UserPlayerRegister() {
+export function ApplyPlayer() {
   const [playerSearch, setPlayerSearch] = useState('');
   const debouncedPlayerSearch = useDebounce(playerSearch);
 
@@ -71,9 +70,10 @@ export function UserPlayerRegister() {
   const icons = useIcons();
   const positions = usePositions();
 
-  const [createPlayer, isInFlight] = useMutation<Register_createPlayerMutation>(CREATE_PLAYER_MUTATION);
+  const [createPlayer, isInFlight] = useMutation<Apply_createPlayerMutation>(CREATE_PLAYER_MUTATION);
 
   const navigate = useNavigate();
+  const previousPath = usePreviousPath();
   const auth = useAuth();
 
   function onCreatePlayerSuccess() {
@@ -112,9 +112,12 @@ export function UserPlayerRegister() {
 
   return (
     <div>
-      <Text as="h1" className="mb-1" variant="title">
-        Inscreva-se
-      </Text>
+      <div className="flex items-center mb-2">
+        <BackButton to={previousPath} />
+        <Text as="h1" variant="title">
+          Inscreva-se
+        </Text>
+      </div>
       <Card>
         <Form initialValues={initialFormValues} onSubmit={onSubmit} validationSchema={playerRegisterSchema}>
           <div className="space-y-2 mb-4">

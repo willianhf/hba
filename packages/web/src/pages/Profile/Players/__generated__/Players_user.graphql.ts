@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6c6262fb764da1c0879e2730a7fc7f1d>>
+ * @generated SignedSource<<dfd8c98bc9dce864c4cd623bffccd70d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { Fragment, ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type ListUserPlayers_user$data = {
+export type Players_user$data = {
   readonly players: {
     readonly __id: string;
     readonly edges: ReadonlyArray<{
@@ -20,11 +20,12 @@ export type ListUserPlayers_user$data = {
       };
     }>;
   };
-  readonly " $fragmentType": "ListUserPlayers_user";
+  readonly canRequestPlayer: boolean;
+  readonly " $fragmentType": "Players_user";
 };
-export type ListUserPlayers_user$key = {
-  readonly " $data"?: ListUserPlayers_user$data;
-  readonly " $fragmentSpreads": FragmentRefs<"ListUserPlayers_user">;
+export type Players_user$key = {
+  readonly " $data"?: Players_user$data;
+  readonly " $fragmentSpreads": FragmentRefs<"Players_user">;
 };
 
 const node: ReaderFragment = {
@@ -42,7 +43,7 @@ const node: ReaderFragment = {
       }
     ]
   },
-  "name": "ListUserPlayers_user",
+  "name": "Players_user",
   "selections": [
     {
       "alias": "players",
@@ -139,12 +140,19 @@ const node: ReaderFragment = {
         }
       ],
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "canRequestPlayer",
+      "storageKey": null
     }
   ],
   "type": "User",
   "abstractKey": null
 };
 
-(node as any).hash = "2874184f5de97c2eaea2499e0f8909f7";
+(node as any).hash = "955f6bb9f09d3b76fec0b494b2bbb622";
 
 export default node;

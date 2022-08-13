@@ -1,5 +1,5 @@
 import { useCurrentSeason } from '@/hooks';
-import { Card, Text } from '@/ui/components';
+import { Card, List, Text } from '@/ui/components';
 import { groupBy } from '@/utils/array';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { PlayersList_findPlayersQuery } from './__generated__/PlayersList_findPlayersQuery.graphql';
@@ -45,10 +45,10 @@ export function PlayersList() {
         <div className="space-y-4">
           {Object.entries(playersByPosition).map(([position, players]) => (
             <div key={position}>
-              <Text variant="subtitle" className="block mb-1">
+              <Text variant="subtitle" className="block mb-2">
                 {position}
               </Text>
-              {players.map(player => (
+              <List options={players} renderItem={(player) => (
                 <Card key={player.id} className="flex items-center w-full">
                   <div>
                     <div className="h-24 w-24 rounded-full overflow-hidden bg-gray-100 relative z-0">
@@ -65,7 +65,7 @@ export function PlayersList() {
                     <Text className="block">{player.icons?.map(icon => icon.name).join(', ')}</Text>
                   </div>
                 </Card>
-              ))}
+              )} />
             </div>
           ))}
         </div>

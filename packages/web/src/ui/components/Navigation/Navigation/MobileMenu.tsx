@@ -3,14 +3,14 @@ import { Popover, Transition } from '@headlessui/react';
 import { LogoutIcon } from '@heroicons/react/outline';
 import { XIcon, UserCircleIcon } from '@heroicons/react/solid';
 import { Fragment } from 'react';
-import { Authenticated } from '../Authenticated';
-import { Brand } from '../Brand';
-import { Button } from '../Button';
-import { Guest } from '../Guest';
-import { Link } from '../Link';
+import { Authenticated } from '../../Authenticated';
+import { Brand } from '../../Brand';
+import { Button } from '../../Button';
+import { Guest } from '../../Guest';
+import { Link } from '../../Link';
 import { NAVIGATION_ITEMS } from './Navigation';
 
-export function MobileMenu() {
+export function MobileNavigation() {
   const auth = useAuth();
 
   return (
@@ -40,16 +40,16 @@ export function MobileMenu() {
               <nav className="grid gap-y-8">
                 <Authenticated>
                   {auth => (
-                    <div className="-m-3 p-3 flex items-center rounded-md">
+                    <Link to={`/profile/${auth.user.username}`} className="-m-3 p-3 flex items-center rounded-md hover:bg-gray-100">
                       <UserCircleIcon className="w-6 h-6 text-blue-600" aria-hidden="true" />
                       <span className="text-base text-gray-900 font-medium ml-3">{auth.user.username}</span>
-                    </div>
+                    </Link>
                   )}
                 </Authenticated>
                 {NAVIGATION_ITEMS.map(item => (
                   <Link
-                    key={item.href}
-                    href={item.href}
+                    key={item.to}
+                    to={item.to}
                     className="-m-3 p-3 flex items-center rounded-md hover:bg-gray-100"
                   >
                     <item.icon className="flex-shrink-0 h-6 w-6 text-blue-600" aria-hidden="true" />
@@ -71,12 +71,12 @@ export function MobileMenu() {
           </div>
           <Guest>
             <div className="py-6 px-5 space-y-6">
-              <Button as={Link} href="?form=signup" colorScheme="blue" className="w-full">
+              <Button as={Link} to="?form=signup" colorScheme="blue" className="w-full">
                 Cadastrar
               </Button>
               <p className="mt-6 text-center text-base font-medium text-gray-500">
                 Já possui cadastro?{' '}
-                <Button as={Link} href="?form=login" variant="link" colorScheme="blue">
+                <Button as={Link} to="?form=login" variant="link" colorScheme="blue">
                   Entrar
                 </Button>
               </p>

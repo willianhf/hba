@@ -89,7 +89,7 @@ export function LoginForm() {
           Entrar
         </Button>
         <div className="text-gray-800">ou</div>
-        <Button as={Link} href="?form=signup" variant="link" colorScheme="blue">
+        <Button as={Link} to="?form=signup" variant="link" colorScheme="blue">
           Cadastrar
         </Button>
       </div>

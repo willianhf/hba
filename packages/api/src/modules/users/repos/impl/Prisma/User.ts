@@ -54,4 +54,17 @@ export class PrismaUserRepository implements UserRepository {
       data: { isVerified: true }
     });
   }
+
+  public async search(search: string): Promise<User[]> {
+    const prismaUsers = await prisma.user.findMany({
+      where: {
+        username: {
+          contains: search,
+          mode: 'insensitive'
+        }
+      }
+    });
+
+    return prismaUsers.map(prismaUser => UserMapper.toDomain(prismaUser));
+  }
 }
