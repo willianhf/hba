@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<aa29d4e17605b497d69179fa718eb97f>>
+ * @generated SignedSource<<520e1e258a913c2b104de82355c10882>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,30 +10,36 @@
 
 import { ConcreteRequest, Query } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type ProfileQuery$variables = {};
-export type ProfileQuery$data = {
+export type ProfileUsernameQuery$variables = {
+  username: string;
+};
+export type ProfileUsernameQuery$data = {
+  readonly findUser: {
+    readonly id?: string;
+    readonly username?: string;
+  } | null;
   readonly user: {
     readonly " $fragmentSpreads": FragmentRefs<"Players_user">;
   };
 };
-export type ProfileQuery = {
-  variables: ProfileQuery$variables;
-  response: ProfileQuery$data;
+export type ProfileUsernameQuery = {
+  variables: ProfileUsernameQuery$variables;
+  response: ProfileUsernameQuery$data;
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "__typename",
-  "storageKey": null
-},
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "username"
+  }
+],
 v1 = [
   {
-    "kind": "Literal",
-    "name": "first",
-    "value": 2147483647
+    "kind": "Variable",
+    "name": "username",
+    "variableName": "username"
   }
 ],
 v2 = {
@@ -43,7 +49,44 @@ v2 = {
   "name": "id",
   "storageKey": null
 },
-v3 = [
+v3 = {
+  "kind": "InlineFragment",
+  "selections": [
+    (v2/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "username",
+      "storageKey": null
+    }
+  ],
+  "type": "User",
+  "abstractKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
+  "storageKey": null
+},
+v5 = {
+  "kind": "InlineFragment",
+  "selections": [
+    (v2/*: any*/)
+  ],
+  "type": "Node",
+  "abstractKey": "__isNode"
+},
+v6 = [
+  {
+    "kind": "Literal",
+    "name": "first",
+    "value": 2147483647
+  }
+],
+v7 = [
   {
     "alias": null,
     "args": null,
@@ -55,11 +98,23 @@ v3 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ProfileQuery",
+    "name": "ProfileUsernameQuery",
     "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": null,
+        "kind": "LinkedField",
+        "name": "findUser",
+        "plural": false,
+        "selections": [
+          (v3/*: any*/)
+        ],
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": null,
@@ -89,10 +144,24 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ProfileQuery",
+    "name": "ProfileUsernameQuery",
     "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": null,
+        "kind": "LinkedField",
+        "name": "findUser",
+        "plural": false,
+        "selections": [
+          (v4/*: any*/),
+          (v3/*: any*/),
+          (v5/*: any*/)
+        ],
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": null,
@@ -101,13 +170,13 @@ return {
         "name": "user",
         "plural": false,
         "selections": [
-          (v0/*: any*/),
+          (v4/*: any*/),
           {
             "kind": "InlineFragment",
             "selections": [
               {
                 "alias": null,
-                "args": (v1/*: any*/),
+                "args": (v6/*: any*/),
                 "concreteType": "UserPlayersConnection",
                 "kind": "LinkedField",
                 "name": "players",
@@ -170,7 +239,7 @@ return {
                             "kind": "LinkedField",
                             "name": "position",
                             "plural": false,
-                            "selections": (v3/*: any*/),
+                            "selections": (v7/*: any*/),
                             "storageKey": null
                           },
                           {
@@ -180,10 +249,10 @@ return {
                             "kind": "LinkedField",
                             "name": "icons",
                             "plural": true,
-                            "selections": (v3/*: any*/),
+                            "selections": (v7/*: any*/),
                             "storageKey": null
                           },
-                          (v0/*: any*/)
+                          (v4/*: any*/)
                         ],
                         "storageKey": null
                       },
@@ -239,10 +308,10 @@ return {
               },
               {
                 "alias": null,
-                "args": (v1/*: any*/),
+                "args": (v6/*: any*/),
                 "filters": null,
                 "handle": "connection",
-                "key": "Players_players",
+                "key": "Profile_players",
                 "kind": "LinkedHandle",
                 "name": "players"
               },
@@ -257,30 +326,23 @@ return {
             "type": "User",
             "abstractKey": null
           },
-          {
-            "kind": "InlineFragment",
-            "selections": [
-              (v2/*: any*/)
-            ],
-            "type": "Node",
-            "abstractKey": "__isNode"
-          }
+          (v5/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "75c581bac584746f1fc6e41ee5d5086a",
+    "cacheID": "daea229ea6ec410ba994423fd1d54e2f",
     "id": null,
     "metadata": {},
-    "name": "ProfileQuery",
+    "name": "ProfileUsernameQuery",
     "operationKind": "query",
-    "text": "query ProfileQuery {\n  user {\n    __typename\n    ... on User {\n      ...Players_user\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n}\n\nfragment PlayerFragment_player on Player {\n  status\n  nbaPlayer {\n    firstName\n    lastName\n    id\n  }\n  position {\n    name\n    id\n  }\n  icons {\n    name\n    id\n  }\n}\n\nfragment Players_user on User {\n  players(first: 2147483647) {\n    edges {\n      node {\n        id\n        ...PlayerFragment_player\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  canRequestPlayer\n}\n"
+    "text": "query ProfileUsernameQuery(\n  $username: String!\n) {\n  findUser(username: $username) {\n    __typename\n    ... on User {\n      id\n      username\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n  user {\n    __typename\n    ... on User {\n      ...Players_user\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n}\n\nfragment PlayerFragment_player on Player {\n  status\n  nbaPlayer {\n    firstName\n    lastName\n    id\n  }\n  position {\n    name\n    id\n  }\n  icons {\n    name\n    id\n  }\n}\n\nfragment Players_user on User {\n  players(first: 2147483647) {\n    edges {\n      node {\n        id\n        ...PlayerFragment_player\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  canRequestPlayer\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e3eddc3749ad81aaa9da107679dc5738";
+(node as any).hash = "5bb6bc74d416e25bb0b08de239503da5";
 
 export default node;

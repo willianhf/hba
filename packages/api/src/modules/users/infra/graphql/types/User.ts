@@ -19,7 +19,6 @@ schemaBuilder.node(UserRef, {
   isTypeOf: user => user instanceof User,
   fields: t => ({
     username: t.string({ resolve: user => user.username.value }),
-    password: t.string({ resolve: user => user.password.value }),
     isVerified: t.boolean({ resolve: user => user.isVerified }),
     isAdmin: t.boolean({ resolve: user => user.isAdmin }),
     createdAt: t.field({

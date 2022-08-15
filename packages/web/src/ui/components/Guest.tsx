@@ -1,5 +1,5 @@
 import { useAuth } from '@/hooks';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { Navigate } from './Navigate';
 
 interface Props {

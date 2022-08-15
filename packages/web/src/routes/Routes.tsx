@@ -1,7 +1,6 @@
 import { Home } from '@/pages';
 import { Players } from '@/pages/Players';
-import { Profile } from '@/pages/Profile';
-import { ApplyPlayer } from '@/pages/Profile/Players/Apply';
+import { ProfileUsernameApply, ProfileUsernameRoute } from '@/pages/ProfileUsername';
 import { Teams } from '@/pages/Teams';
 import { Authenticated } from '@/ui/components';
 import { Layout } from '@/ui/layouts';
@@ -18,13 +17,13 @@ export function Routes() {
         <Route path="teams">
           <Route index element={<Teams />} />
         </Route>
-        <Route path="profile">
-          <Route path=":username" element={<Profile />} />
+        <Route path="profile/:username">
+          <Route index element={<ProfileUsernameRoute />} />
           <Route
-            path=":username/apply"
+            path="apply"
             element={
               <Authenticated>
-                <ApplyPlayer />
+                <ProfileUsernameApply />
               </Authenticated>
             }
           />

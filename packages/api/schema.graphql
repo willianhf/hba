@@ -233,6 +233,7 @@ type Position implements Node {
 type Query {
   currentSeason: Season!
   findPlayers(seasonId: String!): [Player!]!
+  findUser(username: String!): QueryFindUserResult
   findUserPlayersBySeason(after: String, before: String, first: Int, last: Int): QueryFindUserPlayersBySeasonConnection!
   habboProfileExists(username: String!): Boolean!
   icons: [Icon!]!
@@ -255,6 +256,8 @@ type QueryFindUserPlayersBySeasonConnectionEdge {
   cursor: String!
   node: Player!
 }
+
+union QueryFindUserResult = User
 
 union QuerySearchUsersResult = AuthenticationError | QuerySearchUsersSuccess
 
@@ -313,7 +316,6 @@ type User implements Node {
   id: ID!
   isAdmin: Boolean!
   isVerified: Boolean!
-  password: String!
   players(after: String, before: String, first: Int, last: Int): UserPlayersConnection!
   username: String!
 }

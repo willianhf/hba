@@ -7,12 +7,12 @@ import { FormikHelpers } from 'formik';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { graphql, useMutation } from 'react-relay';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { ConnectionHandler } from 'relay-runtime';
 import { match } from 'ts-pattern';
 import * as Yup from 'yup';
 import { useNBAPlayers, type NBAPlayer } from './useNBAPlayers';
-import { Apply_createPlayerMutation } from './__generated__/Apply_createPlayerMutation.graphql';
+import { Apply_createPlayerMutation } from './__generated__/apply_createPlayerMutation.graphql';
 
 interface PlayerRegisterFormValues {
   player: NBAPlayer | null;
@@ -62,7 +62,7 @@ const CREATE_PLAYER_MUTATION = graphql`
   }
 `;
 
-export function ApplyPlayer() {
+export function Apply() {
   const [playerSearch, setPlayerSearch] = useState('');
   const debouncedPlayerSearch = useDebounce(playerSearch);
 
@@ -89,7 +89,7 @@ export function ApplyPlayer() {
     values: DeepNonNullable<PlayerRegisterFormValues>,
     helpers: FormikHelpers<PlayerRegisterFormValues>
   ) {
-    const playersConnectionId = ConnectionHandler.getConnectionID(auth.user.id, 'Players_players');
+    const playersConnectionId = ConnectionHandler.getConnectionID(auth.user.id, 'Profile_players');
 
     createPlayer({
       variables: {

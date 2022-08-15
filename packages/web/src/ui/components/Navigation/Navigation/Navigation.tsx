@@ -1,7 +1,7 @@
 import { Popover } from '@headlessui/react';
 import { ChartBarIcon, GlobeAltIcon, MenuIcon, TableIcon, UserGroupIcon, UserIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { Brand } from '../../Brand';
 import { Button } from '../../Button';
 import { Guest } from '../../Guest';

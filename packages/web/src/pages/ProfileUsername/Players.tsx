@@ -8,7 +8,7 @@ const PLAYERS_FRAGMENT = graphql`
   fragment Players_user on User {
     players(
       first: 2147483647 # max GraphQLInt
-    ) @connection(key: "Players_players") {
+    ) @connection(key: "Profile_players") {
       __id
       edges {
         node {

@@ -1,6 +1,6 @@
 import React, { createContext } from 'react';
 import { graphql, useMutation } from 'react-relay';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useStorage } from 'react-tidy';
 import { match } from 'ts-pattern';
 import { AuthContext_LogoutMutation } from './__generated__/AuthContext_LogoutMutation.graphql';

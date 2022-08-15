@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dfd8c98bc9dce864c4cd623bffccd70d>>
+ * @generated SignedSource<<5fdd6e1b148efe8af921fc1cd3e21bb2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -50,7 +50,7 @@ const node: ReaderFragment = {
       "args": null,
       "concreteType": "UserPlayersConnection",
       "kind": "LinkedField",
-      "name": "__Players_players_connection",
+      "name": "__Profile_players_connection",
       "plural": false,
       "selections": [
         {
@@ -153,6 +153,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "955f6bb9f09d3b76fec0b494b2bbb622";
+(node as any).hash = "8ff8c4c1baa0cb48ee760c9842a82b5b";
 
 export default node;

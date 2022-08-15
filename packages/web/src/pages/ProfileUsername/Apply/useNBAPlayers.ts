@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { graphql } from 'react-relay';
 import { useQuery } from 'relay-hooks';
 import {
-    useNBAPlayers_nbaPlayersQuery,
-    useNBAPlayers_nbaPlayersQuery$data
+  useNBAPlayers_nbaPlayersQuery,
+  useNBAPlayers_nbaPlayersQuery$data
 } from './__generated__/useNBAPlayers_nbaPlayersQuery.graphql';
 
 const FIND_NBA_PLAYERS_QUERY = graphql`

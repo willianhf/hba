@@ -6,3 +6,4 @@ import './habboProfileExists';
 import './logout';
 import './user';
 import './search';
+import './findUser';
