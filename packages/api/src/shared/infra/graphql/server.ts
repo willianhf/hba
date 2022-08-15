@@ -1,8 +1,10 @@
 import { initContextCache } from '@pothos/core';
 import { ApolloServer } from 'apollo-server';
+import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { writeFileSync } from 'fs';
 import { lexicographicSortSchema, printSchema } from 'graphql';
 import { ValidationError as YupValidationError } from 'yup';
+import config from '~/config';
 import { resolveRequestUserService } from '~/modules/users/useCases/ResolveRequestUser';
 import { Server } from '~/shared/core';
 import { ValidationInputError } from '~/shared/core/Error';
@@ -42,7 +44,8 @@ class GraphQLServer extends Server {
         }
 
         return error;
-      }
+      },
+      plugins: config.isProduction ? [] : [ApolloServerPluginLandingPageLocalDefault({ embed: true })]
     });
 
     await apolloServer.listen(this.port());
