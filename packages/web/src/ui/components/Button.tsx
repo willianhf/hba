@@ -40,9 +40,9 @@ type Props = {
     }
 );
 
-type ButtonProps<Component extends React.ElementType> = PolymorphicComponentProps<Component, Props>;
+type ButtonProps<C extends React.ElementType> = PolymorphicComponentProps<C, Props>;
 
-export function Button<Component extends React.ElementType = 'button'>({
+export function Button<C extends React.ElementType = 'button'>({
   as,
   children,
   className,
@@ -51,7 +51,7 @@ export function Button<Component extends React.ElementType = 'button'>({
   isLoading,
   fillParent,
   ...props
-}: ButtonProps<Component>) {
+}: ButtonProps<C>) {
   const Component = as ?? 'button';
 
   const isDisabled = useMemo(() => {

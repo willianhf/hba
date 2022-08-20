@@ -6,7 +6,7 @@ const styling = {
     primary: 'text-gray-900',
     secondary: 'text-gray-700',
     error: 'text-red-500',
-    white: 'text-white',
+    white: 'text-white'
   },
   variants: {
     regular: 'text-base',
@@ -38,9 +38,9 @@ interface Props {
   weight?: keyof Styling['weights'];
 }
 
-type TextProps<Component extends React.ElementType> = PolymorphicComponentProps<Component, Props>;
+type TextProps<C extends React.ElementType> = PolymorphicComponentProps<C, Props>;
 
-export function Text<Component extends React.ElementType = 'span'>({
+export function Text<C extends React.ElementType = 'span'>({
   color = 'primary',
   variant,
   style,
@@ -48,12 +48,18 @@ export function Text<Component extends React.ElementType = 'span'>({
   as,
   className,
   ...props
-}: TextProps<Component>) {
+}: TextProps<C>) {
   const Component = as ?? 'span';
 
   return (
     <Component
-      className={clsx(styling.colors[color], variant && styling.variants[variant], style && styling.style[style], weight && styling.weights[weight], className)}
+      className={clsx(
+        styling.colors[color],
+        variant && styling.variants[variant],
+        style && styling.style[style],
+        weight && styling.weights[weight],
+        className
+      )}
       {...props}
     >
       {props.children}
