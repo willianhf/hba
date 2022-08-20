@@ -1,23 +1,21 @@
-import { prisma } from '~/shared/infra/database';
-import { User, UserName } from '~/modules/users/domain';
-import { UserRepository } from '../..';
+import { User, UserId, UserName } from '~/modules/users/domain';
 import { UserMapper } from '~/modules/users/mappers';
-import { UniqueIdentifier } from '~/shared/domain';
+import { prisma } from '~/shared/infra/database';
+import { UserRepository } from '../..';
 
 export class PrismaUserRepository implements UserRepository {
-  public async getUserById(userId: UniqueIdentifier): Promise<User | null> {
+  public async findById(userId: UserId): Promise<User> {
     const persistedUser = await prisma.user.findFirst({
-      where: { id: userId.toValue() }
+      where: {
+        id: userId.toValue()
+      },
+      rejectOnNotFound: true
     });
 
-    if (persistedUser) {
-      return UserMapper.toDomain(persistedUser);
-    }
-
-    return null;
+    return UserMapper.toDomain(persistedUser);
   }
 
-  public async getUserByUsername(username: UserName): Promise<User | null> {
+  public async findByUsername(username: UserName): Promise<User | null> {
     const persistedUser = await prisma.user.findFirst({
       where: { username: username.value }
     });
@@ -48,7 +46,7 @@ export class PrismaUserRepository implements UserRepository {
     return !!persistedUser;
   }
 
-  public async verify(userId: UniqueIdentifier): Promise<void> {
+  public async verify(userId: UserId): Promise<void> {
     await prisma.user.update({
       where: { id: userId.toValue() },
       data: { isVerified: true }

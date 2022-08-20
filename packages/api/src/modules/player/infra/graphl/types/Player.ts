@@ -43,7 +43,7 @@ schemaBuilder.node(PlayerRef, {
     user: t.field({
       type: UserRef,
       nullable: true,
-      resolve: player => prismaUserRepository.getUserById(player.userId)
+      resolve: player => prismaUserRepository.findById(player.userId)
     }),
     season: t.field({
       type: SeasonRef,

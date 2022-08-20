@@ -1,13 +1,10 @@
-import { ApprovalStatus } from '@prisma/client';
-import { PlayerRepository } from '~/modules/player/repos';
 import { SeasonRepository } from '~/modules/season/repos';
 import { TeamRosterRepository } from '~/modules/team/repos';
 import { IUseCase } from '~/shared/core';
-import { UniqueIdentifier } from '~/shared/domain';
-import * as Errors from './Errors';
+import { UserId } from '../../domain';
 
 interface CanApplyTeamDTO {
-  userId: UniqueIdentifier;
+  userId: UserId;
 }
 
 type CanApplyTeamResult = boolean;
@@ -15,21 +12,20 @@ type CanApplyTeamResult = boolean;
 export class CanApplyTeamUseCase implements IUseCase<CanApplyTeamDTO, CanApplyTeamResult> {
   public constructor(
     private readonly teamRosterRepository: TeamRosterRepository,
-    private readonly seasonRepository: SeasonRepository,
-    private readonly playerRepository: PlayerRepository
+    private readonly seasonRepository: SeasonRepository
   ) {}
 
   public async execute(dto: CanApplyTeamDTO): Promise<CanApplyTeamResult> {
     const currentSeason = await this.seasonRepository.findCurrent();
-    const players = await this.playerRepository.findByUserAndSeason(dto.userId, currentSeason.id);
-    const activePlayer = players.find(player => player.status === ApprovalStatus.ACCEPTED);
-    if (!activePlayer) {
-      throw new Errors.MissingAcceptedPlayerError();
+
+    const hasPendingApplication = await this.teamRosterRepository.hasPendingApplication(dto.userId, currentSeason.id);
+    if (hasPendingApplication) {
+      return false;
     }
 
-    const isInRoster = await this.teamRosterRepository.isPlayerInRoster(activePlayer.id, currentSeason.id);
+    const isInRoster = await this.teamRosterRepository.isUserInRoster(dto.userId, currentSeason.id);
     if (isInRoster) {
-      throw new Errors.AlreadyInTeamRosterError();
+      return false;
     }
 
     return true;

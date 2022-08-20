@@ -13,7 +13,7 @@ schemaBuilder.queryField('user', t =>
       types: [AuthenticationError]
     },
     resolve: async (_root, _args, context) => {
-      const user = await prismaUserRepository.getUserById(context.user.id);
+      const user = await prismaUserRepository.findById(context.user.id);
       return user!;
     }
   })

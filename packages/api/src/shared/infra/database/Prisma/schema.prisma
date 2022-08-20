@@ -18,6 +18,7 @@ model User {
   sessions     Session[]
   verification Verification?
   players      Player[]
+  rosters      TeamRoster[]
 }
 
 model Session {
@@ -82,7 +83,6 @@ model Player {
   season           Season       @relation(fields: [seasonId], references: [id])
   nbaPlayer        NBAPlayer    @relation(fields: [nbaPlayerId], references: [id])
   position         Position     @relation(fields: [positionId], references: [id])
-  rosters          TeamRoster[]
   gameStats        GameStats[]
   icons            PlayerIcon[]
   playerOfTheGames GameResult[]
@@ -145,15 +145,15 @@ enum TeamRosterRole {
 }
 
 model TeamRoster {
-  teamId   String
-  playerId String
-  role     TeamRosterRole @default(PLAYER)
+  teamId String
+  userId String
+  role   TeamRosterRole @default(PLAYER)
 
-  team   Team   @relation(fields: [teamId], references: [id])
-  player Player @relation(fields: [playerId], references: [id])
+  team Team @relation(fields: [teamId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
-  @@id([teamId, playerId])
-  @@unique([teamId, playerId])
+  @@id([teamId, userId])
+  @@unique([teamId, userId])
 }
 
 enum GameKind {

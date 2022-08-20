@@ -29,7 +29,7 @@ export class LoginUseCase implements IUseCase<LoginDTO, LoginResult> {
 
   public async execute(dto: LoginDTO): Promise<LoginResult> {
     const username = UserName.create({ value: dto.username });
-    const user = await this.userRepository.getUserByUsername(username);
+    const user = await this.userRepository.findByUsername(username);
     if (!user) {
       throw new Errors.InvalidCredentialsError();
     }

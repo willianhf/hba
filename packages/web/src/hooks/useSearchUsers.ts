@@ -4,7 +4,7 @@ import { useQuery } from 'relay-hooks';
 import { useUsersQuery } from './__generated__/useUsersQuery.graphql';
 
 const SEARCH_USERS_QUERY = graphql`
-  query useUsersQuery($search: String!) {
+  query useSearchUsersQuery($search: String!) {
     searchUsers(search: $search) {
       ... on QuerySearchUsersSuccess {
         data {
@@ -16,7 +16,7 @@ const SEARCH_USERS_QUERY = graphql`
   }
 `;
 
-export function useUsers(search: string) {
+export function useSearchUsers(search: string) {
   const { data, isLoading, retry } = useQuery<useUsersQuery>(SEARCH_USERS_QUERY, { search }, { skip: true });
 
   const users = data?.searchUsers?.data ?? [];

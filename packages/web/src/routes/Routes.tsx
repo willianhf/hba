@@ -1,7 +1,7 @@
 import { Home } from '@/pages';
 import { Players } from '@/pages/Players';
 import { ProfileUsernameApply, ProfileUsernameRoute } from '@/pages/ProfileUsername';
-import { Teams } from '@/pages/Teams';
+import { ApplyTeam, Teams } from '@/pages/Teams';
 import { Authenticated } from '@/ui/components';
 import { Layout } from '@/ui/layouts';
 import { Route, Routes as ReactRouterRoutes } from 'react-router-dom';
@@ -16,6 +16,7 @@ export function Routes() {
         </Route>
         <Route path="teams">
           <Route index element={<Teams />} />
+          <Route path="apply" element={<ApplyTeam />} />
         </Route>
         <Route path="profile/:username">
           <Route index element={<ProfileUsernameRoute />} />

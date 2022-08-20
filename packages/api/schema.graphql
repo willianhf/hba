@@ -1,9 +1,3 @@
-type AlreadyInTeamRosterError implements BaseError {
-  code: String!
-  message: String!
-  name: String!
-}
-
 type ApplicationError implements BaseError {
   code: String!
   message: String!
@@ -12,8 +6,8 @@ type ApplicationError implements BaseError {
 
 input ApplyTeamInput {
   clientMutationId: ID
-  coCaptainPlayerId: String!
-  nbaTeamId: String!
+  coCaptainUserId: ID!
+  nbaTeamId: ID!
 }
 
 type ApplyTeamPayload {
@@ -157,12 +151,6 @@ type MakeSeasonCurrentPayload {
   itWorked: Boolean!
 }
 
-type MissingAcceptedPlayerError implements BaseError {
-  code: String!
-  message: String!
-  name: String!
-}
-
 type Mutation {
   applyTeam(input: ApplyTeamInput!): MutationApplyTeamResult!
   confirmUserVerification(input: ConfirmUserVerificationInput!): MutationConfirmUserVerificationResult!
@@ -244,6 +232,7 @@ type Query {
   positions: [Position!]!
   searchUsers(search: String!): QuerySearchUsersResult!
   seasons(after: String, before: String, first: Int, last: Int): QuerySeasonsConnection!
+  teams(after: String, before: String, first: Int, last: Int, seasonId: ID): QueryTeamsConnection!
   user: QueryUserResult!
 }
 
@@ -275,6 +264,16 @@ type QuerySeasonsConnectionEdge {
   node: Season!
 }
 
+type QueryTeamsConnection {
+  edges: [QueryTeamsConnectionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type QueryTeamsConnectionEdge {
+  cursor: String!
+  node: Team!
+}
+
 union QueryUserResult = AuthenticationError | User
 
 type Season implements Node {
@@ -291,16 +290,17 @@ type Session {
 
 type Team implements Node {
   id: ID!
+  managers: [TeamRoster!]!
   nbaTeam: NBATeam!
-  rosters: [TeamRoster!]!
+  roster: [TeamRoster!]!
   status: ApprovalStatus!
 }
 
 type TeamRoster implements Node {
   id: ID!
-  player: Player!
   role: TeamRosterRole!
   team: Team!
+  user: User!
 }
 
 enum TeamRosterRole {
@@ -310,7 +310,8 @@ enum TeamRosterRole {
 }
 
 type User implements Node {
-  canApplyTeam: UserCanApplyTeamResult!
+  activePlayer(seasonId: ID): Player
+  canApplyTeam: Boolean!
   canRequestPlayer: Boolean!
   createdAt: Date
   id: ID!
@@ -318,12 +319,6 @@ type User implements Node {
   isVerified: Boolean!
   players(after: String, before: String, first: Int, last: Int): UserPlayersConnection!
   username: String!
-}
-
-union UserCanApplyTeamResult = AlreadyInTeamRosterError | MissingAcceptedPlayerError | UserCanApplyTeamSuccess
-
-type UserCanApplyTeamSuccess {
-  data: Boolean!
 }
 
 type UserPlayersConnection {

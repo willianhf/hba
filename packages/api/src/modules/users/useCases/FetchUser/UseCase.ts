@@ -13,7 +13,7 @@ export class FetchUserUseCase implements IUseCase<FetchUserDTO, FetchUserRespons
 
   public async execute(dto: FetchUserDTO): Promise<FetchUserResponse> {
     const username = UserName.create({ value: dto.username });
-    const user = await this.userRepository.getUserByUsername(username);
+    const user = await this.userRepository.findByUsername(username);
 
     return user;
   }

@@ -11,9 +11,9 @@ interface Props<Option> {
   name: string;
   label: string;
   renderItem: (optionProps: OptionProps<Option>) => React.ReactNode;
-  options: Readonly<Option[]>;
+  options: Readonly<Option[]> | Option[];
   getDisplayValue: (option: Option) => string;
-  getValue: (option: Option | null) => any;
+  getKey?: (option: Option) => string;
   search: string;
   onSearchChange: (search: string) => void;
   isLoading?: boolean;
@@ -22,7 +22,7 @@ interface Props<Option> {
 }
 
 export function Combobox<Option>(props: Props<Option>) {
-  const [field, meta, helpers] = useField<Option>({
+  const [field, meta, helpers] = useField({
     name: props.name,
     multiple: props.isMultiple
   });
@@ -40,6 +40,22 @@ export function Combobox<Option>(props: Props<Option>) {
 
   const inputId = inputRef.current?.id;
 
+  function handleDisplayValue(option?: Option): string {
+    if (!option) {
+      return '';
+    }
+
+    return props.getDisplayValue(option);
+  }
+
+  function handleKey(index: number, option?: Option): string {
+    if (option && props.getKey) {
+      return props.getKey(option);
+    }
+
+    return index.toString();
+  }
+
   return (
     <HeadlessCombobox value={field.value} onChange={handleChange}>
       {({ open }) => (
@@ -53,7 +69,7 @@ export function Combobox<Option>(props: Props<Option>) {
                 'shadow-sm border-2 border-gray-300 overflow-hidden relative',
                 'flex items-center',
                 'py-2 pl-3 pr-10',
-                (open && shouldDisplayOptions) ? 'rounded-t-md' : 'rounded-md',
+                open && shouldDisplayOptions ? 'rounded-t-md' : 'rounded-md',
                 hasError && 'border-rose-600 ring-rose-600'
               )}
             >
@@ -66,7 +82,7 @@ export function Combobox<Option>(props: Props<Option>) {
                   'p-0 ml-1 w-full',
                   'text-sm text-gray-900 placeholder:text-gray-500'
                 )}
-                displayValue={props.getDisplayValue}
+                displayValue={handleDisplayValue}
                 onChange={event => props.onSearchChange(event.target.value)}
                 autoComplete="off"
                 ref={inputRef}
@@ -88,8 +104,8 @@ export function Combobox<Option>(props: Props<Option>) {
                 {isEmpty ? (
                   <div className="cursor-default select-none px-2 py-1 text-gray-900">Nenhum resultado encontrado</div>
                 ) : (
-                  props.options.map(option => (
-                    <HeadlessCombobox.Option key={props.getValue(option)} value={option}>
+                  props.options.map((option, index) => (
+                    <HeadlessCombobox.Option key={handleKey(index, option)} value={option}>
                       {optionProps => (
                         <div
                           className={clsx(
@@ -99,7 +115,7 @@ export function Combobox<Option>(props: Props<Option>) {
                             (optionProps.active || optionProps.selected) && 'bg-gray-100/75'
                           )}
                         >
-                          {props.renderItem({ ...optionProps, option, getDisplayValue: props.getDisplayValue })}
+                          {props.renderItem({ ...optionProps, option, getDisplayValue: handleDisplayValue })}
                         </div>
                       )}
                     </HeadlessCombobox.Option>

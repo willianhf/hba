@@ -1,13 +1,12 @@
-import { UniqueIdentifier } from '~/shared/domain';
-import { PersistableEntity } from '~/shared/domain/Entity';
+import { AggregateRoot, UniqueIdentifier } from '~/shared/domain';
 
 interface PlayerIconProps {
   playerId: string;
   iconId: string;
 }
 
-export class PlayerIcon extends PersistableEntity<PlayerIconProps, UniqueIdentifier> {
+export class PlayerIcon extends AggregateRoot<PlayerIconProps, UniqueIdentifier> {
   public constructor(props: PlayerIconProps, id?: UniqueIdentifier) {
-    super(props, id);
+    super(props, id ?? new UniqueIdentifier());
   }
 }

@@ -62,11 +62,11 @@ export function Menu() {
                   <Text>Perfil</Text>
                 </MenuItem>
               </Link>
-              <MenuItem>
-                <button onClick={auth.onLogout} disabled={auth.isLogoutPending}>
+              <button onClick={auth.onLogout} disabled={auth.isLogoutPending} className="w-full">
+                <MenuItem>
                   <Text color="error">Sair</Text>
-                </button>
-              </MenuItem>
+                </MenuItem>
+              </button>
             </HeadlessMenu.Items>
           </Transition>
         </HeadlessMenu>

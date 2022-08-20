@@ -1,5 +1,5 @@
 import { ApprovalStatusRef } from '~/modules/player/infra/graphl/types/Player';
-import { Team } from '~/modules/team/domain';
+import { Team, TeamRosterRole } from '~/modules/team/domain';
 import {
   prismaNBATeamRepository,
   prismaTeamRepository,
@@ -23,7 +23,12 @@ schemaBuilder.node(TeamRef, {
       type: ApprovalStatusRef,
       resolve: team => team.status
     }),
-    rosters: t.field({
+    managers: t.field({
+      type: [TeamRosterRef],
+      resolve: team =>
+        prismaTeamRosterRepository.findByRoles(team.id, [TeamRosterRole.CAPTAIN, TeamRosterRole.CO_CAPTAIN])
+    }),
+    roster: t.field({
       type: [TeamRosterRef],
       resolve: team => prismaTeamRosterRepository.findByTeamId(team.id)
     }),

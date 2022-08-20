@@ -17,6 +17,7 @@ export class TeamMapper extends Mapper<Team> {
 
   public static toPersist(domain: Team): ToPersistTeam {
     return {
+      id: domain.id.toValue(),
       nbaTeamId: domain.nbaTeamId.toValue(),
       seasonId: domain.seasonId.toValue(),
       approvalStatus: domain.status

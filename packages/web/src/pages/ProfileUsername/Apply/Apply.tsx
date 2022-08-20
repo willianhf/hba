@@ -127,7 +127,7 @@ export function Apply() {
               inputPlaceholder="Buscar jogador"
               options={nbaPlayers}
               getDisplayValue={option => (option ? `${option?.firstName} ${option?.lastName}` : '')}
-              getValue={option => option?.id}
+              getKey={option => option.id}
               search={debouncedPlayerSearch}
               onSearchChange={setPlayerSearch}
               isLoading={isNBAPlayersLoading}

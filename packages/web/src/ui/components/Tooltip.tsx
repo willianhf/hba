@@ -14,7 +14,7 @@ export function Tooltip(props: TooltipProps) {
   return (
     <RadixTooltip.Provider>
       <RadixTooltip.Root>
-        <RadixTooltip.Trigger tabIndex={props.tabIndex}>{props.children}</RadixTooltip.Trigger>
+        <RadixTooltip.Trigger tabIndex={props.tabIndex} asChild>{props.children}</RadixTooltip.Trigger>
         <RadixTooltip.Content
           side={props.side}
           sideOffset={props.sideOffSet}

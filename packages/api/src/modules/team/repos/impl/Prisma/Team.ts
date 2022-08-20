@@ -1,16 +1,20 @@
-import { ApprovalStatus } from '@prisma/client';
 import { SeasonRepository } from '~/modules/season/repos';
-import { Team } from '~/modules/team/domain';
+import { Team, ApprovalStatus } from '~/modules/team/domain';
 import { TeamMapper } from '~/modules/team/mapper';
-import { UniqueIdentifier } from '~/shared/domain';
+import { IncIdentifier, UniqueIdentifier } from '~/shared/domain';
 import { prisma } from '~/shared/infra/database';
 import { TeamRepository } from '../..';
 
 export class PrismaTeamRepository implements TeamRepository {
   public constructor(private seasonRepository: SeasonRepository) {}
 
-  public async findAll(): Promise<Team[]> {
-    const prismaTeams = await prisma.team.findMany();
+  public async findByStatus(seasonId: IncIdentifier, status: ApprovalStatus): Promise<Team[]> {
+    const prismaTeams = await prisma.team.findMany({
+      where: {
+        seasonId: seasonId.toValue(),
+        approvalStatus: status
+      }
+    });
 
     return prismaTeams.map(TeamMapper.toDomain);
   }
@@ -26,11 +30,9 @@ export class PrismaTeamRepository implements TeamRepository {
     return TeamMapper.toDomain(prismaTeam);
   }
 
-  public async create(team: Team): Promise<Team> {
+  public async create(team: Team): Promise<void> {
     const data = TeamMapper.toPersist(team);
-    const prismaTeam = await prisma.team.create({ data });
-
-    return TeamMapper.toDomain(prismaTeam);
+    await prisma.team.create({ data });
   }
 
   public async isAvailable(nbaTeamId: UniqueIdentifier): Promise<boolean> {

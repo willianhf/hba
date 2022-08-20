@@ -3,6 +3,7 @@ import { AggregateRoot, UniqueIdentifier } from '~/shared/domain';
 import { OptionalExceptFor } from '~/types/common';
 import { HabboAPIFacade, HabboProfile } from '../facades/HabboAPI';
 import { UserCreatedEvent } from './events';
+import { UserId } from './UserId';
 import { UserName } from './UserName';
 import { UserPassword } from './UserPassword';
 
@@ -51,6 +52,10 @@ export class User extends AggregateRoot<UserProps> {
     );
 
     return user;
+  }
+
+  override get id(): UserId {
+    return new UserId(this._id.toValue()); 
   }
 
   get username(): UserName {

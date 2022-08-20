@@ -2,6 +2,7 @@ import { playerWithIcons } from '~/modules/player/database';
 import { ApprovalStatus } from '~/modules/player/domain/ApprovalStatus';
 import { Player } from '~/modules/player/domain/Player';
 import { PlayerMapper } from '~/modules/player/mapper';
+import { UserId } from '~/modules/users/domain';
 import { IncIdentifier, UniqueIdentifier } from '~/shared/domain';
 import { prisma } from '~/shared/infra/database';
 import { PlayerRepository } from '../../Player';
@@ -27,7 +28,7 @@ export class PrismaPlayerRepository implements PlayerRepository {
     return PlayerMapper.toDomain(prismaPlayer);
   }
 
-  public async canRequestPlayer(userId: UniqueIdentifier, seasonId: IncIdentifier): Promise<boolean> {
+  public async canRequestPlayer(userId: UserId, seasonId: IncIdentifier): Promise<boolean> {
     const prismaPlayers = await prisma.player.findMany({
       where: {
         userId: userId.toValue(),
@@ -54,15 +55,13 @@ export class PrismaPlayerRepository implements PlayerRepository {
     return !prismaPlayer;
   }
 
-  public async findByUserAndSeason(userId: UniqueIdentifier, seasonId?: IncIdentifier): Promise<Player[]> {
+  public async findByUserAndSeason(userId: UniqueIdentifier, seasonId: IncIdentifier): Promise<Player[]> {
     const prismaPlayers = await prisma.player.findMany({
       where: {
         userId: userId.toValue(),
-        seasonId: seasonId?.toValue()
+        seasonId: seasonId.toValue()
       },
-      include: {
-        icons: true
-      }
+      ...playerWithIcons
     });
 
     return prismaPlayers.map(PlayerMapper.toDomain);
@@ -74,11 +73,26 @@ export class PrismaPlayerRepository implements PlayerRepository {
         seasonId: seasonId.toValue(),
         status: ApprovalStatus.ACCEPTED
       },
-      include: {
-        icons: true
-      }
+      ...playerWithIcons
     });
 
     return prismaPlayers.map(PlayerMapper.toDomain);
+  }
+
+  public async findUserActivePlayer(userId: UserId, seasonId: IncIdentifier): Promise<Player | null> {
+    const prismaPlayer = await prisma.player.findFirst({
+      where: {
+        userId: userId.toValue(),
+        seasonId: seasonId.toValue(),
+        status: ApprovalStatus.ACCEPTED
+      },
+      ...playerWithIcons
+    });
+    
+    if (!prismaPlayer) {
+      return null;
+    }
+
+    return PlayerMapper.toDomain(prismaPlayer);
   }
 }

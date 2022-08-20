@@ -1,9 +1,9 @@
-import { UniqueIdentifier } from '~/shared/domain';
-import { Team } from '../domain';
+import { IncIdentifier, UniqueIdentifier } from '~/shared/domain';
+import { ApprovalStatus, Team } from '../domain';
 
 export interface TeamRepository {
-  findAll(): Promise<Team[]>;
+  findByStatus(seasonId: IncIdentifier, status: ApprovalStatus): Promise<Team[]>;
   findById(id: UniqueIdentifier): Promise<Team>;
-  create(team: Team): Promise<Team>;
+  create(team: Team): Promise<void>;
   isAvailable(nbaTeamId: UniqueIdentifier): Promise<boolean>;
 }
