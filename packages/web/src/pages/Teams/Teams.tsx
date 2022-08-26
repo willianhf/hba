@@ -8,21 +8,17 @@ import { TeamRosterRole, TeamsQuery } from './__generated__/TeamsQuery.graphql';
 const TEAMS_PAGE_QUERY = graphql`
   query TeamsQuery {
     teams {
-      edges {
-        node {
-          id
-          nbaTeam {
-            name
-            conference
-            imageUrl
-          }
-          managers {
-            id
-            role
-            user {
-              username
-            }
-          }
+      id
+      nbaTeam {
+        name
+        conference
+        imageUrl
+      }
+      managers {
+        id
+        role
+        user {
+          username
         }
       }
     }
@@ -77,7 +73,7 @@ function RoleBadge(props: RoleBadgeProps) {
 const teamsQueryRef = loadQuery<TeamsQuery>(relayEnvironment, TEAMS_PAGE_QUERY, {});
 
 interface TeamProps {
-  team: TeamsQuery['response']['teams']['edges'][number]['node'];
+  team: TeamsQuery['response']['teams'][number];
 }
 
 function Team({ team }: TeamProps) {
@@ -106,7 +102,7 @@ function Team({ team }: TeamProps) {
 
 interface ConferenceProps {
   title: 'Leste' | 'Oeste';
-  items: TeamsQuery['response']['teams']['edges'];
+  items: TeamsQuery['response']['teams'];
 }
 
 export function Conference(props: ConferenceProps) {
@@ -117,7 +113,7 @@ export function Conference(props: ConferenceProps) {
       </Text>
       <List
         options={props.items}
-        renderItem={edge => <Team key={edge.node.id} team={edge.node} />}
+        renderItem={team => <Team key={team.id} team={team} />}
         Empty={<Text>Nenhuma equipe inscrita</Text>}
       />
     </div>
@@ -127,8 +123,8 @@ export function Conference(props: ConferenceProps) {
 export function Teams() {
   const { teams, user } = usePreloadedQuery(TEAMS_PAGE_QUERY, teamsQueryRef);
 
-  const east = teams.edges.filter(edge => edge.node.nbaTeam.conference === 'EAST');
-  const west = teams.edges.filter(edge => edge.node.nbaTeam.conference === 'WEST');
+  const east = teams.filter(team => team.nbaTeam.conference === 'EAST');
+  const west = teams.filter(team => team.nbaTeam.conference === 'WEST');
 
   return (
     <div className="space-y-2">
@@ -136,7 +132,7 @@ export function Teams() {
         <Text variant="title" as="h1">
           Equipes
         </Text>
-        {user.canApplyTeam && (
+        {user?.canApplyTeam && (
           <Button as={Link} to="apply" variant="solid" colorScheme="red">
             Inscrever
           </Button>
