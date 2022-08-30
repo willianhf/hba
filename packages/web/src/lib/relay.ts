@@ -11,7 +11,7 @@ const fetchRelay: FetchFunction = async (requestParams, variables) => {
     headers.authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch('http://localhost:4000/graphql', {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/graphql`, {
     method: 'POST',
     headers,
     body: JSON.stringify({
