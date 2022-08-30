@@ -1,17 +1,22 @@
-import React, { createContext } from 'react';
-import { graphql, useMutation } from 'react-relay';
+import { createContext } from 'react';
+import { useMutation, usePreloadedQuery } from 'react-relay';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useStorage } from 'react-tidy';
 import { match } from 'ts-pattern';
-import { AuthContext_LogoutMutation } from './__generated__/AuthContext_LogoutMutation.graphql';
+import { LOGOUT_MUTATION } from './LogoutMutation';
+import { refetchUserQuery, userQueryRef, USER_QUERY } from './UserQuery';
+import { LogoutMutation } from './__generated__/LogoutMutation.graphql';
+import { UserQuery$data } from './__generated__/UserQuery.graphql';
+
+export type User = UserQuery$data['user'];
 
 export interface AuthContextType {
-  user: any;
+  user: User;
   verificationCode: string | null;
   isLoggedIn: boolean;
   onLogin(user: any, token: string, sessionId: string, verificationCode?: string): void;
   onLogout(): void;
-  onVerified(user: any): void;
+  onVerified(): void;
   isLogoutPending: boolean;
 }
 
@@ -21,22 +26,9 @@ interface Props {
   children: React.ReactNode;
 }
 
-const LOGOUT_MUTATION = graphql`
-  mutation AuthContext_LogoutMutation($input: LogoutInput!) {
-    logout(input: $input) {
-      __typename
-      ... on ApplicationError {
-        message
-      }
-      ... on LogoutPayload {
-        itWorked
-      }
-    }
-  }
-`;
-
 export function AuthProvider(props: Props) {
-  const [user, setUser] = useStorage<any>('user');
+  const { user } = usePreloadedQuery(USER_QUERY, userQueryRef);
+
   const [token, setToken] = useStorage<string>('token');
   const [sessionId, setSessionId] = useStorage<string>('sessionId');
   const [verificationCode, setVerificationCode] = useStorage<string>('verificationCode');
@@ -44,11 +36,11 @@ export function AuthProvider(props: Props) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [commit, isPending] = useMutation<AuthContext_LogoutMutation>(LOGOUT_MUTATION);
+  const [commitLogout, isLogoutPending] = useMutation<LogoutMutation>(LOGOUT_MUTATION);
 
-  const isLoggedIn = !!user;
+  const isLoggedIn = !!user?.id;
 
-  function onLogin(user: any, token: string, sessionId: string, verificationCode?: string) {
+  function onLogin(_user: unknown, token: string, sessionId: string, verificationCode?: string) {
     if (verificationCode) {
       setVerificationCode(verificationCode);
       navigate('?form=verification', { replace: true });
@@ -56,13 +48,14 @@ export function AuthProvider(props: Props) {
       navigate(location.pathname, { replace: true });
     }
 
-    setUser(user);
     setToken(token);
     setSessionId(sessionId);
+
+    refetchUserQuery();
   }
 
   function onLogout() {
-    commit({
+    commitLogout({
       variables: {
         input: {
           sessionId: sessionId!
@@ -73,21 +66,23 @@ export function AuthProvider(props: Props) {
           .with('LogoutPayload', () => {
             navigate('/');
 
-            setUser(null);
             setToken(null);
             setVerificationCode(null);
             setSessionId(null);
+
+            refetchUserQuery();
           })
           .run();
       }
     });
   }
 
-  function onVerified(user: any) {
+  function onVerified() {
     navigate(location.pathname, { replace: true });
 
-    setUser(user);
     setVerificationCode(null);
+
+    refetchUserQuery();
   }
 
   const value = {
@@ -98,7 +93,7 @@ export function AuthProvider(props: Props) {
     onLogin,
     onLogout,
     onVerified,
-    isLogoutPending: isPending
+    isLogoutPending
   };
 
   return <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>;

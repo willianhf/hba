@@ -1,10 +1,10 @@
 import { Location, useLocation as useRouterLocation } from 'react-router-dom';
 
-type State = { from?: Location } | null;
+type State<T> = ({ from: Location } & T) | null;
 
-export function useLocation() {
+export function useLocation<T = any>() {
   const location = useRouterLocation();
-  const state = location.state as State;
+  const state = location.state as State<T>;
 
   return { ...location, state };
 }

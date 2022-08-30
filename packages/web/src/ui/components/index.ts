@@ -16,3 +16,5 @@ export { Text } from './Text';
 export { Select } from './Select';
 export { BackButton } from './BackButton';
 export { List } from './List';
+export { IsAdmin } from './IsAdmin';
+export { DateInput } from './DateInput';

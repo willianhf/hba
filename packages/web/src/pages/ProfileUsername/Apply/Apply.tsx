@@ -89,7 +89,7 @@ export function Apply() {
     values: DeepNonNullable<PlayerRegisterFormValues>,
     helpers: FormikHelpers<PlayerRegisterFormValues>
   ) {
-    const playersConnectionId = ConnectionHandler.getConnectionID(auth.user.id, 'Profile_players');
+    const playersConnectionId = ConnectionHandler.getConnectionID(auth.user!.id, 'Profile_players');
 
     createPlayer({
       variables: {
@@ -152,6 +152,7 @@ export function Apply() {
               options={positions}
               getDisplayValue={option => option?.name ?? ''}
               getValue={option => option?.id}
+              renderItem={optionProps => <span>{optionProps.option.name}</span>}
             />
             <Select
               label="Ícones"
@@ -161,6 +162,7 @@ export function Apply() {
               getDisplayValue={option => option?.name ?? ''}
               getValue={option => option?.id}
               isMultiple
+              renderItem={optionProps => <span>{optionProps.option.name}</span>}
             />
           </div>
           <Button type="submit" colorScheme="blue" fillParent isLoading={isInFlight}>

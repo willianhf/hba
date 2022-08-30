@@ -1,9 +1,8 @@
 import { DomainEvents, Subscriber } from '~/shared/domain/events';
 import { UserCreatedEvent } from '../domain/events';
-import { CreateUserVerificationUseCase } from '../useCases/CreateUserVerification/UseCase';
 
 export class UserCreatedSubscriber implements Subscriber<UserCreatedEvent> {
-  constructor(private createUserVerificationUseCase: CreateUserVerificationUseCase) {
+  constructor() {
     this.setupSubscriptions();
   }
 
@@ -11,9 +10,5 @@ export class UserCreatedSubscriber implements Subscriber<UserCreatedEvent> {
     DomainEvents.register(this.onUserCreatedEvent.bind(this), UserCreatedEvent.name);
   }
 
-  private async onUserCreatedEvent(event: UserCreatedEvent): Promise<void> {
-    const { user } = event;
-
-    await this.createUserVerificationUseCase.execute({ user });
-  }
+  private async onUserCreatedEvent(event: UserCreatedEvent): Promise<void> {}
 }

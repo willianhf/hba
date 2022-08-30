@@ -56,7 +56,7 @@ export class AuthenticationError extends ApplicationError {
 }
 
 export class ForbiddenError extends ApplicationError {
-  public constructor() {
-    super('FORBIDDEN', 'Forbidden error', 'You must be an admin to perform this action.');
+  public constructor(message?: string) {
+    super('FORBIDDEN', 'Forbidden error', message ?? 'You must be an admin to perform this action.');
   }
 }

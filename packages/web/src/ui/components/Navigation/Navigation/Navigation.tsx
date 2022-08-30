@@ -31,7 +31,7 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   },
   {
     title: 'Partidas',
-    to: '/games',
+    to: '/matches',
     icon: GlobeAltIcon
   },
   {

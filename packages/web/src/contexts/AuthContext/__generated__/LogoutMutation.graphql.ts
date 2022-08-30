@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1d61192d3fcceae5980355cb99871534>>
+ * @generated SignedSource<<994a384f195b8d315a1bfe6cf644da36>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,10 +13,10 @@ export type LogoutInput = {
   clientMutationId?: string | null;
   sessionId: string;
 };
-export type AuthContext_LogoutMutation$variables = {
+export type LogoutMutation$variables = {
   input: LogoutInput;
 };
-export type AuthContext_LogoutMutation$data = {
+export type LogoutMutation$data = {
   readonly logout: {
     readonly __typename: "ApplicationError";
     readonly message: string;
@@ -29,9 +29,9 @@ export type AuthContext_LogoutMutation$data = {
     readonly __typename: "%other";
   };
 };
-export type AuthContext_LogoutMutation = {
-  variables: AuthContext_LogoutMutation$variables;
-  response: AuthContext_LogoutMutation$data;
+export type LogoutMutation = {
+  variables: LogoutMutation$variables;
+  response: LogoutMutation$data;
 };
 
 const node: ConcreteRequest = (function(){
@@ -101,7 +101,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AuthContext_LogoutMutation",
+    "name": "LogoutMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -110,20 +110,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AuthContext_LogoutMutation",
+    "name": "LogoutMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "9dec580ce019e5176199cf6d7e23471b",
+    "cacheID": "d9f7d7f9c2111685b73691c12c74b29d",
     "id": null,
     "metadata": {},
-    "name": "AuthContext_LogoutMutation",
+    "name": "LogoutMutation",
     "operationKind": "mutation",
-    "text": "mutation AuthContext_LogoutMutation(\n  $input: LogoutInput!\n) {\n  logout(input: $input) {\n    __typename\n    ... on ApplicationError {\n      message\n    }\n    ... on LogoutPayload {\n      itWorked\n    }\n  }\n}\n"
+    "text": "mutation LogoutMutation(\n  $input: LogoutInput!\n) {\n  logout(input: $input) {\n    __typename\n    ... on ApplicationError {\n      message\n    }\n    ... on LogoutPayload {\n      itWorked\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1ae940e785ea63014b94bf4e897ab124";
+(node as any).hash = "4eab9fdcf818a4a20988d66c4e1e9f18";
 
 export default node;

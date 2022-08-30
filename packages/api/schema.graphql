@@ -48,6 +48,20 @@ type ConfirmUserVerificationPayload {
   user: User!
 }
 
+input CreateMatchInput {
+  awayTeamId: ID!
+  clientMutationId: ID
+  homeTeamId: ID!
+  matchKind: MatchKind!
+  matchSeriesId: ID
+  scheduledTo: Date
+}
+
+type CreateMatchPayload {
+  clientMutationId: ID
+  match: Match!
+}
+
 input CreatePlayerInput {
   clientMutationId: ID
   iconsIds: [String!]!
@@ -151,9 +165,32 @@ type MakeSeasonCurrentPayload {
   itWorked: Boolean!
 }
 
+type Match implements Node {
+  awayTeam: Team!
+  homeTeam: Team!
+  id: ID!
+  kind: MatchKind!
+  scheduledTo: Date
+  season: Season!
+  series: MatchSeries
+}
+
+enum MatchKind {
+  ALLSTAR
+  FINAL
+  PLAYOFF
+  REGULAR
+}
+
+type MatchSeries implements Node {
+  id: ID!
+  name: String!
+}
+
 type Mutation {
   applyTeam(input: ApplyTeamInput!): MutationApplyTeamResult!
   confirmUserVerification(input: ConfirmUserVerificationInput!): MutationConfirmUserVerificationResult!
+  createMatch(input: CreateMatchInput!): MutationCreateMatchResult!
   createPlayer(input: CreatePlayerInput!): MutationCreatePlayerResult!
   createSeason(input: CreateSeasonInput!): CreateSeasonPayload!
   createUser(input: CreateUserInput!): MutationCreateUserResult!
@@ -166,6 +203,8 @@ type Mutation {
 union MutationApplyTeamResult = ApplicationError | ApplyTeamPayload | AuthenticationError | ValidationError | ValidationInputError
 
 union MutationConfirmUserVerificationResult = ApplicationError | AuthenticationError | ConfirmUserVerificationPayload
+
+union MutationCreateMatchResult = CreateMatchPayload | ForbiddenError | ValidationInputError
 
 union MutationCreatePlayerResult = ApplicationError | AuthenticationError | CreatePlayerPayload | ValidationInputError
 
@@ -225,6 +264,8 @@ type Query {
   findUserPlayersBySeason(after: String, before: String, first: Int, last: Int): QueryFindUserPlayersBySeasonConnection!
   habboProfileExists(username: String!): Boolean!
   icons: [Icon!]!
+  matchKinds: [MatchKind!]!
+  matches(seasonId: ID): [Match!]!
   nbaPlayers(search: String!): [NBAPlayer!]!
   nbaTeams: [NBATeam!]!
   node(id: ID!): Node
@@ -232,8 +273,8 @@ type Query {
   positions: [Position!]!
   searchUsers(search: String!): QuerySearchUsersResult!
   seasons(after: String, before: String, first: Int, last: Int): QuerySeasonsConnection!
-  teams(after: String, before: String, first: Int, last: Int, seasonId: ID): QueryTeamsConnection!
-  user: QueryUserResult!
+  teams(seasonId: ID): [Team!]!
+  user: User
 }
 
 type QueryFindUserPlayersBySeasonConnection {
@@ -263,18 +304,6 @@ type QuerySeasonsConnectionEdge {
   cursor: String!
   node: Season!
 }
-
-type QueryTeamsConnection {
-  edges: [QueryTeamsConnectionEdge!]!
-  pageInfo: PageInfo!
-}
-
-type QueryTeamsConnectionEdge {
-  cursor: String!
-  node: Team!
-}
-
-union QueryUserResult = AuthenticationError | User
 
 type Season implements Node {
   id: ID!

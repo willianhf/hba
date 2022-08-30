@@ -12,6 +12,7 @@ const styling = {
     regular: 'text-base',
     small: 'text-sm',
     md: 'text-lg',
+    lg: 'text-xl',
     title: 'text-4xl font-bold',
     subtitle: 'text-2xl font-semibold',
     label: 'text-sm font-medium text-gray-700',

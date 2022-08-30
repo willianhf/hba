@@ -4,17 +4,15 @@ import { schemaBuilder } from '~/shared/infra/graphql/builder';
 import { UserRef } from '../types/User';
 
 schemaBuilder.queryField('user', t =>
-  t.authField({
+  t.field({
     type: UserRef,
-    authScopes: {
-      isLoggedIn: true
-    },
-    errors: {
-      types: [AuthenticationError]
-    },
-    resolve: async (_root, _args, context) => {
-      const user = await prismaUserRepository.findById(context.user.id);
-      return user!;
+    nullable: true,
+    resolve: (_root, _args, context) => {
+      if (!context.user) {
+        return null;
+      }
+
+      return prismaUserRepository.findById(context.user.id);
     }
   })
 );

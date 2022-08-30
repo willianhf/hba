@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a51225c222e0d2361d08c31b92f8a73a>>
+ * @generated SignedSource<<7f563fccfd47e7806c3efb370f839522>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,7 @@ export type PlayersQuery$variables = {};
 export type PlayersQuery$data = {
   readonly user: {
     readonly " $fragmentSpreads": FragmentRefs<"ApplyPlayerBanner_user">;
-  };
+  } | null;
 };
 export type PlayersQuery = {
   variables: PlayersQuery$variables;
@@ -31,22 +31,15 @@ const node: ConcreteRequest = {
       {
         "alias": null,
         "args": null,
-        "concreteType": null,
+        "concreteType": "User",
         "kind": "LinkedField",
         "name": "user",
         "plural": false,
         "selections": [
           {
-            "kind": "InlineFragment",
-            "selections": [
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "ApplyPlayerBanner_user"
-              }
-            ],
-            "type": "User",
-            "abstractKey": null
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "ApplyPlayerBanner_user"
           }
         ],
         "storageKey": null
@@ -64,7 +57,7 @@ const node: ConcreteRequest = {
       {
         "alias": null,
         "args": null,
-        "concreteType": null,
+        "concreteType": "User",
         "kind": "LinkedField",
         "name": "user",
         "plural": false,
@@ -73,36 +66,15 @@ const node: ConcreteRequest = {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "__typename",
+            "name": "canRequestPlayer",
             "storageKey": null
           },
           {
-            "kind": "InlineFragment",
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "canRequestPlayer",
-                "storageKey": null
-              }
-            ],
-            "type": "User",
-            "abstractKey": null
-          },
-          {
-            "kind": "InlineFragment",
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              }
-            ],
-            "type": "Node",
-            "abstractKey": "__isNode"
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -110,12 +82,12 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "0c6baa0cfd17d417bd1940269b3664b9",
+    "cacheID": "c7b6e6271b0a7e18e9108d0d55fa4c1b",
     "id": null,
     "metadata": {},
     "name": "PlayersQuery",
     "operationKind": "query",
-    "text": "query PlayersQuery {\n  user {\n    __typename\n    ... on User {\n      ...ApplyPlayerBanner_user\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n}\n\nfragment ApplyPlayerBanner_user on User {\n  canRequestPlayer\n}\n"
+    "text": "query PlayersQuery {\n  user {\n    ...ApplyPlayerBanner_user\n    id\n  }\n}\n\nfragment ApplyPlayerBanner_user on User {\n  canRequestPlayer\n}\n"
   }
 };
 

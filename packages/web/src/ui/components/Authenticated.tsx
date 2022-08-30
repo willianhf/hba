@@ -1,10 +1,13 @@
 import { AuthContextType } from '@/contexts/AuthContext';
+import { User } from '@/contexts/AuthContext/AuthContext';
 import { useAuth } from '@/hooks';
 import { Navigate } from './Navigate';
 
+type Auth = AuthContextType & { user: NonNullable<User> };
+
 interface Props {
   redirect?: boolean;
-  children: React.ReactNode | ((auth: AuthContextType) => React.ReactNode);
+  children: React.ReactNode | ((auth: Auth) => React.ReactNode);
 }
 
 export function Authenticated(props: Props) {
@@ -18,7 +21,7 @@ export function Authenticated(props: Props) {
     return null;
   }
 
-  const children = typeof props.children === 'function' ? props.children(auth) : props.children;
+  const children = typeof props.children === 'function' ? props.children(auth as Auth) : props.children;
 
   return <>{children}</>;
 }

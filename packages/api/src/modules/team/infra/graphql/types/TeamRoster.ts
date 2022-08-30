@@ -17,7 +17,7 @@ schemaBuilder.node(TeamRosterRef, {
   fields: t => ({
     team: t.field({
       type: TeamRef,
-      resolve: teamRoster => prismaTeamRepository.findById(teamRoster.teamId)
+      resolve: async teamRoster => (await prismaTeamRepository.findById(teamRoster.teamId))!
     }),
     user: t.field({
       type: UserRef,

@@ -1,6 +1,8 @@
 import { ApprovalStatus } from '@prisma/client';
 import { AggregateRoot, IncIdentifier, UniqueIdentifier } from '~/shared/domain';
 
+export class TeamId extends UniqueIdentifier {}
+
 interface TeamProps {
   nbaTeamId: UniqueIdentifier;
   seasonId: IncIdentifier;
@@ -8,8 +10,8 @@ interface TeamProps {
 }
 
 export class Team extends AggregateRoot<TeamProps> {
-  public constructor(props: TeamProps, id?: UniqueIdentifier) {
-    super(props, id ?? new UniqueIdentifier());
+  public constructor(props: TeamProps, id?: TeamId) {
+    super(props, id ?? new TeamId());
   }
 
   public get nbaTeamId(): UniqueIdentifier {

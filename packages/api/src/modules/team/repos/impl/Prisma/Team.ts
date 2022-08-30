@@ -8,6 +8,12 @@ import { TeamRepository } from '../..';
 export class PrismaTeamRepository implements TeamRepository {
   public constructor(private seasonRepository: SeasonRepository) {}
 
+  public async findAll(): Promise<Team[]> {
+    const prismaTeams = await prisma.team.findMany({});
+
+    return prismaTeams.map(TeamMapper.toDomain);
+  }
+
   public async findByStatus(seasonId: IncIdentifier, status: ApprovalStatus): Promise<Team[]> {
     const prismaTeams = await prisma.team.findMany({
       where: {
@@ -19,13 +25,16 @@ export class PrismaTeamRepository implements TeamRepository {
     return prismaTeams.map(TeamMapper.toDomain);
   }
 
-  public async findById(id: UniqueIdentifier): Promise<Team> {
+  public async findById(id: UniqueIdentifier): Promise<Team | null> {
     const prismaTeam = await prisma.team.findUnique({
       where: {
         id: id.toValue()
-      },
-      rejectOnNotFound: true
+      }
     });
+
+    if (!prismaTeam) {
+      return null;
+    }
 
     return TeamMapper.toDomain(prismaTeam);
   }

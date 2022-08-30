@@ -7,8 +7,9 @@ import { VerificationRepository } from '../..';
 export class PrismaVerificationRepository implements VerificationRepository {
   public async create(verification: Verification): Promise<void> {
     const toPersist = VerificationMapper.toPersistence(verification);
+    console.log({ verification: toPersist });
 
-    await prisma.verification.create({ data: toPersist, include: { user: true } });
+    await prisma.verification.create({ data: toPersist });
   }
 
   public async findByUser(user: User): Promise<Verification | null> {

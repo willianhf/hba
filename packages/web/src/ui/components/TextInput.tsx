@@ -4,9 +4,9 @@ import { ExclamationCircleIcon, EyeIcon, EyeOffIcon, QuestionMarkCircleIcon } fr
 import clsx from 'clsx';
 import { useField, useFormikContext } from 'formik';
 import React, { useMemo, useState } from 'react';
-import { Button } from '../Button';
-import { Spinner } from '../Spinner';
-import { Tooltip } from '../Tooltip';
+import { Button } from './Button';
+import { Spinner } from './Spinner';
+import { Tooltip } from './Tooltip';
 
 interface Props {
   label: string;

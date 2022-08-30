@@ -5,7 +5,7 @@ import { useField } from 'formik';
 import { useRef } from 'react';
 import { Spinner } from '../Spinner';
 import { Text } from '../Text';
-import { Props as OptionProps } from './Option';
+import { OptionProps, ComboboxOption } from './Option';
 
 interface Props<Option> {
   name: string;
@@ -107,16 +107,9 @@ export function Combobox<Option>(props: Props<Option>) {
                   props.options.map((option, index) => (
                     <HeadlessCombobox.Option key={handleKey(index, option)} value={option}>
                       {optionProps => (
-                        <div
-                          className={clsx(
-                            'outline-none select-none cursor-pointer',
-                            'px-3 py-1',
-                            'rounded-md',
-                            (optionProps.active || optionProps.selected) && 'bg-gray-100/75'
-                          )}
-                        >
+                        <ComboboxOption active={optionProps.active} selected={optionProps.selected}>
                           {props.renderItem({ ...optionProps, option, getDisplayValue: handleDisplayValue })}
-                        </div>
+                        </ComboboxOption>
                       )}
                     </HeadlessCombobox.Option>
                   ))

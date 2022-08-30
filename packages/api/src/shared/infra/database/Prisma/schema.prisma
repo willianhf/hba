@@ -46,7 +46,7 @@ model Season {
   isCurrent Boolean @default(false)
 
   players Player[]
-  games   Game[]
+  matches Match[]
   rosters Team[]
 }
 
@@ -79,13 +79,13 @@ model Player {
   positionId  String
   status      ApprovalStatus @default(IDLE)
 
-  user             User         @relation(fields: [userId], references: [id])
-  season           Season       @relation(fields: [seasonId], references: [id])
-  nbaPlayer        NBAPlayer    @relation(fields: [nbaPlayerId], references: [id])
-  position         Position     @relation(fields: [positionId], references: [id])
-  gameStats        GameStats[]
-  icons            PlayerIcon[]
-  playerOfTheGames GameResult[]
+  user               User          @relation(fields: [userId], references: [id])
+  season             Season        @relation(fields: [seasonId], references: [id])
+  nbaPlayer          NBAPlayer     @relation(fields: [nbaPlayerId], references: [id])
+  position           Position      @relation(fields: [positionId], references: [id])
+  matchStats         MatchStats[]
+  icons              PlayerIcon[]
+  playerOfTheMatches MatchResult[]
 
   @@unique([userId, seasonId, nbaPlayerId])
 }
@@ -129,11 +129,11 @@ model Team {
   seasonId       Int
   approvalStatus ApprovalStatus @default(IDLE)
 
-  nbaTeam   NBATeam      @relation(fields: [nbaTeamId], references: [id])
-  season    Season       @relation(fields: [seasonId], references: [id])
-  roster    TeamRoster[]
-  homeGames Game[]       @relation(name: "homeGames")
-  awayGames Game[]       @relation(name: "awayGames")
+  nbaTeam     NBATeam      @relation(fields: [nbaTeamId], references: [id])
+  season      Season       @relation(fields: [seasonId], references: [id])
+  roster      TeamRoster[]
+  homeMatches Match[]      @relation(name: "homeMatches")
+  awayMatches Match[]      @relation(name: "awayMatches")
 
   @@unique([nbaTeamId, seasonId])
 }
@@ -156,44 +156,44 @@ model TeamRoster {
   @@unique([teamId, userId])
 }
 
-enum GameKind {
+enum MatchKind {
   REGULAR
   PLAYOFF
   FINAL
   ALLSTAR
 }
 
-model Game {
-  id          String    @id @unique @default(uuid())
-  seasonId    Int
-  homeTeamId  String
-  awayTeamId  String
-  scheduledTo DateTime?
-  gameKind    GameKind
-  gameSerieId String?
+model Match {
+  id           String    @id @unique @default(uuid())
+  seasonId     Int
+  homeTeamId   String
+  awayTeamId   String
+  scheduledTo  DateTime?
+  matchKind    MatchKind
+  matchSeriesId String?
 
-  season   Season      @relation(fields: [seasonId], references: [id])
-  homeTeam Team        @relation(fields: [homeTeamId], references: [id], name: "homeGames")
-  awayTeam Team        @relation(fields: [awayTeamId], references: [id], name: "awayGames")
-  stats    GameStats[]
-  result   GameResult?
-  serie    GameSerie?  @relation(fields: [gameSerieId], references: [id])
+  season   Season       @relation(fields: [seasonId], references: [id])
+  homeTeam Team         @relation(fields: [homeTeamId], references: [id], name: "homeMatches")
+  awayTeam Team         @relation(fields: [awayTeamId], references: [id], name: "awayMatches")
+  stats    MatchStats[]
+  result   MatchResult?
+  series   MatchSeries? @relation(fields: [matchSeriesId], references: [id])
 }
 
-model GameResult {
-  gameId            String   @id @unique
-  homeScore         Int
-  awayScore         Int
-  isWalkover        Boolean  @default(false)
-  releasedAt        DateTime
-  playerOfTheGameId String
+model MatchResult {
+  matchId            String   @id @unique
+  homeScore          Int
+  awayScore          Int
+  isWalkover         Boolean  @default(false)
+  releasedAt         DateTime
+  playerOfTheMatchId String
 
-  game            Game   @relation(fields: [gameId], references: [id])
-  playerOfTheGame Player @relation(fields: [playerOfTheGameId], references: [id])
+  match            Match  @relation(fields: [matchId], references: [id])
+  playerOfTheMatch Player @relation(fields: [playerOfTheMatchId], references: [id])
 }
 
-model GameStats {
-  gameId    String
+model MatchStats {
+  matchId   String
   playerId  String
   points    Int    @default(0) @db.SmallInt
   assists   Int    @default(0) @db.SmallInt
@@ -203,16 +203,16 @@ model GameStats {
   turnovers Int    @default(0) @db.SmallInt
   fouls     Int    @default(0) @db.SmallInt
 
-  game   Game   @relation(fields: [gameId], references: [id])
+  match  Match  @relation(fields: [matchId], references: [id])
   player Player @relation(fields: [playerId], references: [id])
 
-  @@id([gameId, playerId])
-  @@unique([gameId, playerId])
+  @@id([matchId, playerId])
+  @@unique([matchId, playerId])
 }
 
-model GameSerie {
-  id   String @id
+model MatchSeries {
+  id   String @id @unique @default(uuid())
   name String
 
-  games Game[]
+  matches Match[]
 }

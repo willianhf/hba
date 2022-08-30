@@ -30,6 +30,7 @@ export class UserMapper extends Mapper<User> {
     const hashedPassword = await domain.password.getHashedValue();
 
     return {
+      id: domain.id.toValue(),
       username: domain.username.value,
       password: hashedPassword,
       isVerified: domain.isVerified,

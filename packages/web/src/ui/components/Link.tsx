@@ -1,30 +1,25 @@
 import clsx from 'clsx';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink, LinkProps as RouterLinkProps, useLocation } from 'react-router-dom';
 
-interface LinkProps {
-  to: string;
-  children: React.ReactNode;
-  state?: any;
-  className?: string;
+interface LinkProps extends RouterLinkProps {
   disabled?: boolean;
 }
 
-export function Link(props: LinkProps) {
+export function Link({ state: initialState, className, disabled, to, ...props }: LinkProps) {
   const location = useLocation();
-  const state = props.state || {};
+  const state = initialState ?? {};
 
-  const classes = clsx([props.className, props.disabled && 'pointer-events-none opacity-80 cursor-not-allowed']);
+  const classes = clsx([className, disabled && 'pointer-events-none opacity-80 cursor-not-allowed']);
 
   return (
     <RouterLink
-      to={props.to}
+      to={to}
       className={classes}
       state={{
         from: location,
         ...state
       }}
-    >
-      {props.children}
-    </RouterLink>
+      {...props}
+    />
   );
 }

@@ -1,7 +1,6 @@
 import { IUseCase, ValidationInputError } from '~/shared/core';
 import { JWTToken, Session, User, UserName, UserPassword, Verification } from '../../domain';
 import { UserRepository } from '../../repos';
-import { createUserVerificationUseCase } from '../CreateUserVerification';
 import { loginUseCase } from '../Login';
 
 interface CreateUserDTO {
@@ -38,7 +37,7 @@ export class CreateUserUseCase implements IUseCase<CreateUserDTO, CreateUserResu
       userAgent: dto.userAgent
     });
 
-    const verification = await createUserVerificationUseCase.execute({ user });
+    const verification = loginResult.verification!;
 
     return {
       ...loginResult,

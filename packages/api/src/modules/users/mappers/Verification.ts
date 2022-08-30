@@ -7,6 +7,7 @@ import { UserMapper } from './User';
 export class VerificationMapper implements Mapper<Verification> {
   public static toPersistence(domain: Verification): ToPersistVerification {
     return {
+      id: domain.id.toValue(),
       code: domain.code.serialize(),
       userId: domain.user.id.toValue(),
       createdAt: domain.createdAt,

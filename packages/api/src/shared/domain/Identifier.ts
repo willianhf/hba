@@ -1,6 +1,12 @@
 export class Identifier<T> {
-  constructor(private value: T) {
-    this.value = value;
+  constructor(private readonly value: T) {}
+
+  toString() {
+    return String(this.value);
+  }
+
+  toValue(): T {
+    return this.value;
   }
 
   equals(id?: Identifier<T>): boolean {
@@ -13,13 +19,5 @@ export class Identifier<T> {
     }
 
     return id.toValue() === this.value;
-  }
-
-  toString() {
-    return String(this.value);
-  }
-
-  toValue(): T {
-    return this.value;
   }
 }
