@@ -1,10 +1,10 @@
 import { Form as FormikForm, Formik, FormikHelpers } from 'formik';
-import { InferType, SchemaOf } from 'yup';
+import { InferType, Schema } from 'yup';
 
 interface Props<Values extends Record<string, any>> {
   initialValues: Values;
   onSubmit(values: InferType<Props<Values>['validationSchema']>, helpers: FormikHelpers<Values>): void | Promise<any>;
-  validationSchema: SchemaOf<any>;
+  validationSchema: Schema<any>;
   children: React.ReactNode;
 }
 

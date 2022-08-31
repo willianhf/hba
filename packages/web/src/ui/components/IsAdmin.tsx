@@ -11,7 +11,7 @@ interface Props {
 export function IsAdmin(props: Props) {
   const auth = useAuth();
 
-  if (!auth.user.isAdmin) {
+  if (!auth.user?.isAdmin) {
     if (props.redirect) {
       return <Navigate to="/" />;
     }

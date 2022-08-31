@@ -1,5 +1,5 @@
 import { useAuth } from '@/hooks';
-import { Button, Link, List, Text } from '@/ui/components';
+import { Authenticated, Button, Link, List, Text } from '@/ui/components';
 import { graphql, useFragment } from 'react-relay';
 import { Player } from './Player';
 import { Players_user$key } from './__generated__/Players_user.graphql';
@@ -27,7 +27,6 @@ interface Props {
 
 export function Players(props: Props) {
   const { players, canRequestPlayer } = useFragment(PLAYERS_FRAGMENT, props.userRef);
-  const auth = useAuth();
 
   return (
     <div>
@@ -36,9 +35,13 @@ export function Players(props: Props) {
           Suas inscrições
         </Text>
         {canRequestPlayer && (
-          <Button colorScheme="blue" as={Link} to={`/profile/${auth.user.username}/apply`}>
-            Inscrever-se
-          </Button>
+          <Authenticated>
+            {auth => (
+              <Button colorScheme="blue" as={Link} to={`/profile/${auth.user.username}/apply`}>
+                Inscrever-se
+              </Button>
+            )}
+          </Authenticated>
         )}
       </div>
       <List options={players.edges} renderItem={edge => <Player playerRef={edge.node} key={edge?.node.id} />} />

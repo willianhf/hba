@@ -2,7 +2,6 @@ import { useAuth } from '@/hooks';
 import { useState } from 'react';
 import { graphql, useMutation } from 'react-relay';
 import { match } from 'ts-pattern';
-import { Authenticated } from '../../Authenticated';
 import { Button } from '../../Button';
 import { Error } from '../../Error';
 import { FormConfirmUserVerificationMutation } from './__generated__/FormConfirmUserVerificationMutation.graphql';
@@ -37,8 +36,8 @@ export function VerificationForm() {
 
   const [error, setError] = useState('');
 
-  function onVerificationSuccess(user: any) {
-    auth.onVerified(user);
+  function onVerificationSuccess() {
+    auth.onVerified();
   }
 
   function onVerificationFailure(message: string) {
@@ -52,9 +51,7 @@ export function VerificationForm() {
       },
       onCompleted: data => {
         match(data.confirmUserVerification)
-          .with({ __typename: 'ConfirmUserVerificationPayload' }, confirmUserVerification =>
-            onVerificationSuccess(confirmUserVerification.user)
-          )
+          .with({ __typename: 'ConfirmUserVerificationPayload' }, onVerificationSuccess)
           .with({ __typename: 'ApplicationError' }, error => onVerificationFailure(error.message))
           .run();
       }

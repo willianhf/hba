@@ -1,5 +1,4 @@
 import { relayEnvironment } from '@/lib/relay';
-import { Authenticated } from '@/ui/components';
 import { Suspense } from 'react';
 import { graphql, loadQuery, usePreloadedQuery } from 'react-relay';
 import { ApplyPlayerBanner } from './ApplyPlayerBanner';
@@ -22,10 +21,8 @@ export function Players() {
 
   return (
     <div className="space-y-2">
-      <Authenticated>
-        <ApplyPlayerBanner userRef={user} />
-      </Authenticated>
-      <Suspense fallback={null}>
+      {user && <ApplyPlayerBanner userRef={user} />}
+      <Suspense>
         <PlayersList />
       </Suspense>
     </div>

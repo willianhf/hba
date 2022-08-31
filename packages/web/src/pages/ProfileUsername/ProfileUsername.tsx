@@ -28,7 +28,7 @@ export function ProfileUsername(props: Props) {
       <Text variant="title" as="h1">
         Perfil de {findUser.username}
       </Text>
-      {isOwnProfile && <Players userRef={user} />}
+      {isOwnProfile && user && <Players userRef={user} />}
     </div>
   );
 }
