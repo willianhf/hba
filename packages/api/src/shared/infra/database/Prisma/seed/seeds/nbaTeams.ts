@@ -24,17 +24,24 @@ export async function seedNBATeams() {
   log('Seeding NBA Teams...');
 
   const data = await fetchNBATeams();
-  const teams = data.league.standard
-    .filter(nbaTeam => nbaTeam.isNBAFranchise)
-    .map(nbaTeam => {
-      return {
-        id: nbaTeam.teamId,
-        name: nbaTeam.fullName,
-        nickname: nbaTeam.nickname,
-        tricode: nbaTeam.tricode,
-        conference: nbaTeam.confName === 'East' ? Conference.EAST : Conference.WEST
-      };
-    });
 
-  await prisma.nBATeam.createMany({ data: teams });
+  await Promise.all(
+    data.league.standard
+      .filter(nbaTeam => nbaTeam.isNBAFranchise)
+      .map(nbaTeam => {
+        const team = {
+          id: nbaTeam.teamId,
+          name: nbaTeam.fullName,
+          nickname: nbaTeam.nickname,
+          tricode: nbaTeam.tricode,
+          conference: nbaTeam.confName === 'East' ? Conference.EAST : Conference.WEST
+        };
+
+        prisma.nBATeam.upsert({
+          where: { id: team.id },
+          create: team,
+          update: team
+        });
+      })
+  );
 }
