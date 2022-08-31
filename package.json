@@ -1,6 +1,9 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "build": "yarn workspace @hba/api build"
+  },
   "workspaces": [
     "packages/*"
   ]
