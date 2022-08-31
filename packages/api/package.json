@@ -5,8 +5,7 @@
     "dev": "tsx watch src/index.ts --clear-screen=false",
     "type-check": "tsc --pretty --noEmit",
     "start": "node dist/index.js",
-    "build": "babel src --out-dir dist/ --copy-files --no-copy-ignored",
-    "postbuild": "tsc -p tsconfig.build.json --emitDeclarationOnly"
+    "build": "babel src --out-dir dist/ --extensions \".ts\" --source-maps inline"
   },
   "dependencies": {
     "@pothos/core": "^3.3.3",
