@@ -12,7 +12,7 @@ import { ConnectionHandler } from 'relay-runtime';
 import { match } from 'ts-pattern';
 import * as Yup from 'yup';
 import { useNBAPlayers, type NBAPlayer } from './useNBAPlayers';
-import { Apply_createPlayerMutation } from './__generated__/apply_createPlayerMutation.graphql';
+import { ApplyPlayerMutation } from './__generated__/ApplyPlayerMutation.graphql';
 
 interface PlayerRegisterFormValues {
   player: NBAPlayer | null;
@@ -32,8 +32,8 @@ const playerRegisterSchema = Yup.object().shape({
   icons: Yup.array().length(2, 'Escolha dois ícones.')
 });
 
-const CREATE_PLAYER_MUTATION = graphql`
-  mutation Apply_createPlayerMutation($input: CreatePlayerInput!, $connections: [ID!]!) {
+const APPLY_PLAYER_MUTATION = graphql`
+  mutation ApplyPlayerMutation($input: CreatePlayerInput!, $connections: [ID!]!) {
     createPlayer(input: $input) {
       __typename
       ... on CreatePlayerPayload {
@@ -70,7 +70,7 @@ export function Apply() {
   const icons = useIcons();
   const positions = usePositions();
 
-  const [createPlayer, isInFlight] = useMutation<Apply_createPlayerMutation>(CREATE_PLAYER_MUTATION);
+  const [createPlayer, isInFlight] = useMutation<ApplyPlayerMutation>(APPLY_PLAYER_MUTATION);
 
   const navigate = useNavigate();
   const previousPath = usePreviousPath();

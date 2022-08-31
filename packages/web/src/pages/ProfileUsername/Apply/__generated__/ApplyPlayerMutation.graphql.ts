@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<81d26df1188ab56cab7b1067cac4864a>>
+ * @generated SignedSource<<e5a80c26509f78e61221bc0179476c9f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,11 +16,11 @@ export type CreatePlayerInput = {
   nbaPlayerId: string;
   positionId: string;
 };
-export type Apply_createPlayerMutation$variables = {
+export type ApplyPlayerMutation$variables = {
   input: CreatePlayerInput;
   connections: ReadonlyArray<string>;
 };
-export type Apply_createPlayerMutation$data = {
+export type ApplyPlayerMutation$data = {
   readonly createPlayer: {
     readonly __typename: "CreatePlayerPayload";
     readonly player: {
@@ -49,9 +49,9 @@ export type Apply_createPlayerMutation$data = {
     readonly __typename: "%other";
   };
 };
-export type Apply_createPlayerMutation = {
-  variables: Apply_createPlayerMutation$variables;
-  response: Apply_createPlayerMutation$data;
+export type ApplyPlayerMutation = {
+  variables: ApplyPlayerMutation$variables;
+  response: ApplyPlayerMutation$data;
 };
 
 const node: ConcreteRequest = (function(){
@@ -163,7 +163,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "Apply_createPlayerMutation",
+    "name": "ApplyPlayerMutation",
     "selections": [
       {
         "alias": null,
@@ -226,7 +226,7 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "Apply_createPlayerMutation",
+    "name": "ApplyPlayerMutation",
     "selections": [
       {
         "alias": null,
@@ -351,16 +351,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9a7ffcaa919f36986c6e784cccf078f3",
+    "cacheID": "a109be0759d177c1f484b90fe0659d5d",
     "id": null,
     "metadata": {},
-    "name": "Apply_createPlayerMutation",
+    "name": "ApplyPlayerMutation",
     "operationKind": "mutation",
-    "text": "mutation Apply_createPlayerMutation(\n  $input: CreatePlayerInput!\n) {\n  createPlayer(input: $input) {\n    __typename\n    ... on CreatePlayerPayload {\n      player {\n        id\n        ...PlayerFragment_player\n        user {\n          canRequestPlayer\n          id\n        }\n      }\n    }\n    ... on ValidationInputError {\n      code\n      fields {\n        field\n        message\n      }\n      message\n      name\n    }\n    ... on ApplicationError {\n      message\n      name\n    }\n  }\n}\n\nfragment PlayerFragment_player on Player {\n  status\n  nbaPlayer {\n    firstName\n    lastName\n    id\n  }\n  position {\n    name\n    id\n  }\n  icons {\n    name\n    id\n  }\n}\n"
+    "text": "mutation ApplyPlayerMutation(\n  $input: CreatePlayerInput!\n) {\n  createPlayer(input: $input) {\n    __typename\n    ... on CreatePlayerPayload {\n      player {\n        id\n        ...PlayerFragment_player\n        user {\n          canRequestPlayer\n          id\n        }\n      }\n    }\n    ... on ValidationInputError {\n      code\n      fields {\n        field\n        message\n      }\n      message\n      name\n    }\n    ... on ApplicationError {\n      message\n      name\n    }\n  }\n}\n\nfragment PlayerFragment_player on Player {\n  status\n  nbaPlayer {\n    firstName\n    lastName\n    id\n  }\n  position {\n    name\n    id\n  }\n  icons {\n    name\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "eae7272f826b341840a792a416445b31";
+(node as any).hash = "52120558c324547253f43649ff282dd7";
 
 export default node;

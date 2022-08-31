@@ -1792,10 +1792,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-relay@^13.0.2":
-  version "13.0.4"
-  resolved "https://registry.yarnpkg.com/@types/react-relay/-/react-relay-13.0.4.tgz#3e80b822eac8316f6b69d606eec511ba9d983f23"
-  integrity sha512-xak6OHxW36HmJdDMgyvGJIhDkvY46/WrEm6YiBq8KN29pyEf3n1TqTgDsK3i9fWlF1m/4PKnJDgDjqIStWfYCg==
+"@types/react-relay@^14.1.1":
+  version "14.1.1"
+  resolved "https://registry.yarnpkg.com/@types/react-relay/-/react-relay-14.1.1.tgz#78f50309a19cf92bfaece563cc3a6ba43fcb5e23"
+  integrity sha512-uUXlJOjWmLF1awJGTSuolsCU3d9Qf7+YChBo/UvlX/neLaMYuAjHvzqB8EkafIOJtLi0AaKKvDL047rnoino2A==
   dependencies:
     "@types/react" "*"
     "@types/relay-runtime" "*"
@@ -1809,15 +1809,10 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
-"@types/relay-runtime@*":
+"@types/relay-runtime@*", "@types/relay-runtime@^14.1.2":
   version "14.1.2"
   resolved "https://registry.yarnpkg.com/@types/relay-runtime/-/relay-runtime-14.1.2.tgz#252313e977f5b4d5a71d623fb8147c7815efbc9d"
   integrity sha512-HeXlKlkGakGZtnViOk5lRn5ljjYqR+EvbJodt0hmwAp5YrWZ5kdXqzMWvAhlAUpGJtP7NkKwMMAsduy46S7UjA==
-
-"@types/relay-runtime@^13.0.3":
-  version "13.0.5"
-  resolved "https://registry.yarnpkg.com/@types/relay-runtime/-/relay-runtime-13.0.5.tgz#68e1e2045af27c822f8d6418b81e289ff1e8a8d9"
-  integrity sha512-Iv3hd3D6R6a1ZyXlmv5fZnue0+62IKe4EAnZVf3APhJ5KRK1Y698/6eSbXYvl9MhdKhMvYthB6sv4S56W4YYwA==
 
 "@types/responselike@*", "@types/responselike@^1.0.0":
   version "1.0.0"
