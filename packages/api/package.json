@@ -5,7 +5,10 @@
     "dev": "tsx watch src/index.ts --clear-screen=false",
     "type-check": "tsc --pretty --noEmit",
     "start": "node dist/index.js",
-    "build": "babel src --out-dir dist/ --extensions \".ts\" --source-maps inline"
+    "build": "yarn migrate:deploy && yarn database:seed && babel src --out-dir dist/ --extensions \".ts\" --source-maps inline",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "database:seed": "prisma db seed"
   },
   "dependencies": {
     "@pothos/core": "^3.3.3",
