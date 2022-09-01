@@ -6,14 +6,22 @@ import { Button } from './Button';
 interface ModalProps {
   title: string;
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   children?: never;
   body: React.ReactNode;
   footer?: React.ReactNode;
   initialFocus?: React.MutableRefObject<any>;
 }
 
-export function Modal({ title, isOpen, onClose, body, footer, initialFocus }: ModalProps) {
+export function Modal({ title, isOpen, body, footer, initialFocus, ...props }: ModalProps) {
+  const isCloseable = !!props.onClose;
+
+  function onClose() {
+    if (props.onClose) {
+      props.onClose();
+    }
+  }
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -54,9 +62,11 @@ export function Modal({ title, isOpen, onClose, body, footer, initialFocus }: Mo
                   <Dialog.Title as="h3" className="text-2xl leading-6 font-semibold text-gray-900">
                     {title}
                   </Dialog.Title>
-                  <Button variant="link" className="text-gray-400 hover:text-gray-600" onClick={onClose}>
-                    <XIcon className="h-6 w-6" aria-hidden="true" />
-                  </Button>
+                  {isCloseable && (
+                    <Button variant="link" className="text-gray-400 hover:text-gray-600" onClick={onClose}>
+                      <XIcon className="h-6 w-6" aria-hidden="true" />
+                    </Button>
+                  )}
                 </div>
                 <div className="mt-4">{body}</div>
               </div>

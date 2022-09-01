@@ -4,17 +4,19 @@ import { useAuth } from '@/hooks';
 import { To } from 'react-router-dom';
 import { Navigate } from './Navigate';
 
-type Auth = AuthContextType & { user: NonNullable<User> };
+type Auth = AuthContextType & {
+  user: User & { isVerified: false };
+};
 
 interface Props {
   redirect?: To;
   children: React.ReactNode | ((auth: Auth) => React.ReactNode);
 }
 
-export function Authenticated(props: Props) {
+export function NotVerified(props: Props) {
   const auth = useAuth();
 
-  if (!auth.isLoggedIn) {
+  if (!auth.user || auth.user?.isVerified) {
     if (props.redirect) {
       return <Navigate to={props.redirect} />;
     }

@@ -18,7 +18,7 @@ export class Verification extends AggregateRoot<VerificationProps> {
   }
 
   public static create(props: CreateVerificationProps, id?: UniqueIdentifier) {
-    const habboAccount = new Verification(
+    return new Verification(
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),
@@ -26,8 +26,6 @@ export class Verification extends AggregateRoot<VerificationProps> {
       },
       id
     );
-
-    return habboAccount;
   }
 
   public refreshVerificationCode(): void {

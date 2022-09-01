@@ -23,6 +23,7 @@ export function Form<Values extends Record<string, any>>(props: Props<Values>) {
       onSubmit={onSubmit}
       validationSchema={props.validationSchema}
       validateOnChange={false}
+      validateOnBlur={false}
     >
       <FormikForm>{props.children}</FormikForm>
     </Formik>

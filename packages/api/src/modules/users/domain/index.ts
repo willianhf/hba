@@ -5,3 +5,4 @@ export { UserId } from './UserId';
 export { UserName } from './UserName';
 export { UserPassword } from './UserPassword';
 export * from './Verification';
+export { HabboProfile } from './HabboProfile';

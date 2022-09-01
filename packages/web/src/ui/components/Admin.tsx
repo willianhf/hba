@@ -1,19 +1,24 @@
 import { AuthContextType } from '@/contexts/AuthContext';
 import { useAuth } from '@/hooks';
+import { To } from 'react-router-dom';
 import { Authenticated } from './Authenticated';
 import { Navigate } from './Navigate';
 
 interface Props {
-  redirect?: boolean;
+  redirect?: To;
   children: React.ReactNode | ((auth: AuthContextType) => React.ReactNode);
 }
 
-export function IsAdmin(props: Props) {
+export function Admin(props: Props) {
   const auth = useAuth();
 
   if (!auth.user?.isAdmin) {
     if (props.redirect) {
-      return <Navigate to="/" />;
+      return (
+        <Authenticated redirect={{ search: 'form=login' }}>
+          <Navigate to={props.redirect} />
+        </Authenticated>
+      );
     }
 
     return <Authenticated>{null}</Authenticated>;

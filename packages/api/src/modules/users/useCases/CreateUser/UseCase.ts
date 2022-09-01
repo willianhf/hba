@@ -6,6 +6,7 @@ import { loginUseCase } from '../Login';
 interface CreateUserDTO {
   username: string;
   password: string;
+  habboUsername: string;
   userAgent: string;
 }
 
@@ -25,10 +26,27 @@ export class CreateUserUseCase implements IUseCase<CreateUserDTO, CreateUserResu
 
     const isUsernameTaken = await this.userRepository.exists(username);
     if (isUsernameTaken) {
-      throw new ValidationInputError({ field: 'username', message: `O usuário "${username.value}" já existe.` });
+      throw new ValidationInputError({ field: 'username', message: `O usuário "${username.value}" já existe` });
     }
 
-    const user = await User.register({ username, password });
+    const isHabboUsernameTaken = await this.userRepository.habboUsernameIsTaken(dto.habboUsername);
+    if (isHabboUsernameTaken) {
+      throw new ValidationInputError({
+        field: 'habboUsername',
+        message: `O habbo "${dto.habboUsername}" já foi cadastrado`
+      });
+    }
+
+    const user = await User.register({ username, password, habboUsername: dto.habboUsername });
+
+    const habboProfile = await user.habboProfile;
+    if (!habboProfile) {
+      throw new ValidationInputError({
+        field: 'habboUsername',
+        message: `O usuário ${dto.habboUsername} não existe no Habbo`
+      });
+    }
+
     await this.userRepository.save(user);
 
     const loginResult = await loginUseCase.execute({

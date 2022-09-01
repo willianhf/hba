@@ -2,7 +2,7 @@ import { Menu as HeadlessMenu, Transition } from '@headlessui/react';
 import { ChevronDownIcon, UserCircleIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
 import { Fragment } from 'react';
-import { IsAdmin } from '../..';
+import { Admin } from '../..';
 import { Authenticated } from '../../Authenticated';
 import { Link } from '../../Link';
 import { Text } from '../../Text';
@@ -63,13 +63,13 @@ export function Menu() {
                   <Text>Perfil</Text>
                 </MenuItem>
               </Link>
-              <IsAdmin>
+              <Admin>
                 <Link to="/admin">
                   <MenuItem>
                     <Text>Administração</Text>
                   </MenuItem>
                 </Link>
-              </IsAdmin>
+              </Admin>
               <button onClick={auth.onLogout} disabled={auth.isLogoutPending} className="w-full">
                 <MenuItem>
                   <Text color="error">Sair</Text>

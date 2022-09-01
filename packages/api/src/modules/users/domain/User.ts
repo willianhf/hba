@@ -1,40 +1,31 @@
 import { ValidationInputError } from '~/shared/core/Error';
 import { AggregateRoot, UniqueIdentifier } from '~/shared/domain';
 import { OptionalExceptFor } from '~/types/common';
-import { HabboAPIFacade, HabboProfile } from '../facades/HabboAPI';
+import { HabboAPIFacade } from '../facades/HabboAPI';
 import { UserCreatedEvent } from './events';
+import { HabboProfile } from './HabboProfile';
 import { UserId } from './UserId';
 import { UserName } from './UserName';
 import { UserPassword } from './UserPassword';
 
 export interface UserProps {
   username: UserName;
+  habboUsername: string;
   password: UserPassword;
   isAdmin: boolean;
   isVerified: boolean;
   createdAt?: Date;
 }
 
-type CreateUserProps = OptionalExceptFor<UserProps, 'username' | 'password'>;
+type CreateUserProps = OptionalExceptFor<UserProps, 'username'| 'password' | 'habboUsername' >;
 
 export class User extends AggregateRoot<UserProps> {
-  private habboProfile?: HabboProfile;
-
   private constructor(props: UserProps, id?: UniqueIdentifier) {
     super(props, id ?? new UniqueIdentifier());
   }
 
   public static async register(props: CreateUserProps): Promise<User> {
     const user = User.create(props);
-
-    try {
-      await user.getHabboProfile();
-    } catch (ex) {
-      throw new ValidationInputError({
-        field: 'username',
-        message: `O usuário "${props.username.value}" não existe no Habbo.`
-      });
-    }
 
     user.addDomainEvent(new UserCreatedEvent(user));
 
@@ -55,7 +46,7 @@ export class User extends AggregateRoot<UserProps> {
   }
 
   override get id(): UserId {
-    return new UserId(this._id.toValue()); 
+    return new UserId(this._id.toValue());
   }
 
   get username(): UserName {
@@ -78,12 +69,11 @@ export class User extends AggregateRoot<UserProps> {
     return this.props.createdAt;
   }
 
-  public async getHabboProfile(): Promise<HabboProfile> {
-    if (!this.habboProfile) {
-      const fetchedHabboProfile = await HabboAPIFacade.fetchProfile(this.username.value);
-      this.habboProfile = fetchedHabboProfile;
-    }
+  get habboUsername(): string {
+    return this.props.habboUsername;
+  }
 
-    return this.habboProfile;
+  get habboProfile(): Promise<HabboProfile | null> {
+    return HabboAPIFacade.fetchProfile(this.habboUsername);
   }
 }

@@ -87,6 +87,7 @@ type CreateSeasonPayload {
 
 input CreateUserInput {
   clientMutationId: ID
+  habboUsername: String!
   password: String!
   username: String!
 }
@@ -262,7 +263,6 @@ type Query {
   findPlayers(seasonId: String!): [Player!]!
   findUser(username: String!): QueryFindUserResult
   findUserPlayersBySeason(after: String, before: String, first: Int, last: Int): QueryFindUserPlayersBySeasonConnection!
-  habboProfileExists(username: String!): Boolean!
   icons: [Icon!]!
   matchKinds: [MatchKind!]!
   matches(seasonId: ID): [Match!]!

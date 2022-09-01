@@ -1,5 +1,5 @@
 import { useAuth } from '@/hooks';
-import { Authenticated, Button, Link, List, Text } from '@/ui/components';
+import { Authenticated, Button, Link, List, Text, Verified } from '@/ui/components';
 import { graphql, useFragment } from 'react-relay';
 import { Player } from './Player';
 import { Players_user$key } from './__generated__/Players_user.graphql';
@@ -35,13 +35,13 @@ export function Players(props: Props) {
           Suas inscrições
         </Text>
         {canRequestPlayer && (
-          <Authenticated>
+          <Verified>
             {auth => (
               <Button colorScheme="blue" as={Link} to={`/profile/${auth.user.username}/apply`}>
                 Inscrever-se
               </Button>
             )}
-          </Authenticated>
+          </Verified>
         )}
       </div>
       <List options={players.edges} renderItem={edge => <Player playerRef={edge.node} key={edge?.node.id} />} />

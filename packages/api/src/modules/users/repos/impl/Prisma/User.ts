@@ -17,7 +17,12 @@ export class PrismaUserRepository implements UserRepository {
 
   public async findByUsername(username: UserName): Promise<User | null> {
     const persistedUser = await prisma.user.findFirst({
-      where: { username: username.value }
+      where: {
+        username: {
+          equals: username.value,
+          mode: 'insensitive'
+        }
+      }
     });
 
     if (persistedUser) {
@@ -39,8 +44,16 @@ export class PrismaUserRepository implements UserRepository {
 
   public async exists(username: UserName): Promise<boolean> {
     const persistedUser = await prisma.user.findFirst({
-      where: { username: username.value, isVerified: true },
-      select: { id: true }
+      where: {
+        username: {
+          equals: username.value,
+          mode: 'insensitive'
+        },
+        isVerified: true
+      },
+      select: {
+        id: true
+      }
     });
 
     return !!persistedUser;
@@ -64,5 +77,19 @@ export class PrismaUserRepository implements UserRepository {
     });
 
     return prismaUsers.map(prismaUser => UserMapper.toDomain(prismaUser));
+  }
+
+  public async habboUsernameIsTaken(habboUsername: string): Promise<boolean> {
+    const count = await prisma.user.count({
+      where: {
+        habboUsername: {
+          equals: habboUsername,
+          mode: 'insensitive'
+        },
+        isVerified: true
+      }
+    });
+
+    return count > 0;
   }
 }
