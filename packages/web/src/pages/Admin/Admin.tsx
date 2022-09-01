@@ -1,5 +1,5 @@
 import { useLocation } from '@/hooks';
-import { Link, Text } from '@/ui/components';
+import { Admin as IsAdmin, Link, Text } from '@/ui/components';
 import { GlobeAltIcon, UserGroupIcon, UserIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
 import { Outlet } from 'react-router-dom';
@@ -29,8 +29,10 @@ function SideItem(props: SideItemProps) {
 }
 
 export function Admin() {
+  const location = useLocation();
+
   return (
-    <>
+    <IsAdmin redirect={location.state?.from ?? '/'}>
       <Text as="h1" variant="title" className="mb-2">
         Painel de administração
       </Text>
@@ -44,6 +46,6 @@ export function Admin() {
           <Outlet />
         </div>
       </div>
-    </>
+    </IsAdmin>
   );
 }

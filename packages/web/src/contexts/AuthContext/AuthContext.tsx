@@ -14,7 +14,7 @@ export interface AuthContextType {
   user: User;
   verificationCode: string | null;
   isLoggedIn: boolean;
-  onLogin(user: any, token: string, sessionId: string, verificationCode?: string): void;
+  onLogin(token: string, sessionId: string, verificationCode?: string): void;
   onLogout(): void;
   onVerified(): void;
   isLogoutPending: boolean;
@@ -40,7 +40,7 @@ export function AuthProvider(props: Props) {
 
   const isLoggedIn = !!user?.id;
 
-  function onLogin(_user: unknown, token: string, sessionId: string, verificationCode?: string) {
+  function onLogin(token: string, sessionId: string, verificationCode?: string) {
     if (verificationCode) {
       setVerificationCode(verificationCode);
       navigate('?form=verification', { replace: true });
@@ -64,7 +64,7 @@ export function AuthProvider(props: Props) {
       onCompleted: data => {
         match(data.logout.__typename)
           .with('LogoutPayload', () => {
-            navigate('/');
+            navigate({ pathname: '/', search: '' }, { replace: true });
 
             setToken(null);
             setVerificationCode(null);
@@ -78,7 +78,7 @@ export function AuthProvider(props: Props) {
   }
 
   function onVerified() {
-    navigate(location.pathname, { replace: true });
+    navigate({ pathname: location.pathname, search: '' }, { replace: true });
 
     setVerificationCode(null);
 

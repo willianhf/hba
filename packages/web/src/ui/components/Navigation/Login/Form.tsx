@@ -70,7 +70,7 @@ export function LoginForm() {
       onCompleted: data => {
         match(data.login)
           .with({ __typename: 'LoginPayload' }, login =>
-            auth.onLogin(login.user, login.token, login.session.id, login.verification?.code.value)
+            auth.onLogin(login.token, login.session.id, login.verification?.code.value)
           )
           .with({ __typename: 'ApplicationError' }, error => helpers.setFieldError('password', error.message))
           .run();

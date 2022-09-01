@@ -4,6 +4,7 @@ import { graphql, useMutation } from 'react-relay';
 import { match } from 'ts-pattern';
 import { Button } from '../../Button';
 import { Error } from '../../Error';
+import { Text } from '../../Text';
 import { FormConfirmUserVerificationMutation } from './__generated__/FormConfirmUserVerificationMutation.graphql';
 
 const CONFIRM_VERIFICATION_MUTATION = graphql`
@@ -66,11 +67,17 @@ export function VerificationForm() {
           {auth.verificationCode}
         </span>
       </div>
-      <span className="mb-2 text-gray-900">
-        Insira esse código na missão do seu usuário no Habbo e depois clique em verificar.
-      </span>
-      <Button onClick={onSubmit} colorScheme="blue" className="w-full mt-5" isLoading={isInFlight}>
+      <div className="mb-4 text-gray-900">
+        Insira esse código na missão do seu usuário no Habbo em seguida clique no botão abaixo para verificar.
+      </div>
+      <Button onClick={onSubmit} colorScheme="blue" fillParent isLoading={isInFlight}>
         Verificar
+      </Button>
+      <Text className="my-1" as="div">
+        ou
+      </Text>
+      <Button onClick={auth.onLogout} colorScheme="red" fillParent isLoading={auth.isLogoutPending}>
+        Sair
       </Button>
     </div>
   );
