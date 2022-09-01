@@ -1,11 +1,11 @@
 import { log } from './log';
 import { prisma } from './prisma';
-import { seedIcons, seedNBATeams, seedPositions } from './seeds';
+import { seedIcons, seedNBATeams, seedPositions, seedSeason } from './seeds';
 
 async function main() {
   log('Start seeding...');
 
-  await Promise.all([seedIcons(), seedPositions(), seedNBATeams()]);
+  await Promise.all([seedIcons(), seedPositions(), seedNBATeams(), seedSeason()]);
 
   log('Seeding complete!');
 }
