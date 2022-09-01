@@ -24,8 +24,8 @@ export class ConfirmUserVerificationUseCase
       throw new EntityNotFoundError('The user does not have a verification');
     }
 
-    const habboUser = await dto.user.getHabboProfile();
-    if (!habboUser.motto.toLowerCase().includes(verification.code.value.toLowerCase())) {
+    const habboProfile = await dto.user.habboProfile;
+    if (!habboProfile?.motto.toLowerCase().includes(verification.code.value.toLowerCase())) {
       throw new VerificationError('A missão não contém o código de verificação válido.');
     }
 

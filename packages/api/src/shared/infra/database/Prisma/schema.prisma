@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  username   String   @unique
-  password   String
-  isVerified Boolean  @default(false)
-  isAdmin    Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  id            String   @id @default(uuid())
+  username      String   @unique
+  habboUsername String
+  password      String
+  isVerified    Boolean  @default(false)
+  isAdmin       Boolean  @default(false)
+  createdAt     DateTime @default(now())
 
   sessions     Session[]
   verification Verification?
@@ -164,12 +165,12 @@ enum MatchKind {
 }
 
 model Match {
-  id           String    @id @unique @default(uuid())
-  seasonId     Int
-  homeTeamId   String
-  awayTeamId   String
-  scheduledTo  DateTime?
-  matchKind    MatchKind
+  id            String    @id @unique @default(uuid())
+  seasonId      Int
+  homeTeamId    String
+  awayTeamId    String
+  scheduledTo   DateTime?
+  matchKind     MatchKind
   matchSeriesId String?
 
   season   Season       @relation(fields: [seasonId], references: [id])

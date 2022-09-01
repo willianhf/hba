@@ -8,7 +8,8 @@ schemaBuilder.relayMutationField(
   {
     inputFields: t => ({
       username: t.string({ required: true }),
-      password: t.string({ required: true })
+      password: t.string({ required: true }),
+      habboUsername: t.string({ required: true })
     })
   },
   {
