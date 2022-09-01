@@ -36,11 +36,11 @@ export class VerificationCode extends ValueObject<VerificationCodeProps> {
   }
 
   public serialize(): string {
-    return JSON.stringify(this.value);
+    return JSON.stringify(this.props);
   }
 
   public static deserialize(serialized: string): VerificationCodeProps {
-    const props: VerificationCodeProps = JSON.parse(serialized);
+    const props = JSON.parse(serialized) as VerificationCodeProps;
 
     return { ...props, expiresAt: new Date(props.expiresAt) };
   }

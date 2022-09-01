@@ -16,5 +16,7 @@ export { Text } from './Text';
 export { Select } from './Select';
 export { BackButton } from './BackButton';
 export { List } from './List';
-export { IsAdmin } from './IsAdmin';
+export { Admin } from './Admin';
 export { DateInput } from './DateInput';
+export { NotVerified } from './NotVerified';
+export { Verified } from './Verified';

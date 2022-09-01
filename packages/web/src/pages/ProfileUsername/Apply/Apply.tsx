@@ -1,7 +1,7 @@
-import { Icon, Position, useAuth, useDebounce, useIcons, usePositions, usePreviousPath } from '@/hooks';
+import { Icon, Position, useAuth, useDebounce, useIcons, useLocation, usePositions, usePreviousPath } from '@/hooks';
 import { parseErrorsFromAPI } from '@/lib/formik';
 import { DeepNonNullable } from '@/types/helpers';
-import { BackButton, Button, Card, Combobox, Form, Select, Text } from '@/ui/components';
+import { BackButton, Button, Card, Combobox, Form, Select, Text, Verified } from '@/ui/components';
 import clsx from 'clsx';
 import { FormikHelpers } from 'formik';
 import { useState } from 'react';
@@ -73,6 +73,7 @@ export function Apply() {
   const [createPlayer, isInFlight] = useMutation<ApplyPlayerMutation>(APPLY_PLAYER_MUTATION);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const previousPath = usePreviousPath();
   const auth = useAuth();
 
@@ -111,65 +112,67 @@ export function Apply() {
   }
 
   return (
-    <div>
-      <div className="flex items-center mb-2">
-        <BackButton to={previousPath} />
-        <Text as="h1" variant="title">
-          Inscreva-se
-        </Text>
-      </div>
-      <Card>
-        <Form initialValues={initialFormValues} onSubmit={onSubmit} validationSchema={playerRegisterSchema}>
-          <div className="space-y-2 mb-4">
-            <Combobox
-              label="Jogador"
-              name="player"
-              inputPlaceholder="Buscar jogador"
-              options={nbaPlayers}
-              getDisplayValue={option => (option ? `${option?.firstName} ${option?.lastName}` : '')}
-              getKey={option => option.id}
-              search={debouncedPlayerSearch}
-              onSearchChange={setPlayerSearch}
-              isLoading={isNBAPlayersLoading}
-              renderItem={optionProps => (
-                <div
-                  className={clsx(
-                    'rounded-md p-2 bg-white cursor-pointer flex items-center',
-                    (optionProps.selected || optionProps.active) && 'bg-gray-100'
-                  )}
-                >
-                  <div className="h-8 w-8 rounded-full overflow-hidden bg-gray-100 relative z-0 mr-2">
-                    <img src={optionProps.option.imageUrl} className="h-8 object-cover absolute bottom-0" />
+    <Verified redirect={location.state?.from ?? '/'}>
+      <div>
+        <div className="flex items-center mb-2">
+          <BackButton to={previousPath} />
+          <Text as="h1" variant="title">
+            Inscreva-se
+          </Text>
+        </div>
+        <Card>
+          <Form initialValues={initialFormValues} onSubmit={onSubmit} validationSchema={playerRegisterSchema}>
+            <div className="space-y-2 mb-4">
+              <Combobox
+                label="Jogador"
+                name="player"
+                inputPlaceholder="Buscar jogador"
+                options={nbaPlayers}
+                getDisplayValue={option => (option ? `${option?.firstName} ${option?.lastName}` : '')}
+                getKey={option => option.id}
+                search={debouncedPlayerSearch}
+                onSearchChange={setPlayerSearch}
+                isLoading={isNBAPlayersLoading}
+                renderItem={optionProps => (
+                  <div
+                    className={clsx(
+                      'rounded-md p-2 bg-white cursor-pointer flex items-center',
+                      (optionProps.selected || optionProps.active) && 'bg-gray-100'
+                    )}
+                  >
+                    <div className="h-8 w-8 rounded-full overflow-hidden bg-gray-100 relative z-0 mr-2">
+                      <img src={optionProps.option.imageUrl} className="h-8 object-cover absolute bottom-0" />
+                    </div>
+                    <Text className="truncate">{optionProps.getDisplayValue(optionProps.option)}</Text>
                   </div>
-                  <Text className="truncate">{optionProps.getDisplayValue(optionProps.option)}</Text>
-                </div>
-              )}
-            />
-            <Select
-              label="Posição"
-              name="position"
-              placeholder="Escolha sua posição"
-              options={positions}
-              getDisplayValue={option => option?.name ?? ''}
-              getValue={option => option?.id}
-              renderItem={optionProps => <span>{optionProps.option.name}</span>}
-            />
-            <Select
-              label="Ícones"
-              name="icons"
-              placeholder="Selecione dois ícones"
-              options={icons}
-              getDisplayValue={option => option?.name ?? ''}
-              getValue={option => option?.id}
-              isMultiple
-              renderItem={optionProps => <span>{optionProps.option.name}</span>}
-            />
-          </div>
-          <Button type="submit" colorScheme="blue" fillParent isLoading={isInFlight}>
-            Inscrever-se
-          </Button>
-        </Form>
-      </Card>
-    </div>
+                )}
+              />
+              <Select
+                label="Posição"
+                name="position"
+                placeholder="Escolha sua posição"
+                options={positions}
+                getDisplayValue={option => option?.name ?? ''}
+                getValue={option => option?.id}
+                renderItem={optionProps => <span>{optionProps.option.name}</span>}
+              />
+              <Select
+                label="Ícones"
+                name="icons"
+                placeholder="Selecione dois ícones"
+                options={icons}
+                getDisplayValue={option => option?.name ?? ''}
+                getValue={option => option?.id}
+                isMultiple
+                renderItem={optionProps => <span>{optionProps.option.name}</span>}
+              />
+            </div>
+            <Button type="submit" colorScheme="blue" fillParent isLoading={isInFlight}>
+              Inscrever-se
+            </Button>
+          </Form>
+        </Card>
+      </div>
+    </Verified>
   );
 }

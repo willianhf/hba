@@ -1,19 +1,18 @@
 import { useAuth } from '@/hooks';
-import { useLocation } from 'react-router-dom';
+import { To } from 'react-router-dom';
 import { Navigate } from './Navigate';
 
 interface Props {
-  redirect?: boolean;
+  redirect?: To;
   children: React.ReactNode;
 }
 
 export function Guest(props: Props) {
   const auth = useAuth();
-  const location = useLocation();
 
   if (auth.isLoggedIn) {
     if (props.redirect) {
-      return <Navigate to={location.pathname} />;
+      return <Navigate to={props.redirect} />;
     }
 
     return null;

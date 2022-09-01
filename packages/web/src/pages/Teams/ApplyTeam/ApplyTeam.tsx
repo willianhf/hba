@@ -1,6 +1,6 @@
-import { useDebounce, useNBATeams, useSearchUsers } from '@/hooks';
+import { useDebounce, useLocation, useNBATeams, useSearchUsers } from '@/hooks';
 import { parseErrorsFromAPI } from '@/lib/formik';
-import { Button, Card, Combobox, Form, Text } from '@/ui/components';
+import { Button, Card, Combobox, Form, Text, Verified } from '@/ui/components';
 import { FormikHelpers } from 'formik';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -80,6 +80,7 @@ const applyTeamSchema = Yup.object().shape({
 export function ApplyTeam() {
   const [commit, isInFlight] = useMutation<ApplyTeamMutation>(APPLY_TEAM_MUTATION);
   const navigate = useNavigate();
+  const location = useLocation();
 
   function onApplyTeamSuccess() {
     toast.success('Inscrição enviada com sucesso. Agora é só aguardar a aprovação de um administrador.');
@@ -109,24 +110,25 @@ export function ApplyTeam() {
   }
 
   return (
-    <div className="space-y-2">
-      <Text variant="title" as="h1">
-        Inscrever equipe
-      </Text>
-      <Form
-        initialValues={{ nbaTeam: null, coCaptainUser: null }}
-        onSubmit={onSubmit}
-        validationSchema={applyTeamSchema}
-      >
-        <Card className="space-y-2">
-          <TeamCombobox />
-          <SubCaptainCombobox />
-          <Button type="submit" colorScheme="red" fillParent isLoading={isInFlight}>
-            Aplicar
-          </Button>
-        </Card>
-      </Form>
-    </div>
+    <Verified redirect={location.state?.from ?? '/'}>
+      <div className="space-y-2">
+        <Text variant="title" as="h1">
+          Inscrever equipe
+        </Text>
+        <Form
+          initialValues={{ nbaTeam: null, coCaptainUser: null }}
+          onSubmit={onSubmit}
+          validationSchema={applyTeamSchema}
+        >
+          <Card className="space-y-2">
+            <TeamCombobox />
+            <SubCaptainCombobox />
+            <Button type="submit" colorScheme="red" fillParent isLoading={isInFlight}>
+              Aplicar
+            </Button>
+          </Card>
+        </Form>
+      </div>
+    </Verified>
   );
 }
-

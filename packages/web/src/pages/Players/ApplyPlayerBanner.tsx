@@ -1,5 +1,4 @@
-import { useAuth } from '@/hooks';
-import { Authenticated, Button, Card, Link, Text } from '@/ui/components';
+import { Button, Card, Link, Text, Verified } from '@/ui/components';
 import { graphql, useFragment } from 'react-relay';
 import { ApplyPlayerBanner_user$key } from './__generated__/ApplyPlayerBanner_user.graphql';
 
@@ -21,7 +20,7 @@ export function ApplyPlayerBanner(props: Props) {
   }
 
   return (
-    <Authenticated>
+    <Verified>
       {auth => (
         <Card className="space-y-1 md:space-y-0 md:flex md:items-center md:justify-between mb-2">
           <Text as="p">As inscrições para temporada estão abertas.</Text>
@@ -32,6 +31,6 @@ export function ApplyPlayerBanner(props: Props) {
           </div>
         </Card>
       )}
-    </Authenticated>
+    </Verified>
   );
 }

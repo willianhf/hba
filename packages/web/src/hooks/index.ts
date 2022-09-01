@@ -9,3 +9,4 @@ export { useNBATeams, type NBATeam } from './useNBATeams';
 export { useSearchUsers } from './useSearchUsers';
 export { useLocation } from './useLocation';
 export { usePreviousPath } from './usePreviousPath';
+export { useNavigate } from './useNavigate';

@@ -81,7 +81,7 @@ export function SignupForm() {
       onCompleted: data => {
         match(data.createUser)
           .with({ __typename: 'CreateUserPayload' }, createUser =>
-            auth.onLogin(createUser.user, createUser.token, createUser.session.id, createUser.verification.code.value)
+            auth.onLogin(createUser.token, createUser.session.id, createUser.verification.code.value)
           )
           .with({ __typename: 'ValidationInputError' }, error => helpers.setErrors(parseErrorsFromAPI(error.fields)))
           .run();
