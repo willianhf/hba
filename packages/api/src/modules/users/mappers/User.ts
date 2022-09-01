@@ -16,6 +16,7 @@ export class UserMapper extends Mapper<User> {
       {
         username,
         password,
+        habboUsername: persisted.habboUsername,
         isVerified: persisted.isVerified,
         isAdmin: persisted.isAdmin,
         createdAt: persisted.createdAt
@@ -33,6 +34,7 @@ export class UserMapper extends Mapper<User> {
       id: domain.id.toValue(),
       username: domain.username.value,
       password: hashedPassword,
+      habboUsername: domain.habboUsername,
       isVerified: domain.isVerified,
       isAdmin: domain.isAdmin
     };

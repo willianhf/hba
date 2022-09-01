@@ -6,5 +6,6 @@ export interface UserRepository {
   search: (search: string) => Promise<User[]>;
   save: (user: User) => Promise<void>;
   exists: (username: UserName) => Promise<boolean>;
+  habboUsernameIsTaken: (habboUsername: string) => Promise<boolean>;
   verify: (userId: UserId) => Promise<void>;
 }

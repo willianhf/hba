@@ -48,15 +48,20 @@ interface SignupFormValues {
   username: string;
   password: string;
   confirmPassword: string;
+  habboUsername: string;
 }
 
 const signupSchema = Yup.object().shape({
   username: Yup.string()
-    .required('O nome de usuário é obrigatório.')
-    .min(3, 'O nome de usuário deve ter no mínimo 3 caracteres.')
-    .max(25, 'O nome de usuário deve ter no máximo 25 caracteres.'),
-  password: Yup.string().required('A senha é obrigatória.'),
-  confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'As senhas não conferem.')
+    .required('O nome de usuário é obrigatório')
+    .min(3, 'O nome de usuário deve ter no mínimo 3 caracteres')
+    .max(25, 'O nome de usuário deve ter no máximo 25 caracteres'),
+  habboUsername: Yup.string()
+    .required('O nome de usuário do Habbo é obrigatório')
+    .min(3, 'O nome de usuário do Habbo deve ter no mínimo 3 caracteres')
+    .max(25, 'O nome de usuário do Habbo deve ter no máximo 25 caracteres'),
+  password: Yup.string().required('A senha é obrigatória'),
+  confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'As senhas não conferem')
 });
 
 export function SignupForm() {
@@ -66,6 +71,7 @@ export function SignupForm() {
 
   const initialValues: SignupFormValues = {
     username: '',
+    habboUsername: '',
     password: '',
     confirmPassword: ''
   };
@@ -75,7 +81,8 @@ export function SignupForm() {
       variables: {
         input: {
           username: values.username,
-          password: values.password
+          password: values.password,
+          habboUsername: values.habboUsername
         }
       },
       onCompleted: data => {
@@ -92,10 +99,11 @@ export function SignupForm() {
   return (
     <Form initialValues={initialValues} onSubmit={onSubmit} validationSchema={signupSchema}>
       <div className="space-y-2">
+        <TextInput label="Usuário" name="username" />
         <TextInput
-          label="Usuário"
-          name="username"
-          tooltip="Você deve utilizar o mesmo nome de usuário da sua conta do Habbo."
+          label="Habbo"
+          name="habboUsername"
+          tooltip="Informe o nome correto, pois irá precisar validar sua conta."
         />
         <TextInput.Password label="Senha" name="password" />
         <TextInput.Password label="Confirmar senha" name="confirmPassword" />

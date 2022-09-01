@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c0676f7a146f41f7c020d5175e90d8ad>>
+ * @generated SignedSource<<eaa923df2818193832e36ea8f10bb075>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ConcreteRequest, Mutation } from 'relay-runtime';
 export type CreateUserInput = {
   clientMutationId?: string | null;
+  habboUsername: string;
   password: string;
   username: string;
 };
