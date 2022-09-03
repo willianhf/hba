@@ -8,11 +8,20 @@ import { ProfileUsernameApply, ProfileUsernameRoute } from '@/pages/ProfileUsern
 import { ApplyTeam, Teams } from '@/pages/Teams';
 import { Layout } from '@/ui/layouts';
 import { DataBrowserRouter, Route } from 'react-router-dom';
+import { RouterErrorBoundary } from './ErrorBoundary';
 
 export function Routes() {
   return (
     <DataBrowserRouter>
-      <Route path="/" element={<Layout />} errorElement={null}>
+      <Route
+        path="/"
+        element={<Layout />}
+        errorElement={
+          <Layout>
+            <RouterErrorBoundary />
+          </Layout>
+        }
+      >
         <Route index element={<Home />} />
         <Route path="players">
           <Route index element={<Players />} />
