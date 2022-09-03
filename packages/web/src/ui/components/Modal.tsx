@@ -1,7 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
 import React, { Fragment } from 'react';
-import { Button } from './Button';
 
 interface ModalProps {
   title: string;
@@ -63,9 +62,9 @@ export function Modal({ title, isOpen, body, footer, initialFocus, ...props }: M
                     {title}
                   </Dialog.Title>
                   {isCloseable && (
-                    <Button variant="link" className="text-gray-400 hover:text-gray-600" onClick={onClose}>
+                    <div className="text-gray-400 hover:text-gray-600 cursor-pointer" onClick={onClose}>
                       <XIcon className="h-6 w-6" aria-hidden="true" />
-                    </Button>
+                    </div>
                   )}
                 </div>
                 <div className="mt-4">{body}</div>
