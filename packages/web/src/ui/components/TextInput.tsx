@@ -1,4 +1,3 @@
-import { useElementFocus } from '@/hooks';
 import { InheritableElementProps } from '@/types/helpers';
 import { ExclamationCircleIcon, EyeIcon, EyeOffIcon, QuestionMarkCircleIcon } from '@heroicons/react/outline';
 import clsx from 'clsx';
@@ -30,8 +29,7 @@ function TextInputRoot({
   tooltip,
   ...props
 }: TextInputProps) {
-  const [{ onChange: formikOnChange, onBlur: formikOnBlur, ...field }, meta] = useField({ name });
-  const [isFocused, onFocus, onBlur] = useElementFocus();
+  const [field, meta] = useField<string>(name);
 
   const hasError = useMemo(() => {
     if (isLoading) {
@@ -40,19 +38,6 @@ function TextInputRoot({
 
     return !!meta.error && meta.touched;
   }, [isLoading, meta.error, meta.touched]);
-
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    if (onChange) {
-      onChange(event);
-    }
-
-    formikOnChange(event);
-  }
-
-  function handleBlur(event: React.FocusEvent<HTMLInputElement>) {
-    onBlur();
-    formikOnBlur(event);
-  }
 
   return (
     <div>
@@ -75,9 +60,6 @@ function TextInputRoot({
             'flex-1 sm:text-sm border-none focus:outline-none focus:ring-0 rounded-md',
             hasError ? 'text-rose-600' : 'text-black'
           )}
-          onChange={handleChange}
-          onFocus={onFocus}
-          onBlur={handleBlur}
           {...field}
           {...props}
         />
@@ -125,14 +107,14 @@ function Password(props: TextInputProps) {
       {...props}
       type={computedType}
       rightElement={
-        <Button variant="link" onClick={() => setShowingPassword(previous => !previous)} tabIndex={-1}>
+        <div onClick={() => setShowingPassword(previous => !previous)} tabIndex={-1}>
           <Icon
             className={clsx(
-              'h-5 w-5',
+              'h-5 w-5 cursor-pointer',
               hasError ? 'text-red-500 hover:text-red-700' : 'text-gray-400 hover:text-gray-600'
             )}
           />
-        </Button>
+        </div>
       }
     />
   );
