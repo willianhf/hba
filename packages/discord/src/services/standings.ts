@@ -114,3 +114,34 @@ export async function generateStandings() {
   return standings;
 }
 
+function buildStandingRow(team: TeamStandings, index: number): string {
+  return `| ${index + 1} | ${team.name.padEnd(24, " ")}| ${team.games}  | ${team.wins}  | ${team.losses}  | ${team.conferenceWins}-${team.conferenceLosses}  | ${team.winPercent} |  ${team.last.slice(-3).join("").padEnd(3, "-")}    |   |`;
+}
+
+export async function buildStandingsMessage(): Promise<string> {
+  const standings = await generateStandings();
+  const east = standings.east.map(buildStandingRow).join("\n");
+  const west = standings.west.map(buildStandingRow).join("\n");
+
+  return `
+:small_blue_diamond: Habbo Basketball Association :small_blue_diamond: Season 21 :small_blue_diamond:
+
+\`\`\`md
+# EASTERN CONFERENCE
+\`\`\`\`\`\`
+| # | Team                    | G  | W  | L  | CONF |  %   | LAST 3  | P |
+|---+-------------------------+----+----+----+------+------+---------+---|
+${east}
+\`\`\`
+\`\`\`cs
+# WESTERN CONFERENCE
+\`\`\`\`\`\`
+| # | Team                    | G  | W  | L  | CONF |  %   | LAST 3  | P |
+|---+-------------------------+----+----+----+------+------+---------+---|
+${west}
+\`\`\`\`\`\`
+% - WIN PERCENTAGE | LAST 3 - LAST 3 GAMES | P - CLINCHED PLAYOFFS
+\`\`\`
+`;
+}
+
