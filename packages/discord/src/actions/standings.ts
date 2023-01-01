@@ -1,5 +1,6 @@
-import { spoiler, hideLinkEmbed } from "discord.js";
-import { getSeasonGames } from "../services/games.js";
+import { hideLinkEmbed, spoiler } from "discord.js";
+import { generateSeasonGames, getSeasonGames } from "../services/games.js";
+import { resetResults } from "../services/results.js";
 import {
   generateStandings,
   getStandingsChannel,
@@ -13,7 +14,7 @@ function buildStandingRow(team: TeamStandings, index: number): string {
   return `| ${index + 1} | ${team.name.padEnd(24, " ")}| ${team.games}  | ${team.wins}  | ${team.losses}  | ${team.conferenceWins}-${team.conferenceLosses}  | ${team.winPercent} |  ${team.last.slice(-3).join("").padEnd(3, "-")}    |   |`;
 }
 
-export async function buildStandingsMessage(): Promise<string> {
+async function buildStandingsMessage(): Promise<string> {
   const standings = await generateStandings();
   const east = standings.east.map(buildStandingRow).join("\n");
   const west = standings.west.map(buildStandingRow).join("\n");
@@ -66,4 +67,11 @@ export async function upsertStandings() {
   }
 
   console.log("✅ Standings update successfully");
+}
+
+export async function resetStandings() {
+  await resetResults();
+  await generateSeasonGames();
+
+  upsertStandings();
 }
