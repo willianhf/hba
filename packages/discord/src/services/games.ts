@@ -105,8 +105,6 @@ ${west}
 
 \`BETWEEN CONFERENCES\`
 ${between}
-
-Sorteio: ${spoiler(hideLinkEmbed("https://www.youtube.com/watch?v=BNgMeoNjcPQ"))}
 `
 }
 
