@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { db } from "../db.js";
 import { bot } from "../main.js";
 import { getResults } from "./results.js";
-import { Team, teams } from "./teams.js";
+import { Team, seasonTeams } from "./teams.js";
 import { formatWinPercent } from "../utils/format.js";
 
 dotenv.config();
@@ -55,7 +55,7 @@ interface Standings {
 export async function generateStandings() {
   const results = await getResults();
 
-  const standings = teams.map(team => {
+  const standings = seasonTeams.map(team => {
     const teamResults = results.filter(result => result.homeTeam.name === team.name || result.awayTeam.name === team.name);
     const teamStats = teamResults.reduce((acc, result) => {
       let winner = result.homeTeam;
