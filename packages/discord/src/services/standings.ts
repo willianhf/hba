@@ -22,11 +22,11 @@ export async function getStandingsMessage(): Promise<Message<true> | undefined> 
 
   await db.read();
 
-  return messages.find(message => message.id === db.data?.messageId);
+  return messages.find(message => message.id === db.data?.standingsMessageId);
 }
 
 export async function saveStandingsMessageId(message: Message<true>): Promise<void> {
-  db.data!.messageId = message.id;
+  db.data!.standingsMessageId = message.id;
   await db.write();
 }
 
