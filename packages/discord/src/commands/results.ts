@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, CommandInteraction, GuildMember, User } f
 import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from "discordx";
 import { onSendResult } from "../actions/result.js";
 import { bot } from "../main.js";
-import { teams } from "../services/teams.js";
+import { seasonTeams, teams } from "../services/teams.js";
 import { canExecute } from "../utils/command.js";
 import { MOD_ROLE_ID } from "../utils/roles.js";
 
@@ -78,13 +78,13 @@ export class ResultsCommands {
       return;
     }
 
-    const homeTeam = teams.find(team => team.name === homeTeamName);
+    const homeTeam = seasonTeams.find(team => team.name === homeTeamName);
     if (!homeTeam) {
       interaction.reply({ content: "Time da casa inválido", ephemeral: true });
       return;
     }
 
-    const awayTeam = teams.find(team => team.name === awayTeamName);
+    const awayTeam = seasonTeams.find(team => team.name === awayTeamName);
     if (!awayTeam) {
       interaction.reply({ content: "Time de fora inválido", ephemeral: true });
       return;

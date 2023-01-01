@@ -1,9 +1,9 @@
-import { hideLinkEmbed, Message, spoiler } from "discord.js";
+import { Message } from "discord.js";
 import { db } from "../db.js";
 import { getTeamEmoji } from "../utils/format.js";
 import { type Result } from "./results.js";
 import { getStandingsChannel } from "./standings.js";
-import { teams, type Conference, type Team } from "./teams.js";
+import { seasonTeams, type Conference, type Team } from "./teams.js";
 
 export interface SeasonGame {
   home: Team;
@@ -55,8 +55,8 @@ export async function generateSeasonGames(): Promise<void> {
     return;
   }
 
-  const games = teams.reduce((acc, team) => {
-    const opponents = teams.filter(t => t.name !== team.name);
+  const games = seasonTeams.reduce((acc, team) => {
+    const opponents = seasonTeams.filter(t => t.name !== team.name);
     opponents.forEach(opponent => {
       const isScheduled = acc.find(seasonGame => hasMatchup(seasonGame, team, opponent));
       if (!isScheduled) {
@@ -70,6 +70,13 @@ export async function generateSeasonGames(): Promise<void> {
   db.data!.seasonGamesGenerated = true;
   db.data!.seasonGames = games;
   await db.write();
+}
+
+export async function resetSeasonGames(): Promise<void> {
+  db.data!.seasonGamesGenerated = false;
+  await db.write();
+
+  await generateSeasonGames();
 }
 
 

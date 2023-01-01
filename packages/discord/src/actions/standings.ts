@@ -1,4 +1,4 @@
-import { generateSeasonGames, upsertSeasonGames } from "../services/games.js";
+import { resetSeasonGames, upsertSeasonGames } from "../services/games.js";
 import { resetResults } from "../services/results.js";
 import {
   buildStandingsMessage,
@@ -26,7 +26,7 @@ export async function upsertStandings(): Promise<void> {
 
 export async function resetStandings() {
   await resetResults();
-  await generateSeasonGames();
+  await resetSeasonGames();
 
   upsertStandings();
 }
