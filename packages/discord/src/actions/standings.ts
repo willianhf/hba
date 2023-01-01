@@ -1,3 +1,4 @@
+import { spoiler, hideLinkEmbed } from "discord.js";
 import { getSeasonGames } from "../services/games.js";
 import {
   generateStandings,
@@ -46,7 +47,9 @@ ${seasonGames.east.map(seasonGame => `${getTeamEmoji(seasonGame.away)} vs. ${get
 ${seasonGames.west.map(seasonGame => `${getTeamEmoji(seasonGame.away)} vs. ${getTeamEmoji(seasonGame.home)}`).join("\n")}
 
 \`BETWEEN CONFERENCES\`
-${seasonGames.west.map(seasonGame => `${getTeamEmoji(seasonGame.away)} vs. ${getTeamEmoji(seasonGame.home)}`).join("\n")}
+${seasonGames.between.map(seasonGame => `${getTeamEmoji(seasonGame.away)} vs. ${getTeamEmoji(seasonGame.home)}`).join("\n")}
+
+Sorteio: ${spoiler(hideLinkEmbed("https://www.youtube.com/watch?v=BNgMeoNjcPQ"))}
 `;
 }
 
