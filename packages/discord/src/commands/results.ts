@@ -2,11 +2,11 @@ import { ApplicationCommandOptionType, CommandInteraction, GuildMember, User } f
 import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from "discordx";
 import { onSendResult } from "../actions/result.js";
 import { bot } from "../main.js";
-import { seasonTeams, teams } from "../services/teams.js";
+import { seasonTeams } from "../services/teams.js";
 import { canExecute } from "../utils/command.js";
 import { MOD_ROLE_ID } from "../utils/roles.js";
 
-const teamsChoice = teams.map(team => team.name);
+const teamsChoice = seasonTeams.map(team => team.name);
 
 @Discord()
 @SlashGroup({
