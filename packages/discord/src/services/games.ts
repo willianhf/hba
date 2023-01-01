@@ -87,7 +87,7 @@ export async function saveSeasonGamesMessageId(message: Message<true>): Promise<
   await db.write();
 }
 
-const buildMatchupRow = seasonGame => `${getTeamEmoji(seasonGame.away)} vs. ${getTeamEmoji(seasonGame.home)}`
+const buildMatchupRow = (seasonGame: SeasonGame) => `${getTeamEmoji(seasonGame.away)} vs. ${getTeamEmoji(seasonGame.home)}`
 
 export async function buildSeasonGamesMessage(): Promise<string> {
   const seasonGames = await getSeasonGames();
