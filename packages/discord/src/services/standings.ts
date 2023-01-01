@@ -1,9 +1,12 @@
 import { Message, TextChannel } from "discord.js";
+import dotenv from "dotenv";
 import { db } from "../db.js";
 import { bot } from "../main.js";
 import { getResults } from "./results.js";
 import { Team, teams } from "./teams.js";
 import { formatWinPercent } from "../utils/format.js";
+
+dotenv.config();
 
 export const STANDINGS_CHANNEL_ID = process.env.STANDINGS_CHANNEL_ID ?? '';
 

@@ -79,7 +79,7 @@ export async function getSeasonGamesMessage(): Promise<Message<true> | undefined
 
   await db.read();
 
-  return messages.find(message => message.id === db.data?.standingsMessageId);
+  return messages.find(message => message.id === db.data?.seasonGamesMessageId);
 }
 
 export async function saveSeasonGamesMessageId(message: Message<true>): Promise<void> {
