@@ -1,0 +1,30 @@
+{
+  "name": "@hba/discord",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "build/main.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node-esm src/main.ts",
+    "start": "node build/main.js",
+    "watch": "nodemon --exec ts-node-esm src/main.ts --ignore db.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordx/importer": "^1.1.10",
+    "@discordx/utilities": "^5.2.1",
+    "discord.js": "^14.7.1",
+    "discordx": "^11.5.2",
+    "dotenv": "^16.0.3",
+    "lowdb": "^5.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
+  }
+}
