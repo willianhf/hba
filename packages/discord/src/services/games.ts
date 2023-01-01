@@ -21,7 +21,7 @@ function isSameConference(seasonGame: SeasonGame, conference: Conference): boole
 export async function getSeasonGames(): Promise<SeasonGames> {
   await db.read();
 
-  const games = db.data?.seasonGames ?? [];
+  const games = db.data?.seasonGames?.filter(seasonGame => !seasonGame.played) ?? [];
 
   return {
     east: games.filter(seasonGame => isSameConference(seasonGame, "east")),
@@ -30,9 +30,13 @@ export async function getSeasonGames(): Promise<SeasonGames> {
   };
 }
 
+function hasMatchup(seasonGame: SeasonGame, a: Team, b: Team) {
+  return (seasonGame.home.name === a.name && seasonGame.away.name === b.name) || (seasonGame.home.name === b.name && seasonGame.away.name === a.name);
+}
+
 export async function markSeasonGamePlayed(result: Result): Promise<void> {
   db.data!.seasonGames = db.data!.seasonGames.map(seasonGame => {
-    if (result.homeTeam.name === seasonGame.home.name && result.awayTeam.name === seasonGame.away.name) {
+    if (hasMatchup(seasonGame, result.homeTeam, result.awayTeam)) {
       return { ...seasonGame, played: true };
     }
 
@@ -50,7 +54,12 @@ export async function generateSeasonGames(): Promise<void> {
 
   const games = teams.reduce((acc, team) => {
     const opponents = teams.filter(t => t.name !== team.name);
-    opponents.forEach(opponent => acc.push({ home: team, away: opponent, played: false }));
+    opponents.forEach(opponent => {
+      const isScheduled = acc.find(seasonGame => hasMatchup(seasonGame, team, opponent));
+      if (!isScheduled) {
+        acc.push({ home: team, away: opponent, played: false });
+      }
+    });
 
     return acc;
   }, [] as SeasonGame[]);
