@@ -1,14 +1,14 @@
-import { PermissionGuard } from "@discordx/utilities";
-import { ApplicationCommandOptionType, CommandInteraction, User } from "discord.js";
-import { Discord, Guard, Slash, SlashChoice, SlashGroup, SlashOption } from "discordx";
+import { ApplicationCommandOptionType, CommandInteraction, GuildMember, User } from "discord.js";
+import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from "discordx";
 import { onSendResult } from "../actions/result.js";
 import { bot } from "../main.js";
 import { teams } from "../services/teams.js";
+import { canExecute } from "../utils/command.js";
+import { MOD_ROLE_ID } from "../utils/roles.js";
 
 const teamsChoice = teams.map(team => team.name);
 
 @Discord()
-@Guard(PermissionGuard(["Administrator"]))
 @SlashGroup({
   name: "results",
   description: "Gerencia os resultados da temporada",
@@ -73,25 +73,30 @@ export class ResultsCommands {
     }) video: User,
     interaction: CommandInteraction,
   ): void {
+    if (!canExecute(interaction.member as GuildMember, MOD_ROLE_ID)) {
+      interaction.reply({ content: "Você não possui permissão para executar esse comando", ephemeral: true });
+      return;
+    }
+
     const homeTeam = teams.find(team => team.name === homeTeamName);
     if (!homeTeam) {
-      interaction.reply("Time da casa inválido");
+      interaction.reply({ content: "Time da casa inválido", ephemeral: true });
       return;
     }
 
     const awayTeam = teams.find(team => team.name === awayTeamName);
     if (!awayTeam) {
-      interaction.reply("Time de fora inválido");
+      interaction.reply({ content: "Time de fora inválido", ephemeral: true });
       return;
     }
 
     if (homeTeam.name === awayTeam.name) {
-      interaction.reply("Os times não podem ser os mesmos");
+      interaction.reply({ content: "Os times não podem ser os mesmos", ephemeral: true });
       return;
     }
 
     if (homeTeamScore == awayTeamScore) {
-      interaction.reply("A partida deve ter algum vencedor");
+      interaction.reply({ content: "A partida deve ter algum vencedor", ephemeral: true });
       return;
     }
 
@@ -105,13 +110,13 @@ export class ResultsCommands {
     console.log("✅ Result stored successfully");
 
     interaction.reply(`
-${bot.emojis.cache.find(emoji => emoji.name === awayTeam.emoji) ?? ''} ${awayTeam.name} ${awayTeamScore} @ ${homeTeamScore} ${homeTeam.name} ${bot.emojis.cache.find(emoji => emoji.name === homeTeam.emoji) ?? ''}
+${bot.emojis.cache.find(emoji => emoji.name === awayTeam.emoji) ?? ""} ${awayTeam.name} ${awayTeamScore} @ ${homeTeamScore} ${homeTeam.name} ${bot.emojis.cache.find(emoji => emoji.name === homeTeam.emoji) ?? ""}
 
 🔥 ⛹️  Cole.Wolforg Player of the Game: ${potg.toString()} 
 Árbitro: ${ref.toString()}
 Placar: ${scorer.toString()}
-${recorder ? `Recorder: ${recorder.toString()}` : ''}
-${video ? `VAR: ${video.toString()}` : ''}
+${recorder ? `Recorder: ${recorder.toString()}` : ""}
+${video ? `VAR: ${video.toString()}` : ""}
 `);
   }
 }
