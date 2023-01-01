@@ -1,7 +1,7 @@
 import { PermissionGuard } from "@discordx/utilities";
 import { CommandInteraction } from "discord.js";
 import { Discord, Guard, Slash, SlashGroup } from "discordx";
-import { upsertStandings } from "../actions/standings.js";
+import { resetStandings, upsertStandings } from "../actions/standings.js";
 
 @Discord()
 @Guard(PermissionGuard(["Administrator"]))
@@ -15,5 +15,12 @@ export class StandingsCommands {
   async generate(interaction: CommandInteraction): Promise<void> {
     interaction.reply({ content: "✅ Tabela de classificação gerada com sucesso", ephemeral: true });
     upsertStandings();
+  }
+
+  @Slash({ description: "Reseta a tabela de classificação" })
+  @SlashGroup("standings")
+  async reset(interaction: CommandInteraction): Promise<void> {
+    interaction.reply({ content: "✅ Tabela de classificação resetada com sucesso", ephemeral: true });
+    resetStandings();
   }
 }

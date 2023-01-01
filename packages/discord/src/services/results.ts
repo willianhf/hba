@@ -19,3 +19,7 @@ export async function saveResult(result: Result): Promise<void> {
   await db.write();
 }
 
+export async function resetResults(): Promise<void> {
+  db.data!.results = [];
+  await db.write();
+}
