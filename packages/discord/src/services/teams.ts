@@ -79,7 +79,7 @@ export const teams: Team[] = [
   },
   {
     name: "Washington Wizards",
-    emoji: "tor",
+    emoji: "was",
     conference: "east"
   },
   {
