@@ -7,7 +7,8 @@ interface Data {
   results: Result[];
   seasonGames: SeasonGame[];
   seasonGamesGenerated: boolean;
-  messageId?: string | null;
+  standingsMessageId?: string | null;
+  seasonGamesMessageId?: string | null;
 }
 
 const adapter = new JSONFile<Data>("db.json");
