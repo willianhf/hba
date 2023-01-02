@@ -111,8 +111,7 @@ ${east}
 ${west}
 
 \`BETWEEN CONFERENCES\`
-${between}
-`
+${between}`
 }
 
 export async function upsertSeasonGames(): Promise<void> {

@@ -13,6 +13,10 @@ export function formatWinPercent(number: number): string {
   return characters.join("");
 }
 
+export function getEmojiByName(name: string): string {
+  return bot.emojis.cache.find(emoji => emoji.name === name)?.toString() ?? "";
+}
+
 export function getTeamEmoji(team: Team): string {
-  return bot.emojis.cache.find(emoji => emoji.name === team.emoji)?.toString() ?? "";
+  return getEmojiByName(team.emoji);
 }
