@@ -6,10 +6,14 @@ import { changeTimezone } from "../utils/date.js";
 import { getEmojiByName, getTeamEmoji } from "../utils/format.js";
 
 const scheduledGameRow = (scheduledGame: ScheduleGame): string => {
+  console.log(scheduledGame.dateTime);
+
   const timezones = {
     brazil: changeTimezone(scheduledGame.dateTime, "America/Sao_Paulo"),
     portugal: changeTimezone(scheduledGame.dateTime, "Europe/Lisbon"),
   };
+  
+  console.log(timezones.brazil, timezones.portugal);
 
   return bold(`${format(timezones.brazil, "HH:mm")} 🇧🇷 | ${format(timezones.portugal, "HH:mm")} 🇵🇹 - ${getTeamEmoji(scheduledGame.away)} vs. ${getTeamEmoji(scheduledGame.home)}`);
 }
