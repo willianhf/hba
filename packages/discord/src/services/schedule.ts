@@ -22,7 +22,7 @@ async function cleanPastScheduledGames(): Promise<void> {
     .filter(scheduleGame => {
       const difference = differenceInHours(new Date(scheduleGame.dateTime), new Date());
 
-      return difference > 0 && difference < 24;
+      return difference >= 0 && difference < 24;
     });
 
   await db.write();

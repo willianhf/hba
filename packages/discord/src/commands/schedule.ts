@@ -80,7 +80,6 @@ export class ResultsCommands {
       return;
     }
 
-    console.log(dateTime, dateTime.toISOString());
     await saveScheduleGame({
       home: homeTeam,
       away: awayTeam,
