@@ -74,7 +74,7 @@ export class ResultsCommands {
     }) video: User,
     interaction: CommandInteraction,
   ): void {
-    if (!canExecute(interaction.member as GuildMember, MOD_ROLE_ID)) {
+    if (!canExecute(interaction.member as GuildMember, [MOD_ROLE_ID])) {
       interaction.reply({ content: "Você não possui permissão para executar esse comando", ephemeral: true });
       return;
     }

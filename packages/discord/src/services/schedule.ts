@@ -54,7 +54,7 @@ export async function isGameScheduled(a: Team, b: Team): Promise<ScheduleGame | 
 
 export async function removeScheduledGame(a: Team, b: Team): Promise<void> {
   db.data!.scheduledGames = db.data!.scheduledGames
-    .filter(scheduledGame => hasMatchup(scheduledGame, a, b));
+    .filter(scheduledGame => !hasMatchup(scheduledGame, a, b));
 
   await db.write();
 }
