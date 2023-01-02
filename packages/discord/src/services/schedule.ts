@@ -8,11 +8,10 @@ dotenv.config();
 export interface ScheduleGame {
   home: Team;
   away: Team;
-  dateTime: Date;
+  dateTime: string;
 }
 
 export async function saveScheduleGame(scheduleGame: ScheduleGame): Promise<void> {
-
   db.data?.scheduledGames.push(scheduleGame);
 
   await db.write();

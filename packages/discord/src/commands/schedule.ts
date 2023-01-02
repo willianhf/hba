@@ -80,10 +80,11 @@ export class ResultsCommands {
       return;
     }
 
+    console.log(dateTime, dateTime.toISOString());
     await saveScheduleGame({
       home: homeTeam,
       away: awayTeam,
-      dateTime: dateTime
+      dateTime: dateTime.toISOString()
     });
 
     if (isToday(dateTime)) {

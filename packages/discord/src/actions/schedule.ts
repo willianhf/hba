@@ -7,8 +7,8 @@ import { getEmojiByName, getTeamEmoji } from "../utils/format.js";
 
 const scheduledGameRow = (scheduledGame: ScheduleGame): string => {
   const timezones = {
-    brazil: changeTimezone(scheduledGame.dateTime, "America/Sao_Paulo"),
-    portugal: changeTimezone(scheduledGame.dateTime, "Europe/Lisbon"),
+    brazil: changeTimezone(new Date(scheduledGame.dateTime), "America/Sao_Paulo"),
+    portugal: changeTimezone(new Date(scheduledGame.dateTime), "Europe/Lisbon"),
   };
 
   return bold(`${format(timezones.brazil, "HH:mm")} 🇧🇷 | ${format(timezones.portugal, "HH:mm")} 🇵🇹 - ${getTeamEmoji(scheduledGame.away)} vs. ${getTeamEmoji(scheduledGame.home)}`);
