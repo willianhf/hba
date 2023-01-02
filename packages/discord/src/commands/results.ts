@@ -4,6 +4,7 @@ import { onSendResult } from "../actions/result.js";
 import { bot } from "../main.js";
 import { seasonTeams } from "../services/teams.js";
 import { canExecute } from "../utils/command.js";
+import { getTeamEmoji } from "../utils/format.js";
 import { MOD_ROLE_ID } from "../utils/roles.js";
 
 const teamsChoice = seasonTeams.map(team => team.name);
@@ -110,7 +111,7 @@ export class ResultsCommands {
     console.log("✅ Result stored successfully");
 
     interaction.reply(`
-${bot.emojis.cache.find(emoji => emoji.name === awayTeam.emoji) ?? ""} ${awayTeam.name} ${awayTeamScore} @ ${homeTeamScore} ${homeTeam.name} ${bot.emojis.cache.find(emoji => emoji.name === homeTeam.emoji) ?? ""}
+${getTeamEmoji(awayTeam)} ${awayTeam.name} ${awayTeamScore} @ ${homeTeamScore} ${homeTeam.name} ${getTeamEmoji(homeTeam)}
 
 🔥 ⛹️  Cole.Wolforg Player of the Game: ${potg.toString()} 
 Árbitro: ${ref.toString()}
