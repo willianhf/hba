@@ -5,7 +5,7 @@ import { announceScheduledGames } from "../actions/schedule.js";
 import { isGameScheduled, removeScheduledGame, saveScheduleGame } from "../services/schedule.js";
 import { seasonTeams } from "../services/teams.js";
 import { canExecute } from "../utils/command.js";
-import { CAPTAIN_ROLE_ID } from "../utils/roles.js";
+import { CAPTAIN_ROLE_ID, MOD_ROLE_ID } from "../utils/roles.js";
 
 const teamsChoice = seasonTeams.map(team => team.name);
 
@@ -46,7 +46,7 @@ export class ResultsCommands {
     }) time: string,
     interaction: CommandInteraction,
   ): Promise<void> {
-    if (!canExecute(interaction.member as GuildMember, CAPTAIN_ROLE_ID)) {
+    if (!canExecute(interaction.member as GuildMember, [MOD_ROLE_ID, CAPTAIN_ROLE_ID])) {
       interaction.reply({ content: "Você não possui permissão para executar esse comando", ephemeral: true });
       return;
     }
@@ -113,7 +113,7 @@ export class ResultsCommands {
     }) awayTeamName: string,
     interaction: CommandInteraction,
   ): Promise<void> {
-    if (!canExecute(interaction.member as GuildMember, CAPTAIN_ROLE_ID)) {
+    if (!canExecute(interaction.member as GuildMember, [MOD_ROLE_ID, CAPTAIN_ROLE_ID])) {
       interaction.reply({ content: "Você não possui permissão para executar esse comando", ephemeral: true });
       return;
     }
@@ -141,14 +141,28 @@ export class ResultsCommands {
       return;
     }
 
+    await removeScheduledGame(homeTeam, awayTeam);
+
     if (isToday(new Date(scheduledGame.dateTime))) {
       await announceScheduledGames();
     }
 
-    await removeScheduledGame(homeTeam, awayTeam);
-
     console.log("✅ Removed scheduled game successfully");
     interaction.reply({ content: "✅ Removido o jogo agendado com sucesso", ephemeral: true });
+  }
+
+  @Slash({ description: "Publica os jogos agendados do dia" })
+  @SlashGroup("schedule")
+  async publish(
+    interaction: CommandInteraction,
+  ): Promise<void> {
+    if (!canExecute(interaction.member as GuildMember, [MOD_ROLE_ID, CAPTAIN_ROLE_ID])) {
+      interaction.reply({ content: "Você não possui permissão para executar esse comando", ephemeral: true });
+      return;
+    }
+
+    await announceScheduledGames();
+    interaction.reply({ content: "✅ Publica os jogos agendados do dia", ephemeral: true });
   }
 }
 
