@@ -7,6 +7,8 @@ export function changeTimezone(date: Date, timezone: string): Date {
 
   const diff = date.getTime() - invdate.getTime();
 
+  console.log(invdate, diff);
+
   return new Date(date.getTime() - diff);
 }
 
