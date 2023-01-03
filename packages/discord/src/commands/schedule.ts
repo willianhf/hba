@@ -1,11 +1,13 @@
 import { isToday, isValid, parse } from "date-fns";
+// @ts-ignore
+import { utcToZonedTime } from "date-fns-tz/esm";
 import { ApplicationCommandOptionType, CommandInteraction, GuildMember } from "discord.js";
 import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from "discordx";
 import { announceScheduledGames } from "../actions/schedule.js";
 import { isGameScheduled, removeScheduledGame, saveScheduleGame } from "../services/schedule.js";
 import { seasonTeams } from "../services/teams.js";
 import { canExecute } from "../utils/command.js";
-import { CAPTAIN_ROLE_ID, MOD_ROLE_ID } from "../utils/roles.js";
+import { CAPTAIN_ROLE_ID, isPortuguese, MOD_ROLE_ID } from "../utils/roles.js";
 
 const teamsChoice = seasonTeams.map(team => team.name);
 
@@ -68,7 +70,7 @@ export class ResultsCommands {
       return;
     }
 
-    const dateTime = parse(`${date} ${time}`, "dd/MM/yyyy HH:mm", new Date());
+    let dateTime = parse(`${date} ${time}`, "dd/MM/yyyy HH:mm", new Date());
     if (!isValid(dateTime)) {
       interaction.reply({ content: "A data ou horário informado é inválido", ephemeral: true });
       return;
@@ -78,6 +80,10 @@ export class ResultsCommands {
     if (scheduledGame) {
       interaction.reply({ content: "Esse jogo já está agendado", ephemeral: true });
       return;
+    }
+
+    if (!isPortuguese(interaction.member as GuildMember)) {
+      dateTime = utcToZonedTime(dateTime, "America/Sao_Paulo");  
     }
 
     await saveScheduleGame({
