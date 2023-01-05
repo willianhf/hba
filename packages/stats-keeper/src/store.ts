@@ -77,7 +77,10 @@ export const useStore = create<Store>((set) => ({
       produce((state: Store) => {
         const index = state[homeOrAway]?.players.findIndex((p) => player.id === p.id) ?? -1;
         if (index >= 0) {
-          state[homeOrAway]!.players[index][stat] -= 1;
+          const statValue = state[homeOrAway]!.players[index][stat];
+          if (statValue > 0) {
+            state[homeOrAway]!.players[index][stat] -= 1;
+          }
         }
       })
     )

@@ -3,18 +3,21 @@ import { useStore } from "../store";
 import { Player } from "../types";
 import { sumPoints } from "../utils/stats";
 
-const playerStatsRow = (player: Player, spacePad: number) =>
-  `${player.isCaptain ? "© " : ""}${player.name.padEnd(spacePad, " ")} | PTS: ${player.points
-    .toString()
-    .padStart(2, " ")} AST: ${player.assists.toString().padStart(2, " ")} STL: ${player.steals
-    .toString()
-    .padStart(2, " ")} REB: ${player.rebounds.toString().padStart(2, " ")} BLK: ${player.blocks
-    .toString()
-    .padStart(2, " ")} TO: ${player.turnovers.toString().padStart(2, " ")} F: ${player.fouls
-    .toString()
-    .padStart(2, " ")}`;
+const CAPTAIN_TAG = "© ";
+const STATS_OFFSET = 2;
 
-const PAD_OFFSET = 1;
+const playerStatsRow = (player: Player, spacePad: number) =>
+  `${player.isCaptain ? "© " : ""}${player.name.padEnd(player.isCaptain ? spacePad - CAPTAIN_TAG.length : spacePad, " ")} | PTS: ${player.points
+    .toString()
+    .padStart(STATS_OFFSET, " ")} AST: ${player.assists.toString().padStart(STATS_OFFSET, " ")} STL: ${player.steals
+    .toString()
+    .padStart(STATS_OFFSET, " ")} REB: ${player.rebounds.toString().padStart(STATS_OFFSET, " ")} BLK: ${player.blocks
+    .toString()
+    .padStart(STATS_OFFSET, " ")} TO: ${player.turnovers.toString().padStart(STATS_OFFSET, " ")} F: ${player.fouls
+    .toString()
+    .padStart(STATS_OFFSET, " ")}`;
+
+const PAD_OFFSET = 3;
 
 export function CopyStats(): JSX.Element | null {
   const { home, away } = useStore((state) => ({ home: state.home, away: state.away }));

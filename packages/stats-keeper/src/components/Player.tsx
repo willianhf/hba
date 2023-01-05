@@ -1,7 +1,7 @@
 import { XMarkIcon } from "@heroicons/react/20/solid";
+import clsx from "clsx";
 import { useStore } from "../store";
 import { HomeOrAway, Player as IPlayer, Stats } from "../types";
-import clsx from "clsx";
 
 interface Props {
   homeOrAway: HomeOrAway;
@@ -63,12 +63,17 @@ function PlayerStat(props: PlayerStatProps): JSX.Element {
     decrease: state.decreasePlayerStat
   }));
 
+  function onClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, fn: Function) {
+    event.preventDefault();
+    fn();
+  }
+
   return (
     <button
       type="button"
       className="text-center p-0 select-none"
-      onClick={() => increase(props.homeOrAway, props.player, props.stat)}
-      onContextMenu={() => decrease(props.homeOrAway, props.player, props.stat)}
+      onClick={(event) => onClick(event, () => increase(props.homeOrAway, props.player, props.stat))}
+      onContextMenu={(event) => onClick(event, () => decrease(props.homeOrAway, props.player, props.stat))}
     >
       {props.player[props.stat]}
     </button>
