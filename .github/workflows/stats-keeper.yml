@@ -2,8 +2,8 @@ name: 'publish'
 on:
   push:
     paths:
-      - './packages/stats-keeper/**'
-      - './.github/workflows/stats-keeper.yml'
+      - 'packages/stats-keeper/**'
+      - '.github/workflows/stats-keeper.yml'
     branches:
       - main
 
@@ -17,7 +17,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     defaults:
       run:
-        working-directory: ./packages/stats-keeper
+        working-directory: packages/stats-keeper
     steps:
       - uses: actions/checkout@v3
       - name: setup node
