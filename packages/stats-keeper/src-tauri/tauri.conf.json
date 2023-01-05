@@ -53,11 +53,12 @@
     },
     "windows": [
       {
-        "fullscreen": false,
+        "width": 800,
         "height": 680,
+        "fullscreen": false,
         "resizable": true,
-        "title": "HBA | Stats Keeper",
-        "width": 800
+        "alwaysOnTop": true,
+        "title": "HBA | Stats Keeper"
       }
     ]
   }

@@ -4,7 +4,7 @@ import { Team } from "./components/Team";
 
 export default function App(): JSX.Element {
   return (
-    <div className="px-4 py-2 h-full flex flex-col bg-zinc-800">
+    <div className="px-4 py-2 min-h-full flex flex-col">
       <Score />
       <div className="flex-1 mb-2">
         <Team homeOrAway="home" />
