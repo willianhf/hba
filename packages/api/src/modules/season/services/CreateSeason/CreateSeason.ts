@@ -1,7 +1,6 @@
-import { IUseCase } from '~/shared/core';
+import { IUseCase, ValidationError } from '~/shared/core';
 import { Season } from '../../domain/Season';
 import { SeasonRepository } from '../../repos';
-import { NameTakenError } from './Errors';
 
 interface CreateSeasonDTO {
   name: string;
@@ -14,7 +13,7 @@ export class CreateSeasonService implements IUseCase<CreateSeasonDTO, Season> {
   public async execute(input: CreateSeasonDTO): Promise<Season> {
     const existentSeason = await this.seasonRepository.findByName(input.name);
     if (existentSeason) {
-      throw new NameTakenError(input.name);
+      throw new ValidationError(`A temporada ${input.name} já existe.`);
     }
 
     const season = new Season(input);

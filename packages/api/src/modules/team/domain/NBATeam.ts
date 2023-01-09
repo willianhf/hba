@@ -1,5 +1,7 @@
-import { Conference } from '@prisma/client';
 import { Entity, UniqueIdentifier } from '~/shared/domain';
+import { Conference } from '@prisma/client';
+
+export { Conference } from '@prisma/client';
 
 interface NBATeamProps {
   name: string;

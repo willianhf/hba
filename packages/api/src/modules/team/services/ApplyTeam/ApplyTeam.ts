@@ -1,6 +1,6 @@
 import { TeamRosterRole } from '@prisma/client';
 import { SeasonRepository } from '~/modules/season/repos';
-import { UserId } from '~/modules/users/domain';
+import { ActorId } from '~/modules/auth/domain';
 import { IUseCase, ValidationError, ValidationInputError } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { Team, TeamRoster } from '../../domain';
@@ -9,8 +9,8 @@ import { isNBATeamAvailableService } from '../NBATeamAvailable';
 
 interface ApplyTeamDTO {
   nbaTeamId: UniqueIdentifier;
-  captainUserId: UserId;
-  coCaptainUserId: UserId;
+  captainActorId: ActorId;
+  coCaptainActorId: ActorId;
 }
 
 type ApplyTeamResult = Team;
@@ -26,15 +26,15 @@ export class ApplyTeamUseCase implements IUseCase<ApplyTeamDTO, ApplyTeamResult>
     const currentSeason = await this.seasonRepository.findCurrent();
 
     const hasPendingApplication = await this.teamRosterRepository.hasPendingApplication(
-      dto.captainUserId,
+      dto.captainActorId,
       currentSeason.id
     );
     if (hasPendingApplication) {
       throw new ValidationError('Você já possui uma inscrição de equipe pendente');
     }
 
-    if (dto.captainUserId === dto.coCaptainUserId) {
-      throw new ValidationInputError({ field: 'coCaptainUser', message: 'O sub-capitão não pode ser você mesmo' });
+    if (dto.captainActorId === dto.coCaptainActorId) {
+      throw new ValidationInputError({ field: 'coCaptainActor', message: 'O sub-capitão não pode ser você mesmo' });
     }
 
     const isNBATeamAvailable = await isNBATeamAvailableService.execute({ nbaTeamId: dto.nbaTeamId });
@@ -42,15 +42,15 @@ export class ApplyTeamUseCase implements IUseCase<ApplyTeamDTO, ApplyTeamResult>
       throw new ValidationInputError({ field: 'nbaTeam', message: 'Essa equipe já foi escolhida' });
     }
 
-    const isCaptainInRoster = await this.teamRosterRepository.isUserInRoster(dto.captainUserId, currentSeason.id);
+    const isCaptainInRoster = await this.teamRosterRepository.isActorInRoster(dto.captainActorId, currentSeason.id);
     if (isCaptainInRoster) {
       throw new ValidationError('Você já está em uma equipe');
     }
 
-    const isCoCaptainInRoster = await this.teamRosterRepository.isUserInRoster(dto.coCaptainUserId, currentSeason.id);
+    const isCoCaptainInRoster = await this.teamRosterRepository.isActorInRoster(dto.coCaptainActorId, currentSeason.id);
     if (isCoCaptainInRoster) {
       throw new ValidationInputError({
-        field: 'coCaptainUser',
+        field: 'coCaptainActor',
         message: 'O sub-capitão selecionado já está em uma equipe'
       });
     }
@@ -60,13 +60,13 @@ export class ApplyTeamUseCase implements IUseCase<ApplyTeamDTO, ApplyTeamResult>
 
     const teamRosterCaptain = new TeamRoster({
       teamId: team.id,
-      userId: dto.captainUserId,
+      actorId: dto.captainActorId,
       role: TeamRosterRole.CAPTAIN
     });
 
     const teamRosterCoCaptain = new TeamRoster({
       teamId: team.id,
-      userId: dto.coCaptainUserId,
+      actorId: dto.coCaptainActorId,
       role: TeamRosterRole.CO_CAPTAIN
     });
 

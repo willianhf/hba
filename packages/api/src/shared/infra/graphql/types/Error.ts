@@ -1,3 +1,4 @@
+import { ErrorFieldOptions } from '@pothos/plugin-errors';
 import {
   ApplicationError,
   AuthenticationError,
@@ -11,7 +12,7 @@ export const ErrorInterface = schemaBuilder.interfaceRef<ApplicationError>('Base
   fields: t => ({
     name: t.exposeString('name'),
     message: t.exposeString('message'),
-    code: t.string({ resolve: error => error.extensions.code })
+    code: t.string({ resolve: error => error.code })
   })
 });
 
@@ -38,7 +39,7 @@ schemaBuilder.objectType(ValidationInputError, {
   fields: t => ({
     fields: t.field({
       type: [ErrorField],
-      resolve: error => error.extensions.fields
+      resolve: error => error.extensions.fields as any
     })
   })
 });

@@ -1,7 +1,7 @@
 import { ApprovalStatus, TeamRosterRole } from '@prisma/client';
 import { TeamRoster, TeamRosterIdentifier } from '~/modules/team/domain';
 import { TeamRosterMapper } from '~/modules/team/mapper';
-import { UserId } from '~/modules/users/domain';
+import { ActorId } from '~/modules/auth/domain';
 import { IncIdentifier, UniqueIdentifier } from '~/shared/domain';
 import { prisma } from '~/shared/infra/database';
 import { TeamRosterRepository } from '../..';
@@ -10,7 +10,7 @@ export class PrismaTeamRosterRepository implements TeamRosterRepository {
   public async findById(id: TeamRosterIdentifier): Promise<TeamRoster | null> {
     const prismaTeamRoster = await prisma.teamRoster.findUnique({
       where: {
-        teamId_userId: id.compose()
+        teamId_actorId: id.compose()
       }
     });
 
@@ -55,10 +55,10 @@ export class PrismaTeamRosterRepository implements TeamRosterRepository {
     return prismaTeamRosters.map(TeamRosterMapper.toDomain);
   }
 
-  public async isUserInRoster(userId: UserId, seasonId: IncIdentifier): Promise<boolean> {
+  public async isActorInRoster(actorId: ActorId, seasonId: IncIdentifier): Promise<boolean> {
     const playersInRosterCount = await prisma.teamRoster.count({
       where: {
-        userId: userId.toValue(),
+        actorId: actorId.toValue(),
         team: {
           seasonId: seasonId.toValue(),
           approvalStatus: ApprovalStatus.ACCEPTED
@@ -69,10 +69,10 @@ export class PrismaTeamRosterRepository implements TeamRosterRepository {
     return playersInRosterCount > 0;
   }
 
-  public async hasPendingApplication(userId: UserId, seasonId: IncIdentifier): Promise<boolean> {
-    const userApplications = await prisma.teamRoster.count({
+  public async hasPendingApplication(actorId: ActorId, seasonId: IncIdentifier): Promise<boolean> {
+    const applications = await prisma.teamRoster.count({
       where: {
-        userId: userId.toValue(),
+        actorId: actorId.toValue(),
         role: TeamRosterRole.CAPTAIN,
         team: {
           seasonId: seasonId.toValue(),
@@ -81,6 +81,6 @@ export class PrismaTeamRosterRepository implements TeamRosterRepository {
       }
     });
 
-    return userApplications > 0;
+    return applications > 0;
   }
 }

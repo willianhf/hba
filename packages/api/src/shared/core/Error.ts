@@ -1,10 +1,13 @@
-import { ApolloError } from 'apollo-server';
+import { GraphQLError } from 'graphql';
 
-export class ApplicationError extends ApolloError {
-  public constructor(code: string, title: string, description: string, extensions?: Record<string, any>) {
-    super(description, code, extensions);
-
-    Object.defineProperty(this, 'name', { value: title });
+export class ApplicationError extends GraphQLError {
+  public constructor(
+    public code: string,
+    public title: string,
+    description: string,
+    extensions?: Record<string, any>
+  ) {
+    super(description, { extensions: { ...extensions, title, code } });
   }
 
   public toPlainObject(): object {

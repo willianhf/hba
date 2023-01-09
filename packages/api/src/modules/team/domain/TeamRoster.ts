@@ -1,29 +1,29 @@
 import { TeamRosterRole } from './TeamRosterRole';
-import { UserId } from '~/modules/users/domain';
+import { ActorId } from '~/modules/auth/domain';
 import { AggregateRoot, ComposedIdentifier, UniqueIdentifier } from '~/shared/domain';
 
 interface TeamRosterProps {
   teamId: UniqueIdentifier;
-  userId: UserId;
+  actorId: ActorId;
   role: TeamRosterRole;
 }
 
 export type TeamRosterIdentifier = ComposedIdentifier<{
   teamId: UniqueIdentifier;
-  userId: UserId;
+  actorId: ActorId;
 }>;
 
 export class TeamRoster extends AggregateRoot<TeamRosterProps, TeamRosterIdentifier> {
   public constructor(props: TeamRosterProps, id?: TeamRosterIdentifier) {
-    super(props, id ?? new ComposedIdentifier({ teamId: props.teamId, userId: props.userId }));
+    super(props, id ?? new ComposedIdentifier({ teamId: props.teamId, actorId: props.actorId }));
   }
 
   public get teamId(): UniqueIdentifier {
     return this.props.teamId;
   }
 
-  public get userId(): UserId {
-    return this.props.userId;
+  public get actorId(): ActorId {
+    return this.props.actorId;
   }
 
   public get role(): TeamRosterRole {

@@ -1,3 +1,4 @@
+import { ApprovalStatus } from '~/modules/player/domain/ApprovalStatus';
 import { Player } from '~/modules/player/domain/Player';
 import {
   prismaIconRepository,
@@ -5,11 +6,8 @@ import {
   prismaPlayerRepository,
   prismaPositionRepository
 } from '~/modules/player/repos/impl/Prisma';
-import { ApprovalStatus } from '~/modules/player/domain/ApprovalStatus';
 import { SeasonRef } from '~/modules/season/infra/graphql/types/Season';
 import { prismaSeasonRepository } from '~/modules/season/repos';
-import { UserRef } from '~/modules/users/infra/graphql/types/User';
-import { prismaUserRepository } from '~/modules/users/repos';
 import { UniqueIdentifier } from '~/shared/domain';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
 import { IconRef } from './Icon';
@@ -39,11 +37,6 @@ schemaBuilder.node(PlayerRef, {
       type: PositionRef,
       nullable: true,
       resolve: player => prismaPositionRepository.findById(player.positionId)
-    }),
-    user: t.field({
-      type: UserRef,
-      nullable: true,
-      resolve: player => prismaUserRepository.findById(player.userId)
     }),
     season: t.field({
       type: SeasonRef,

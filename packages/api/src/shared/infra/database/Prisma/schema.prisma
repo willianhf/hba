@@ -7,38 +7,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            String   @id @default(uuid())
-  username      String   @unique
+model Actor {
+  id            String @id @default(uuid())
   habboUsername String
-  password      String
-  isVerified    Boolean  @default(false)
-  isAdmin       Boolean  @default(false)
-  createdAt     DateTime @default(now())
 
+  identity Identity?
+  roles    Role[]
+  actor    DiscordActor?
+  players  Player[]
+  rosters  TeamRoster[]
+}
+
+model DiscordActor {
+  discordId String @id @unique
+  actorId   String @unique
+
+  actor Actor @relation(fields: [actorId], references: [id])
+}
+
+model Identity {
+  id         String   @id @default(uuid())
+  username   String   @unique
+  password   String?
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  actorId    String   @unique
+
+  actor        Actor         @relation(fields: [actorId], references: [id])
   sessions     Session[]
   verification Verification?
-  players      Player[]
-  rosters      TeamRoster[]
+}
+
+model Role {
+  id      String @id @default(uuid())
+  actorId String
+
+  actor Actor @relation(fields: [actorId], references: [id])
 }
 
 model Session {
-  id        String   @id @default(uuid())
-  userId    String
-  userAgent String
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  identityId String
+  userAgent  String
+  createdAt  DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  identity Identity @relation(fields: [identityId], references: [id])
 }
 
 model Verification {
-  id        String   @id @default(uuid())
-  code      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String   @unique
+  id         String   @id @default(uuid())
+  code       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  identityId String   @unique
 
-  user User @relation(fields: [userId], references: [id])
+  identity Identity @relation(fields: [identityId], references: [id])
 }
 
 model Season {
@@ -74,13 +97,13 @@ enum ApprovalStatus {
 
 model Player {
   id          String         @id @unique @default(uuid())
-  userId      String
+  actorId     String
   seasonId    Int
   nbaPlayerId String
   positionId  String
   status      ApprovalStatus @default(IDLE)
 
-  user               User          @relation(fields: [userId], references: [id])
+  actor              Actor         @relation(fields: [actorId], references: [id])
   season             Season        @relation(fields: [seasonId], references: [id])
   nbaPlayer          NBAPlayer     @relation(fields: [nbaPlayerId], references: [id])
   position           Position      @relation(fields: [positionId], references: [id])
@@ -88,7 +111,7 @@ model Player {
   icons              PlayerIcon[]
   playerOfTheMatches MatchResult[]
 
-  @@unique([userId, seasonId, nbaPlayerId])
+  @@unique([actorId, seasonId, nbaPlayerId])
 }
 
 model Icon {
@@ -146,15 +169,15 @@ enum TeamRosterRole {
 }
 
 model TeamRoster {
-  teamId String
-  userId String
-  role   TeamRosterRole @default(PLAYER)
+  teamId  String
+  actorId String
+  role    TeamRosterRole @default(PLAYER)
 
-  team Team @relation(fields: [teamId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  team  Team  @relation(fields: [teamId], references: [id])
+  actor Actor @relation(fields: [actorId], references: [id])
 
-  @@id([teamId, userId])
-  @@unique([teamId, userId])
+  @@id([teamId, actorId])
+  @@unique([teamId, actorId])
 }
 
 enum MatchKind {
@@ -216,4 +239,28 @@ model MatchSeries {
   name String
 
   matches Match[]
+}
+
+enum DiscordChannelCategory {
+  STANDINGS
+  SCHEDULE
+}
+
+model DiscordChannel {
+  category  DiscordChannelCategory @id @unique
+  discordId String
+  name      String
+}
+
+enum DiscordRoleCategory {
+  MOD
+  CAPTAIN
+  COUNCIL
+  PORTUGUESE
+}
+
+model DiscordRole {
+  category  DiscordRoleCategory @id @unique
+  discordId String
+  name      String
 }

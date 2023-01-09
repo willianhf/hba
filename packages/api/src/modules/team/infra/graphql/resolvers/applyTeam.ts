@@ -1,5 +1,5 @@
 import { applyTeamService } from '~/modules/team/services/ApplyTeam';
-import { UserId } from '~/modules/users/domain';
+import { ActorId } from '~/modules/auth/domain';
 import { ApplicationError, AuthenticationError, ValidationError, ValidationInputError } from '~/shared/core/Error';
 import { UniqueIdentifier } from '~/shared/domain';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
@@ -23,8 +23,8 @@ schemaBuilder.relayMutationField(
     resolve: async (_parent, args, context) => {
       return applyTeamService.execute({
         nbaTeamId: new UniqueIdentifier(args.input.nbaTeamId.id),
-        captainUserId: context.user!.id,
-        coCaptainUserId: new UserId(args.input.coCaptainUserId.id)
+        captainActorId: context.user!.id,
+        coCaptainActorId: new ActorId(args.input.coCaptainUserId.id)
       });
     }
   },

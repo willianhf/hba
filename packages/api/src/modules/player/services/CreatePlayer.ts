@@ -1,6 +1,6 @@
 import { decodeGlobalID } from '@pothos/plugin-relay';
 import { prismaSeasonRepository, SeasonRepository } from '~/modules/season/repos';
-import { User } from '~/modules/users/domain';
+import { Actor } from '~/modules/auth/domain';
 import { EntityNotFoundError, IUseCase, ValidationInputError } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { Player } from '../domain/Player';
@@ -9,7 +9,7 @@ import { prismaIconRepository, prismaPlayerRepository, prismaPositionRepository 
 import { findNBAPlayerService } from './FindNBAPlayer';
 
 interface CreatePlayerDTO {
-  user: User;
+  actor: Actor;
   nbaPlayerId: string;
   positionId: string;
   iconsIds: string[];
@@ -51,7 +51,7 @@ class CreatePlayerService implements IUseCase<CreatePlayerDTO, Player> {
       })
     );
 
-    const canRequestPlayer = await this.playerRepository.canRequestPlayer(dto.user.id, currentSeason.id);
+    const canRequestPlayer = await this.playerRepository.canRequestPlayer(dto.actor.id, currentSeason.id);
     if (!canRequestPlayer) {
       throw new ValidationInputError({
         field: 'player',
@@ -68,7 +68,7 @@ class CreatePlayerService implements IUseCase<CreatePlayerDTO, Player> {
     }
 
     const player = Player.create({
-      userId: dto.user.id,
+      actorId: dto.actor.id,
       seasonId: currentSeason.id,
       nbaPlayerId,
       positionId,

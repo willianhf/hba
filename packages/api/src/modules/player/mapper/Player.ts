@@ -6,7 +6,7 @@ import { Player } from '../domain/Player';
 export class PlayerMapper extends Mapper<Player> {
   public static toPersist(domain: Player): ToPersistPlayer {
     return {
-      userId: domain.userId.toValue(),
+      actorId: domain.actorId.toValue(),
       seasonId: domain.seasonId.toValue(),
       nbaPlayerId: domain.nbaPlayerId.toValue(),
       positionId: domain.positionId.toValue(),
@@ -20,7 +20,7 @@ export class PlayerMapper extends Mapper<Player> {
 
   public static toDomain(persisted: PersistedPlayer): Player {
     const playerId = new UniqueIdentifier(persisted.id);
-    const userId = new UniqueIdentifier(persisted.userId);
+    const actorId = new UniqueIdentifier(persisted.actorId);
     const seasonId = new IncIdentifier(persisted.seasonId);
     const nbaPlayerId = new UniqueIdentifier(persisted.nbaPlayerId);
     const positionId = new UniqueIdentifier(persisted.positionId);
@@ -29,7 +29,7 @@ export class PlayerMapper extends Mapper<Player> {
 
     return Player.create(
       {
-        userId,
+        actorId,
         seasonId,
         nbaPlayerId,
         positionId,

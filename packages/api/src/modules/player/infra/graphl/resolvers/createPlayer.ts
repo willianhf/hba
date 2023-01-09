@@ -20,7 +20,7 @@ schemaBuilder.relayMutationField(
       types: [AuthenticationError, ApplicationError, ValidationInputError]
     },
     resolve: async (_parent, args, context) => {
-      return createPlayerService.execute({ ...args.input, user: context.user! });
+      return createPlayerService.execute({ ...args.input, actor: context.user! });
     }
   },
   {

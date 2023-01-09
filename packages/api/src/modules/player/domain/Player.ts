@@ -1,9 +1,10 @@
+import { ActorId } from '~/modules/auth/domain';
 import { AggregateRoot, IncIdentifier, UniqueIdentifier } from '~/shared/domain';
 import { RequiredExceptFor } from '~/types/common';
 import { ApprovalStatus } from './ApprovalStatus';
 
 interface PlayerProps {
-  userId: UniqueIdentifier;
+  actorId: ActorId;
   seasonId: IncIdentifier;
   nbaPlayerId: UniqueIdentifier;
   positionId: UniqueIdentifier;
@@ -22,8 +23,8 @@ export class Player extends AggregateRoot<PlayerProps> {
     return new Player({ ...props, approvalStatus: props.approvalStatus ?? ApprovalStatus.IDLE }, id);
   }
 
-  public get userId(): UniqueIdentifier {
-    return this.props.userId;
+  public get actorId(): UniqueIdentifier {
+    return this.props.actorId;
   }
 
   public get seasonId(): IncIdentifier {
