@@ -1,11 +1,11 @@
-import { AggregateRoot, Identifier, UniqueIdentifier } from '~/shared/domain';
-import { ActorId } from './Actor';
+import { AggregateRoot, Identifier } from '~/shared/domain';
+import { Actor } from './Actor';
 
 export class DiscordActorId extends Identifier<string> {}
 
 interface DiscordActorProps {
   discordId: string;
-  actorId: ActorId;
+  actor: Actor;
 }
 
 export class DiscordActor extends AggregateRoot<DiscordActorProps, DiscordActorId> {
@@ -17,7 +17,7 @@ export class DiscordActor extends AggregateRoot<DiscordActorProps, DiscordActorI
     return this.props.discordId;
   }
 
-  get actorId(): ActorId {
-    return this.props.actorId;
+  get actor(): Actor {
+    return this.props.actor;
   }
 }

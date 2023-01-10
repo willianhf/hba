@@ -17,4 +17,13 @@ export class PrismaActorRepository implements ActorRepository {
   async findAll(): Promise<Actor[]> {
     throw new Error('Method not implemented.');
   }
+
+  async findByHabboUsername(habboUsername: string): Promise<Actor | null> {
+    const prismaActor = await prisma.actor.findFirst({ where: { habboUsername } });
+    if (!prismaActor) {
+      return null;
+    }
+
+    return ActorMapper.toDomain(prismaActor);
+  }
 }

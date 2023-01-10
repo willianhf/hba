@@ -1,9 +1,15 @@
-import { NBATeam, Prisma, Team, TeamRoster } from '@prisma/client';
+import { Actor, NBATeam, Prisma, Season, Team, TeamActor } from '@prisma/client';
 
 export type PersistedNBATeam = NBATeam;
 
-export type PersistedTeam = Team;
-export type ToPersistTeam = Prisma.TeamUncheckedCreateInput;
+export type PersistedTeamActor = TeamActor & {
+  actor: Actor;
+};
+export type ToPersistTeamActor = Prisma.TeamActorUncheckedCreateInput;
 
-export type PersistedTeamRoster = TeamRoster;
-export type ToPersistTeamRoster = Prisma.TeamRosterUncheckedCreateInput;
+export type PersistedTeam = Team & {
+  nbaTeam: NBATeam;
+  roster: PersistedTeamActor[];
+  season: Season;
+};
+export type ToPersistTeam = Prisma.TeamCreateInput;

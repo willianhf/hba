@@ -1,5 +1,5 @@
-import { IUseCase } from '~/shared/core';
-import { Actor, DiscordActor } from '../domain';
+import { IUseCase, ValidationError } from '~/shared/core';
+import { Actor, DiscordActor, DiscordActorId } from '../domain';
 import { ActorRepository, DiscordActorRepository } from '../repos';
 
 interface CreateDiscordActorDTO {
@@ -16,11 +16,23 @@ export class CreateDiscordActorUseCase implements IUseCase<CreateDiscordActorDTO
   ) {}
 
   async execute(dto: CreateDiscordActorDTO): Promise<DiscordActor> {
-    const actor = new Actor({ habboUsername: dto.habboUsername });
-    await this.actorRepository.create(actor);
+    let actor = await this.actorRepository.findByHabboUsername(dto.habboUsername);
+    if (!actor) {
+      actor = new Actor({ habboUsername: dto.habboUsername });
+      await this.actorRepository.create(actor);
+    }
 
-    const discordActor = new DiscordActor({ actorId: actor.id, discordId: dto.discordId });
-    await this.discordActorRepository.create(discordActor);
+    let discordActor = await this.discordActorRepository.findById(new DiscordActorId(dto.discordId));
+    if (!discordActor) {
+      discordActor = new DiscordActor({ actor, discordId: dto.discordId });
+      await this.discordActorRepository.create(discordActor);
+    } else {
+      throw new ValidationError('Você já está cadastrado.');
+    }
+
+    if (discordActor.discordId !== dto.discordId) {
+      throw new ValidationError('Esse usuário já está associada a outra conta.');
+    }
 
     return discordActor;
   }

@@ -15,14 +15,14 @@ model Actor {
   roles    Role[]
   actor    DiscordActor?
   players  Player[]
-  rosters  TeamRoster[]
+  rosters  TeamActor[]
 }
 
 model DiscordActor {
   discordId String @id @unique
   actorId   String @unique
 
-  actor Actor @relation(fields: [actorId], references: [id])
+  actor Actor @relation(fields: [actorId], references: [id], onDelete: Cascade)
 }
 
 model Identity {
@@ -155,23 +155,23 @@ model Team {
 
   nbaTeam     NBATeam      @relation(fields: [nbaTeamId], references: [id])
   season      Season       @relation(fields: [seasonId], references: [id])
-  roster      TeamRoster[]
+  roster      TeamActor[]
   homeMatches Match[]      @relation(name: "homeMatches")
   awayMatches Match[]      @relation(name: "awayMatches")
 
   @@unique([nbaTeamId, seasonId])
 }
 
-enum TeamRosterRole {
+enum TeamRole {
   CAPTAIN
   CO_CAPTAIN
   PLAYER
 }
 
-model TeamRoster {
+model TeamActor {
   teamId  String
   actorId String
-  role    TeamRosterRole @default(PLAYER)
+  role    TeamRole @default(PLAYER)
 
   team  Team  @relation(fields: [teamId], references: [id])
   actor Actor @relation(fields: [actorId], references: [id])

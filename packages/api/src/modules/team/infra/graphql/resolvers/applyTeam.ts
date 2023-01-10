@@ -1,4 +1,4 @@
-import { applyTeamService } from '~/modules/team/services/ApplyTeam';
+import { applyTeamUseCase } from '~/modules/team/useCases';
 import { ActorId } from '~/modules/auth/domain';
 import { ApplicationError, AuthenticationError, ValidationError, ValidationInputError } from '~/shared/core/Error';
 import { UniqueIdentifier } from '~/shared/domain';
@@ -21,10 +21,10 @@ schemaBuilder.relayMutationField(
       types: [AuthenticationError, ApplicationError, ValidationError, ValidationInputError]
     },
     resolve: async (_parent, args, context) => {
-      return applyTeamService.execute({
+      return applyTeamUseCase.execute({
         nbaTeamId: new UniqueIdentifier(args.input.nbaTeamId.id),
-        captainActorId: context.user!.id,
-        coCaptainActorId: new ActorId(args.input.coCaptainUserId.id)
+        captainActor: context.user!.id,
+        coCaptainActor: new ActorId(args.input.coCaptainUserId.id)
       });
     }
   },

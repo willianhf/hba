@@ -1,9 +1,9 @@
-import { Prisma } from '@prisma/client';
-export {
-  Actor as PersistedActor,
-  DiscordActor as PersistedDiscordActor,
-  Identity as PersistedIdentity
-} from '@prisma/client';
+import { Actor, DiscordActor, Prisma } from '@prisma/client';
+export { Actor as PersistedActor, Identity as PersistedIdentity } from '@prisma/client';
+
+export type PersistedDiscordActor = DiscordActor & {
+  actor: Actor;
+};
 
 export type ToPersistActor = Prisma.ActorCreateInput;
 export type ToPersistIdentity = Prisma.IdentityCreateInput;
