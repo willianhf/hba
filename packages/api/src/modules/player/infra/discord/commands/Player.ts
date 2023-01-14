@@ -13,7 +13,7 @@ import {
 import { applyPlayerUseCase } from '~/modules/player/useCases/ApplyPlayer';
 import { changePlayerStatusUseCase } from '~/modules/player/useCases/ChangePlayerStatus';
 import { prismaSeasonRepository } from '~/modules/season/repos';
-import { ApplicationError, InMemoryCache, ValidationError } from '~/shared/core';
+import { ApplicationError, InMemoryCache, Pagination, ValidationError } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { MessageBuilder } from '~/shared/infra/discord';
 import { bot } from '~/shared/infra/discord/server';
@@ -40,21 +40,19 @@ export class PlayerCommands {
     const applications = await prismaPlayerRepository.findByStatus(season.id, status);
 
     this.cache.set(`applications:${status}`, applications);
-
-    const totalPages = Math.floor(applications.length / APPLICATIONS_PAGE_SIZE) - 1;
-    this.cache.set(`applications:${status}:pages`, Math.max(totalPages, 0));
+    this.cache.set(`applications:${status}:pages`, Pagination.totalPages(applications, APPLICATIONS_PAGE_SIZE));
   }
 
-  private async checkCache(status: ApprovalStatus): Promise<void> {
+  private async ensureCache(status: ApprovalStatus): Promise<void> {
     if (!this.cache.has(`applications:${status}`)) {
       await this.fetchApplications(status);
     }
   }
 
   private async getApplicationsPaginated(status: ApprovalStatus, page: number): Promise<Player[]> {
-    await this.checkCache(status);
+    await this.ensureCache(status);
 
-    return this.cache.getOr<Player[]>(`applications:${status}`, []).slice(page, (page + 1) * APPLICATIONS_PAGE_SIZE);
+    return Pagination.paginate(this.cache.getOr<Player[]>(`applications:${status}`, []), page, APPLICATIONS_PAGE_SIZE);
   }
 
   private getTotalPages(status: ApprovalStatus): number {
@@ -62,7 +60,7 @@ export class PlayerCommands {
   }
 
   private async getApplicationsBySearch(status: ApprovalStatus, search: string | null): Promise<Player[]> {
-    await this.checkCache(status);
+    await this.ensureCache(status);
 
     const applications = this.cache.getOr<Player[]>(`applications:${status}`, []);
     if (search) {
@@ -71,7 +69,7 @@ export class PlayerCommands {
         .slice(0, APPLICATIONS_PAGE_SIZE);
     }
 
-    return applications.slice(0, APPLICATIONS_PAGE_SIZE);
+    return Pagination.paginate(applications, 0, APPLICATIONS_PAGE_SIZE);
   }
 
   private async fetchPositions(): Promise<void> {
@@ -329,7 +327,7 @@ export class PlayerCommands {
     }
   }
 
-  @Slash({ description: 'Remova uma inscrição aprovada de jogador na temporada atual' })
+  @Slash({ description: 'Remove inscrição aprovada de jogador na temporada atual' })
   @Guard(PermissionGuard(['Administrator']))
   @SlashGroup('player')
   async remove(

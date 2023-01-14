@@ -1,20 +1,18 @@
 import { PermissionGuard } from '@discordx/utilities';
-import {
-  ApplicationCommandOptionType,
-  AutocompleteInteraction,
-  CommandInteraction, User
-} from 'discord.js';
+import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, User } from 'discord.js';
 import { Discord, Guard, Slash, SlashChoice, SlashGroup, SlashOption } from 'discordx';
 import { DiscordActorId } from '~/modules/auth/domain';
 import { prismaDiscordActorRepository } from '~/modules/auth/repos/impl/prisma';
 import { prismaSeasonRepository } from '~/modules/season/repos';
-import { ApprovalStatus, Conference, TeamId } from '~/modules/team/domain';
+import { ApprovalStatus, Conference, NBATeam, Team, TeamId } from '~/modules/team/domain';
 import { prismaNBATeamRepository, prismaTeamRepository } from '~/modules/team/repos/impl/Prisma';
 import { applyTeamUseCase, changeTeamApprovalStatusUseCase } from '~/modules/team/useCases';
-import { ValidationError } from '~/shared/core';
+import { InMemoryCache, Pagination, ValidationError } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { MessageBuilder } from '~/shared/infra/discord';
 import { bot } from '~/shared/infra/discord/server';
+
+const TEAMS_PAGE_SIZE = 10;
 
 @Discord()
 @SlashGroup({
@@ -22,6 +20,66 @@ import { bot } from '~/shared/infra/discord/server';
   description: 'Gerencia as equipes'
 })
 export class TeamCommands {
+  private readonly cache = new InMemoryCache();
+
+  public constructor() {
+    this.fetchNBATeams();
+    this.fetchTeams(ApprovalStatus.IDLE);
+  }
+
+  private async fetchNBATeams(): Promise<void> {
+    const nbaTeams = await prismaNBATeamRepository.findAll();
+    this.cache.set('nbaTeams', nbaTeams);
+  }
+
+  private async fetchTeams(status: ApprovalStatus): Promise<void> {
+    const season = await prismaSeasonRepository.findCurrent();
+    const teams = await prismaTeamRepository.findByStatus(season.id, status);
+
+    this.cache.set(`teams:${status}`, teams);
+    this.cache.set(`teams:${status}:pages`, Pagination.totalPages(teams, TEAMS_PAGE_SIZE));
+  }
+
+  private async ensureCache(status: ApprovalStatus): Promise<void> {
+    if (!this.cache.has(`teams:${status}`)) {
+      await this.fetchTeams(status);
+    }
+  }
+
+  private async getTeamsPaginated(status: ApprovalStatus, page: number): Promise<Team[]> {
+    await this.ensureCache(status);
+
+    return Pagination.paginate(this.cache.getOr<Team[]>(`teams:${status}`, []), page, TEAMS_PAGE_SIZE);
+  }
+
+  private async getTeamsBySearch(status: ApprovalStatus, search: string | null): Promise<Team[]> {
+    await this.ensureCache(status);
+
+    const teams = this.cache.getOr<Team[]>(`teams:${status}`, []);
+    if (search) {
+      return teams
+        .filter(team => team.nbaTeam.name.toLowerCase().includes(search.toLowerCase()))
+        .slice(0, TEAMS_PAGE_SIZE);
+    }
+
+    return Pagination.paginate(teams, 0, TEAMS_PAGE_SIZE);
+  }
+
+  private getTotalPages(status: ApprovalStatus): number {
+    return this.cache.getOr(`teams:${status}:pages`, 0);
+  }
+
+  private buildTeamsList(teams: Team[]): string[] {
+    const biggestTeamName = Math.max(...teams.map(team => team.nbaTeam.name.length));
+
+    return teams.map(
+      team =>
+        `${team.nbaTeam.name.padEnd(biggestTeamName, ' ')} | © ${team.roster.captain.habboUsername} & ${
+          team.roster.coCaptain.habboUsername
+        }`
+    );
+  }
+
   @Slash({ description: 'Aplica-se para ser capitão de uma equipe' })
   @SlashGroup('team')
   async apply(
@@ -38,15 +96,13 @@ export class TeamCommands {
       name: 'team',
       type: ApplicationCommandOptionType.String,
       required: true,
-      autocomplete: async (interaction: AutocompleteInteraction) => {
-        const conference = interaction.options.getString('conference') as Conference | null;
-        if (conference === 'EAST') {
-          const eastTeams = await prismaNBATeamRepository.findByConference(conference);
-          interaction.respond(eastTeams.map(team => ({ name: team.name, value: team.id.toValue() })));
-        } else {
-          const westTeams = await prismaNBATeamRepository.findByConference(Conference.WEST);
-          interaction.respond(westTeams.map(team => ({ name: team.name, value: team.id.toValue() })));
-        }
+      autocomplete: async function (this: TeamCommands, interaction: AutocompleteInteraction) {
+        const conference = (interaction.options.getString('conference') as Conference | null) ?? Conference.EAST;
+        const nbaTeams = this.cache
+          .getOr<NBATeam[]>('nbaTeams', [])
+          .filter(nbaTeam => nbaTeam.conference === conference);
+
+        interaction.respond(nbaTeams.map(team => ({ name: team.name, value: team.id.toValue() })));
       }
     })
     nbaTeamId: string,
@@ -96,18 +152,30 @@ export class TeamCommands {
 
   @Slash({ description: 'Lista todas as inscrições de times da temporada' })
   @SlashGroup('team')
-  async applications(interaction: CommandInteraction): Promise<void> {
+  async applications(
+    @SlashOption({
+      description: 'Página',
+      name: 'page',
+      type: ApplicationCommandOptionType.Integer,
+      required: false
+    })
+    page: number | null,
+    interaction: CommandInteraction
+  ): Promise<void> {
+    page = page ?? 0;
+
+    const status = ApprovalStatus.IDLE;
+    const teams = await this.getTeamsPaginated(status, page);
     const season = await prismaSeasonRepository.findCurrent();
 
-    const applications = await prismaTeamRepository.findByStatus(season.id, ApprovalStatus.IDLE);
+    const teamsList = this.buildTeamsList(teams);
+
     interaction.reply(
       new MessageBuilder()
         .codeBlock([
           `Inscrições de times pendente (Temporada ${season.name}):\n`,
-          ...applications.map(
-            application =>
-              `${application.nbaTeam.name} | © ${application.roster.captain.habboUsername} & ${application.roster.coCaptain.habboUsername}`
-          )
+          ...teamsList,
+          `\nPágina [${page}-${this.getTotalPages(status)}]`
         ])
         .build()
     );
@@ -122,14 +190,15 @@ export class TeamCommands {
       name: 'team_id',
       type: ApplicationCommandOptionType.String,
       required: true,
-      autocomplete: async (interaction: AutocompleteInteraction) => {
-        const season = await prismaSeasonRepository.findCurrent();
-        const applications = await prismaTeamRepository.findByStatus(season.id, ApprovalStatus.IDLE);
+      autocomplete: async function (this: TeamCommands, interaction: AutocompleteInteraction) {
+        const input = interaction.options.getString('team_id');
+        const teams = await this.getTeamsBySearch(ApprovalStatus.IDLE, input);
+        const teamsList = await this.buildTeamsList(teams);
 
         interaction.respond(
-          applications.map(application => ({
-            name: `${application.nbaTeam.name} | © ${application.roster.captain.habboUsername} & ${application.roster.coCaptain.habboUsername}`,
-            value: application.id.toValue()
+          teamsList.map((team, index) => ({
+            name: team,
+            value: teams[index].id.toValue()
           }))
         );
       }
@@ -145,6 +214,8 @@ export class TeamCommands {
       }
 
       await changeTeamApprovalStatusUseCase.execute({ team, status: ApprovalStatus.ACCEPTED });
+
+      this.cache.invalidate('teams');
 
       interaction.reply(new MessageBuilder('Equipe aprovada com sucesso.').kind('SUCCESS').build());
 
@@ -172,14 +243,15 @@ export class TeamCommands {
       name: 'team_id',
       type: ApplicationCommandOptionType.String,
       required: true,
-      autocomplete: async (interaction: AutocompleteInteraction) => {
-        const season = await prismaSeasonRepository.findCurrent();
-        const applications = await prismaTeamRepository.findByStatus(season.id, ApprovalStatus.IDLE);
+      autocomplete: async function (this: TeamCommands, interaction: AutocompleteInteraction) {
+        const input = interaction.options.getString('team_id');
+        const teams = await this.getTeamsBySearch(ApprovalStatus.IDLE, input);
+        const teamsList = await this.buildTeamsList(teams);
 
         interaction.respond(
-          applications.map(application => ({
-            name: `${application.nbaTeam.name} | © ${application.roster.captain.habboUsername} & ${application.roster.coCaptain.habboUsername}`,
-            value: application.id.toValue()
+          teamsList.map((team, index) => ({
+            name: team,
+            value: teams[index].id.toValue()
           }))
         );
       }
@@ -196,6 +268,8 @@ export class TeamCommands {
 
       await changeTeamApprovalStatusUseCase.execute({ team, status: ApprovalStatus.DENIED });
 
+      this.cache.invalidate('teams');
+
       interaction.reply(new MessageBuilder('Equipe reprovada com sucesso.').kind('SUCCESS').build());
 
       const captainActorDiscord = await prismaDiscordActorRepository.findByActorId(team.roster.captain.id);
@@ -206,6 +280,53 @@ export class TeamCommands {
           `Sua inscrição da equipe ${team.nbaTeam.name} foi REPROVADA para a temporada ${season.name} da HBA.`
         );
       }
+    } catch (ex) {
+      if (ex instanceof ValidationError) {
+        interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+      }
+    }
+  }
+
+  @Slash({ description: 'Remove uma inscrição aprovada de equipe na temporada atual' })
+  @Guard(PermissionGuard(['Administrator']))
+  @SlashGroup('team')
+  async remove(
+    @SlashOption({
+      description: 'Inscrição',
+      name: 'team_id',
+      type: ApplicationCommandOptionType.String,
+      required: true,
+      autocomplete: async function (this: TeamCommands, interaction: AutocompleteInteraction) {
+        const input = interaction.options.getString('team_id');
+        const teams = await this.getTeamsBySearch(ApprovalStatus.ACCEPTED, input);
+        const teamsList = await this.buildTeamsList(teams);
+
+        interaction.respond(
+          teamsList.map((team, index) => ({
+            name: team,
+            value: teams[index].id.toValue()
+          }))
+        );
+      }
+    })
+    teamId: string,
+    interaction: CommandInteraction
+  ): Promise<void> {
+    try {
+      const team = await prismaTeamRepository.findById(new TeamId(teamId));
+      if (!team) {
+        interaction.reply(new MessageBuilder('Time informado inválido.').kind('ERROR').build());
+        return;
+      }
+
+      await changeTeamApprovalStatusUseCase.execute({
+        team,
+        status: ApprovalStatus.DENIED
+      });
+
+      this.cache.invalidate('teams');
+
+      interaction.reply(new MessageBuilder('Inscrição do jogador removida com sucesso.').kind('SUCCESS').build());
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
