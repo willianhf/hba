@@ -17,4 +17,8 @@ export class NBAPlayer extends Entity<NBAPlayerProps> {
   public get lastName(): string {
     return this.props.lastName;
   }
+
+  public get name(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
 }

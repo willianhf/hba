@@ -1,39 +1,41 @@
 import got, { HTTPError } from 'got';
 import { EntityNotFoundError, UnexpectedError } from '~/shared/core/Error';
 import { UniqueIdentifier } from '~/shared/domain';
-import { NBAPlayer } from '../domain/NBAPlayer';
+import { NBAPlayer } from '../domain';
 
-interface NBAAPIPlayersResponse {
-  league: {
-    standard: {
-      personId: string;
-      firstName: string;
-      lastName: string;
-    }[];
-  };
+interface NBAAPIPlayer {
+  id: number;
+  first_name: string;
+  last_name: string;
+}
+
+interface NBAAPISearchPlayersResponse {
+  data: NBAAPIPlayer[];
 }
 
 export class NBAAPIFacade {
-  private static readonly hostname = 'http://data.nba.net/10s/prod/v1/2021';
+  private static readonly hostname = 'https://www.balldontlie.io/api/v1/';
   private static readonly httpClient = got.extend({
     prefixUrl: this.hostname
   });
 
   public static async fetchPlayersByName(search: string): Promise<NBAPlayer[]> {
     try {
-      const response = await this.httpClient.get('players.json').json<NBAAPIPlayersResponse>();
-
-      const players = response.league.standard
-        .filter(player => {
-          const fullName = `${player.firstName} ${player.lastName}`.toLowerCase().trim();
-          return fullName.includes(search.toLowerCase().trim());
+      const response = await this.httpClient
+        .get('players', {
+          searchParams: {
+            search
+          }
         })
-        .map(player => {
-          return new NBAPlayer(
-            { firstName: player.firstName, lastName: player.lastName },
-            new UniqueIdentifier(player.personId)
-          );
-        });
+        .json<NBAAPISearchPlayersResponse>();
+
+      const players = response.data.map(
+        player =>
+          new NBAPlayer(
+            { firstName: player.first_name, lastName: player.last_name },
+            new UniqueIdentifier(player.id.toString())
+          )
+      );
 
       return players;
     } catch (error) {
@@ -43,16 +45,14 @@ export class NBAAPIFacade {
 
   public static async fetchPlayerById(nbaPlayerId: UniqueIdentifier): Promise<NBAPlayer> {
     try {
-      const response = await this.httpClient.get(`players.json`).json<NBAAPIPlayersResponse>();
-
-      const player = response.league.standard.find(player => player.personId === nbaPlayerId.toValue());
-      if (!player) {
+      const response = await this.httpClient.get(`players/${nbaPlayerId.toValue()}`).json<NBAAPIPlayer>();
+      if (!response.id) {
         throw new EntityNotFoundError('The provided NBA player does not exist');
       }
 
       return new NBAPlayer(
-        { firstName: player.firstName, lastName: player.lastName },
-        new UniqueIdentifier(player.personId)
+        { firstName: response.first_name, lastName: response.last_name },
+        new UniqueIdentifier(response.id.toString())
       );
     } catch (error) {
       if (error instanceof HTTPError) {

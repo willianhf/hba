@@ -2,9 +2,7 @@ import { PermissionGuard } from '@discordx/utilities';
 import {
   ApplicationCommandOptionType,
   AutocompleteInteraction,
-  CommandInteraction,
-  GuildMember,
-  User
+  CommandInteraction, User
 } from 'discord.js';
 import { Discord, Guard, Slash, SlashChoice, SlashGroup, SlashOption } from 'discordx';
 import { DiscordActorId } from '~/modules/auth/domain';

@@ -1,5 +1,5 @@
-import { NBAPlayer } from '~/modules/player/domain/NBAPlayer';
-import { IncIdentifier, UniqueIdentifier } from '~/shared/domain';
+import { NBAPlayer } from '~/modules/player/domain';
+import { UniqueIdentifier } from '~/shared/domain';
 import { prisma } from '~/shared/infra/database';
 import { NBAPlayerRepository } from '../../NBAPlayer';
 

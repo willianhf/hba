@@ -114,9 +114,16 @@ model Player {
   @@unique([actorId, seasonId, nbaPlayerId])
 }
 
+enum IconCategory {
+  PRIMARY
+  SECONDARY
+}
+
 model Icon {
-  id   String @id @unique
-  name String @unique
+  id       String       @id @unique
+  name     String       @unique
+  category IconCategory
+  enabled  Boolean      @default(true)
 
   playerIcons PlayerIcon[]
 }
@@ -153,11 +160,11 @@ model Team {
   seasonId       Int
   approvalStatus ApprovalStatus @default(IDLE)
 
-  nbaTeam     NBATeam      @relation(fields: [nbaTeamId], references: [id])
-  season      Season       @relation(fields: [seasonId], references: [id])
+  nbaTeam     NBATeam     @relation(fields: [nbaTeamId], references: [id])
+  season      Season      @relation(fields: [seasonId], references: [id])
   roster      TeamActor[]
-  homeMatches Match[]      @relation(name: "homeMatches")
-  awayMatches Match[]      @relation(name: "awayMatches")
+  homeMatches Match[]     @relation(name: "homeMatches")
+  awayMatches Match[]     @relation(name: "awayMatches")
 
   @@unique([nbaTeamId, seasonId])
 }

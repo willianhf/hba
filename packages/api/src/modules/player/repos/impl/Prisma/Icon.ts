@@ -1,4 +1,4 @@
-import { Icon } from '~/modules/player/domain/Icon';
+import { Icon, IconCategory } from '~/modules/player/domain';
 import { UniqueIdentifier } from '~/shared/domain';
 import { prisma } from '~/shared/infra/database';
 import { IconRepository } from '../../Icon';
@@ -17,6 +17,12 @@ export class PrismaIconRepository implements IconRepository {
     }
 
     return new Icon(prismaIcon, new UniqueIdentifier(prismaIcon.id));
+  }
+
+  public async findByCategory(category: IconCategory): Promise<Icon[]> {
+    const prismaIcons = await prisma.icon.findMany({ where: { category, enabled: true } });
+
+    return prismaIcons.map(icon => new Icon(icon, new UniqueIdentifier(icon.id)));
   }
 
   public async findPlayerIcons(playerId: UniqueIdentifier): Promise<Icon[]> {

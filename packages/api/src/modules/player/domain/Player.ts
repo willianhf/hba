@@ -1,49 +1,65 @@
-import { ActorId } from '~/modules/auth/domain';
+import { ApprovalStatus } from '@prisma/client';
+import { Actor } from '~/modules/auth/domain';
+import { SeasonId } from '~/modules/season/domain';
 import { AggregateRoot, IncIdentifier, UniqueIdentifier } from '~/shared/domain';
-import { RequiredExceptFor } from '~/types/common';
-import { ApprovalStatus } from './ApprovalStatus';
+import { Icon } from './Icon';
+import { Icons } from './Icons';
+import { NBAPlayer } from './NBAPlayer';
+import { PlayerIcon } from './PlayerIcon';
+import { Position } from './Position';
+
+export { ApprovalStatus } from '@prisma/client';
 
 interface PlayerProps {
-  actorId: ActorId;
-  seasonId: IncIdentifier;
-  nbaPlayerId: UniqueIdentifier;
-  positionId: UniqueIdentifier;
-  approvalStatus: ApprovalStatus;
-  iconIds: UniqueIdentifier[];
+  actor: Actor;
+  seasonId: SeasonId;
+  nbaPlayer: NBAPlayer;
+  position: Position;
+  status?: ApprovalStatus;
+  icons?: Icons;
 }
 
-type CreatePlayerProps = RequiredExceptFor<PlayerProps, 'approvalStatus'>;
-
 export class Player extends AggregateRoot<PlayerProps> {
-  private constructor(props: PlayerProps, id?: UniqueIdentifier) {
-    super(props, id ?? new UniqueIdentifier());
+  public constructor(props: PlayerProps, id?: UniqueIdentifier) {
+    super(
+      {
+        ...props,
+        status: props.status ?? ApprovalStatus.IDLE,
+        icons: props.icons ?? new Icons()
+      },
+      id ?? new UniqueIdentifier()
+    );
   }
 
-  public static create(props: CreatePlayerProps, id?: UniqueIdentifier): Player {
-    return new Player({ ...props, approvalStatus: props.approvalStatus ?? ApprovalStatus.IDLE }, id);
-  }
-
-  public get actorId(): UniqueIdentifier {
-    return this.props.actorId;
+  public get actor(): Actor {
+    return this.props.actor;
   }
 
   public get seasonId(): IncIdentifier {
     return this.props.seasonId;
   }
 
-  public get nbaPlayerId(): UniqueIdentifier {
-    return this.props.nbaPlayerId;
+  public get nbaPlayer(): NBAPlayer {
+    return this.props.nbaPlayer;
   }
 
-  public get positionId(): UniqueIdentifier {
-    return this.props.positionId;
+  public get position(): Position {
+    return this.props.position;
   }
 
-  public get iconIds(): UniqueIdentifier[] {
-    return this.props.iconIds;
+  public get icons(): Icons {
+    return this.props.icons!;
   }
 
   public get status(): ApprovalStatus {
-    return this.props.approvalStatus;
+    return this.props.status!;
+  }
+
+  public setIcons(icons: Icon[]): void {
+    icons.forEach(icon => this.icons.add(new PlayerIcon({ icon, playerId: this.id })));
+  }
+
+  public changeStatus(status: ApprovalStatus): void {
+    this.props.status = status;
   }
 }
