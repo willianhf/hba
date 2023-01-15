@@ -1,16 +1,17 @@
 import { PermissionGuard } from '@discordx/utilities';
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, User } from 'discord.js';
 import { Discord, Guard, Slash, SlashChoice, SlashGroup, SlashOption } from 'discordx';
-import { DiscordActorId } from '~/modules/auth/domain';
+import { DiscordActorFacade } from '~/modules/auth/infra/discord/facades/DiscordActor';
 import { prismaDiscordActorRepository } from '~/modules/auth/repos/impl/prisma';
 import { prismaSeasonRepository } from '~/modules/season/repos';
 import { ApprovalStatus, Conference, NBATeam, Team, TeamId } from '~/modules/team/domain';
 import { prismaNBATeamRepository, prismaTeamRepository } from '~/modules/team/repos/impl/Prisma';
 import { applyTeamUseCase, changeTeamApprovalStatusUseCase } from '~/modules/team/useCases';
-import { InMemoryCache, Pagination, ValidationError } from '~/shared/core';
+import { Pagination, ValidationError } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { MessageBuilder } from '~/shared/infra/discord';
 import { bot } from '~/shared/infra/discord/server';
+import { teamsCache } from '../cache';
 
 const TEAMS_PAGE_SIZE = 10;
 
@@ -19,9 +20,8 @@ const TEAMS_PAGE_SIZE = 10;
   name: 'team',
   description: 'Gerencia as equipes'
 })
+@SlashGroup('team')
 export class TeamCommands {
-  private readonly cache = new InMemoryCache();
-
   public constructor() {
     this.fetchNBATeams();
     this.fetchTeams(ApprovalStatus.IDLE);
@@ -29,33 +29,32 @@ export class TeamCommands {
 
   private async fetchNBATeams(): Promise<void> {
     const nbaTeams = await prismaNBATeamRepository.findAll();
-    this.cache.set('nbaTeams', nbaTeams);
+    teamsCache.set('nbaTeams', nbaTeams);
   }
 
   private async fetchTeams(status: ApprovalStatus): Promise<void> {
+    const key = `teams:${status}`;
+    if (teamsCache.has(key)) {
+      return;
+    }
+
     const season = await prismaSeasonRepository.findCurrent();
     const teams = await prismaTeamRepository.findByStatus(season.id, status);
 
-    this.cache.set(`teams:${status}`, teams);
-    this.cache.set(`teams:${status}:pages`, Pagination.totalPages(teams, TEAMS_PAGE_SIZE));
-  }
-
-  private async ensureCache(status: ApprovalStatus): Promise<void> {
-    if (!this.cache.has(`teams:${status}`)) {
-      await this.fetchTeams(status);
-    }
+    teamsCache.set(key, teams);
+    teamsCache.set(`${key}:pages`, Pagination.totalPages(teams, TEAMS_PAGE_SIZE));
   }
 
   private async getTeamsPaginated(status: ApprovalStatus, page: number): Promise<Team[]> {
-    await this.ensureCache(status);
+    await this.fetchTeams(status);
 
-    return Pagination.paginate(this.cache.getOr<Team[]>(`teams:${status}`, []), page, TEAMS_PAGE_SIZE);
+    return Pagination.paginate(teamsCache.getOr<Team[]>(`teams:${status}`, []), page, TEAMS_PAGE_SIZE);
   }
 
   private async getTeamsBySearch(status: ApprovalStatus, search: string | null): Promise<Team[]> {
-    await this.ensureCache(status);
+    await this.fetchTeams(status);
 
-    const teams = this.cache.getOr<Team[]>(`teams:${status}`, []);
+    const teams = teamsCache.getOr<Team[]>(`teams:${status}`, []);
     if (search) {
       return teams
         .filter(team => team.nbaTeam.name.toLowerCase().includes(search.toLowerCase()))
@@ -65,8 +64,14 @@ export class TeamCommands {
     return Pagination.paginate(teams, 0, TEAMS_PAGE_SIZE);
   }
 
+  private async getApprovedTeams(): Promise<Team[]> {
+    await this.fetchTeams(ApprovalStatus.ACCEPTED);
+
+    return teamsCache.getOr<Team[]>(`teams:${ApprovalStatus.ACCEPTED}`, []);
+  }
+
   private getTotalPages(status: ApprovalStatus): number {
-    return this.cache.getOr(`teams:${status}:pages`, 0);
+    return teamsCache.getOr(`teams:${status}:pages`, 0);
   }
 
   private buildTeamsList(teams: Team[]): string[] {
@@ -76,12 +81,11 @@ export class TeamCommands {
       team =>
         `${team.nbaTeam.name.padEnd(biggestTeamName, ' ')} | © ${team.roster.captain.habboUsername} & ${
           team.roster.coCaptain.habboUsername
-        }`
+        }© ${team.roster.captain.habboUsername}`
     );
   }
 
   @Slash({ description: 'Aplica-se para ser capitão de uma equipe' })
-  @SlashGroup('team')
   async apply(
     @SlashChoice(...Object.keys(Conference))
     @SlashOption({
@@ -98,7 +102,7 @@ export class TeamCommands {
       required: true,
       autocomplete: async function (this: TeamCommands, interaction: AutocompleteInteraction) {
         const conference = (interaction.options.getString('conference') as Conference | null) ?? Conference.EAST;
-        const nbaTeams = this.cache
+        const nbaTeams = teamsCache
           .getOr<NBATeam[]>('nbaTeams', [])
           .filter(nbaTeam => nbaTeam.conference === conference);
 
@@ -115,21 +119,10 @@ export class TeamCommands {
     coCaptain: User,
     interaction: CommandInteraction
   ): Promise<void> {
-    const captainActor = await prismaDiscordActorRepository.findById(new DiscordActorId(interaction.user.id));
-    if (!captainActor) {
-      interaction.reply(
-        new MessageBuilder('Você precisa se registrar para inscrever uma equipe.').kind('ERROR').build()
-      );
+    const captainActor = await DiscordActorFacade.findOrRegister(interaction.user, interaction.member);
 
-      return;
-    }
-
-    const coCaptainActor = await prismaDiscordActorRepository.findById(new DiscordActorId(coCaptain.id));
-    if (!coCaptainActor) {
-      interaction.reply(new MessageBuilder('O sub-capitão precisa ser registrado.').kind('ERROR').build());
-
-      return;
-    }
+    const coCaptainMember = await interaction.guild?.members.fetch({ user: coCaptain });
+    const coCaptainActor = await DiscordActorFacade.findOrRegister(coCaptain, coCaptainMember);
 
     try {
       const team = await applyTeamUseCase.execute({
@@ -138,11 +131,13 @@ export class TeamCommands {
         nbaTeamId: new UniqueIdentifier(nbaTeamId)
       });
 
+      teamsCache.invalidate(`teams:${ApprovalStatus.IDLE}`);
+
       coCaptain.send(
         `Você foi inscrito como sub-capitão da equipe ${team.nbaTeam.name} e ${team.roster.captain.habboUsername} como capitão.`
       );
 
-      interaction.reply(new MessageBuilder('A inscrição da equipe foi enviada com sucesso.').kind('SUCCESS').build());
+      interaction.reply(new MessageBuilder('A inscrição da equipe foi enviada com sucesso').kind('SUCCESS').build());
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
@@ -151,7 +146,6 @@ export class TeamCommands {
   }
 
   @Slash({ description: 'Lista todas as inscrições de times da temporada' })
-  @SlashGroup('team')
   async applications(
     @SlashOption({
       description: 'Página',
@@ -183,7 +177,6 @@ export class TeamCommands {
 
   @Slash({ description: 'Aprova um time para a temporada atual' })
   @Guard(PermissionGuard(['Administrator']))
-  @SlashGroup('team')
   async accept(
     @SlashOption({
       description: 'Equipe',
@@ -209,15 +202,15 @@ export class TeamCommands {
     try {
       const team = await prismaTeamRepository.findById(new TeamId(teamId));
       if (!team) {
-        interaction.reply(new MessageBuilder('Time informado inválido.').kind('ERROR').build());
+        interaction.reply(new MessageBuilder('Time informado inválido').kind('ERROR').build());
         return;
       }
 
       await changeTeamApprovalStatusUseCase.execute({ team, status: ApprovalStatus.ACCEPTED });
 
-      this.cache.invalidate('teams');
+      teamsCache.invalidate('teams');
 
-      interaction.reply(new MessageBuilder('Equipe aprovada com sucesso.').kind('SUCCESS').build());
+      interaction.reply(new MessageBuilder('Equipe aprovada com sucesso').kind('SUCCESS').build());
 
       const captainActorDiscord = await prismaDiscordActorRepository.findByActorId(team.roster.captain.id);
       if (captainActorDiscord) {
@@ -236,7 +229,6 @@ export class TeamCommands {
 
   @Slash({ description: 'Recusa um time para a temporada atual' })
   @Guard(PermissionGuard(['Administrator']))
-  @SlashGroup('team')
   async deny(
     @SlashOption({
       description: 'Equipe',
@@ -262,15 +254,15 @@ export class TeamCommands {
     try {
       const team = await prismaTeamRepository.findById(new TeamId(teamId));
       if (!team) {
-        interaction.reply(new MessageBuilder('Time informado inválido.').kind('ERROR').build());
+        interaction.reply(new MessageBuilder('Time informado inválido').kind('ERROR').build());
         return;
       }
 
       await changeTeamApprovalStatusUseCase.execute({ team, status: ApprovalStatus.DENIED });
 
-      this.cache.invalidate('teams');
+      teamsCache.invalidate('teams');
 
-      interaction.reply(new MessageBuilder('Equipe reprovada com sucesso.').kind('SUCCESS').build());
+      interaction.reply(new MessageBuilder('Equipe reprovada com sucesso').kind('SUCCESS').build());
 
       const captainActorDiscord = await prismaDiscordActorRepository.findByActorId(team.roster.captain.id);
       if (captainActorDiscord) {
@@ -289,7 +281,6 @@ export class TeamCommands {
 
   @Slash({ description: 'Remove uma inscrição aprovada de equipe na temporada atual' })
   @Guard(PermissionGuard(['Administrator']))
-  @SlashGroup('team')
   async remove(
     @SlashOption({
       description: 'Inscrição',
@@ -297,8 +288,7 @@ export class TeamCommands {
       type: ApplicationCommandOptionType.String,
       required: true,
       autocomplete: async function (this: TeamCommands, interaction: AutocompleteInteraction) {
-        const input = interaction.options.getString('team_id');
-        const teams = await this.getTeamsBySearch(ApprovalStatus.ACCEPTED, input);
+        const teams = await this.getApprovedTeams();
         const teamsList = await this.buildTeamsList(teams);
 
         interaction.respond(
@@ -315,7 +305,7 @@ export class TeamCommands {
     try {
       const team = await prismaTeamRepository.findById(new TeamId(teamId));
       if (!team) {
-        interaction.reply(new MessageBuilder('Time informado inválido.').kind('ERROR').build());
+        interaction.reply(new MessageBuilder('Time informado inválido').kind('ERROR').build());
         return;
       }
 
@@ -324,9 +314,9 @@ export class TeamCommands {
         status: ApprovalStatus.DENIED
       });
 
-      this.cache.invalidate('teams');
+      teamsCache.invalidate('teams');
 
-      interaction.reply(new MessageBuilder('Inscrição do jogador removida com sucesso.').kind('SUCCESS').build());
+      interaction.reply(new MessageBuilder('Inscrição do jogador removida com sucesso').kind('SUCCESS').build());
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());

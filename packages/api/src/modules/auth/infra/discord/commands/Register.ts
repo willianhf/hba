@@ -9,7 +9,7 @@ export class AuthCommands {
   @Slash({ description: 'Registra-se como membro na liga' })
   async register(interaction: CommandInteraction): Promise<void> {
     if (!interaction.member || !('displayName' in interaction.member)) {
-      interaction.reply(new MessageBuilder('Não é possível realizar o seu registro.').kind('ERROR').build());
+      interaction.reply(new MessageBuilder('Não é possível realizar o seu registro').kind('ERROR').build());
       return;
     }
 
@@ -19,7 +19,7 @@ export class AuthCommands {
         habboUsername: interaction.member.displayName
       });
 
-      interaction.reply(new MessageBuilder('Registro realizado com sucesso.').kind('SUCCESS').build());
+      interaction.reply(new MessageBuilder('Registro realizado com sucesso').kind('SUCCESS').build());
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());

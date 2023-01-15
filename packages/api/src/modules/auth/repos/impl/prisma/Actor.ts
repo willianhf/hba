@@ -10,8 +10,13 @@ export class PrismaActorRepository implements ActorRepository {
     await prisma.actor.create({ data });
   }
 
-  async findById(_id: ActorId): Promise<Actor | null> {
-    throw new Error('Method not implemented.');
+  async findById(id: ActorId): Promise<Actor | null> {
+    const prismaActor = await prisma.actor.findUnique({ where: { id: id.toValue() } });
+    if (!prismaActor) {
+      return null;
+    }
+
+    return ActorMapper.toDomain(prismaActor);
   }
 
   async findAll(): Promise<Actor[]> {

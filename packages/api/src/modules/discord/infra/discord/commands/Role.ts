@@ -38,6 +38,6 @@ export class DiscordRoleCommands {
       name: role.name
     });
 
-    interaction.reply(new MessageBuilder('Cargo definido com sucesso.').kind('SUCCESS').build());
+    interaction.reply(new MessageBuilder('Cargo definido com sucesso').kind('SUCCESS').build());
   }
 }

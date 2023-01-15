@@ -30,7 +30,7 @@ export class Roster extends WatchedList<TeamActor> {
     return coCaptain.actor;
   }
 
-  public get actors(): Actor[] {
-    return this.getItems().map(teamActor => teamActor.actor);
+  public get players(): TeamActor[] {
+    return this.getItems().filter(teamActor => teamActor.role === TeamRole.PLAYER);
   }
 }

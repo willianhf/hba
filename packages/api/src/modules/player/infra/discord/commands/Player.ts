@@ -167,7 +167,7 @@ export class PlayerCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
-      const discordActor = await DiscordActorFacade.findOrRegister(interaction);
+      const discordActor = await DiscordActorFacade.findOrRegister(interaction.user, interaction.member);
 
       await applyPlayerUseCase.execute({
         actor: discordActor.actor,
@@ -178,7 +178,7 @@ export class PlayerCommands {
 
       interaction.reply(
         new MessageBuilder(
-          'A sua inscrição como jogador foi enviada com sucesso. Ela irá ser aprovada ou rejeitada por um administrador.'
+          'A sua inscrição como jogador foi enviada com sucesso, aguarde ser aprovada ou rejeitada por um administrador'
         )
           .kind('SUCCESS')
           .build()
@@ -260,7 +260,7 @@ export class PlayerCommands {
 
       this.cache.invalidate('applications');
 
-      interaction.reply(new MessageBuilder('Inscrição de jogador aprovada com sucesso.').kind('SUCCESS').build());
+      interaction.reply(new MessageBuilder('Inscrição de jogador aprovada com sucesso').kind('SUCCESS').build());
 
       const playerActorDiscord = await prismaDiscordActorRepository.findByActorId(player.actor.id);
       if (playerActorDiscord) {
@@ -310,7 +310,7 @@ export class PlayerCommands {
 
       this.cache.invalidate('applications');
 
-      interaction.reply(new MessageBuilder('Inscrição de jogador reprovada com sucesso.').kind('SUCCESS').build());
+      interaction.reply(new MessageBuilder('Inscrição de jogador reprovada com sucesso').kind('SUCCESS').build());
 
       const playerActorDiscord = await prismaDiscordActorRepository.findByActorId(player.actor.id);
       if (playerActorDiscord) {
@@ -360,7 +360,7 @@ export class PlayerCommands {
 
       this.cache.invalidate('applications');
 
-      interaction.reply(new MessageBuilder('Inscrição do jogador removida com sucesso.').kind('SUCCESS').build());
+      interaction.reply(new MessageBuilder('Inscrição do jogador removida com sucesso').kind('SUCCESS').build());
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());

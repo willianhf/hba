@@ -43,13 +43,13 @@ class ApplyPlayerUseCase implements IUseCase<ApplyPlayerDTO, Player> {
 
     const canRequestPlayer = await this.playerRepository.canRequestPlayer(dto.actor.id, currentSeason.id);
     if (!canRequestPlayer) {
-      throw new ValidationError('Você já tem uma inscrição pendente ou aprovada pra essa temporada.');
+      throw new ValidationError('Você já tem uma inscrição pendente ou aprovada pra essa temporada');
     }
 
     const nbaPlayer = await findNBAPlayerService.execute({ nbaPlayerId: dto.nbaPlayerId });
     const isNBAPlayerAvailable = await this.playerRepository.isNBAPlayerAvailable(nbaPlayer.id, currentSeason.id);
     if (!isNBAPlayerAvailable) {
-      throw new ValidationError('O jogador escolhido já foi escolhido por outra pessoa.');
+      throw new ValidationError('O jogador escolhido já foi escolhido por outra pessoa');
     }
 
     const player = new Player({

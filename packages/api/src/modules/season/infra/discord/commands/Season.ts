@@ -35,7 +35,7 @@ export class SeasonCommands {
     try {
       await createSeasonService.execute({ name: season, isCurrent: !!isCurrent });
 
-      interaction.reply(new MessageBuilder('Temporada criada com sucesso.').kind('SUCCESS').build());
+      interaction.reply(new MessageBuilder('Temporada criada com sucesso').kind('SUCCESS').build());
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());

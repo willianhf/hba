@@ -1,11 +1,11 @@
 import { prismaSeasonRepository } from '~/modules/season/repos';
 import {
-  prismaTeamRepository,
-  prismaRosterRepository,
-  prismaNBATeamRepository
+  prismaNBATeamRepository, prismaRosterRepository, prismaTeamRepository
 } from '~/modules/team/repos/impl/Prisma';
+import { AddActorToRosterUseCase } from './AddActorToRoster';
 import { ApplyTeamUseCase } from './ApplyTeam';
 import { ChangeTeamApprovalStatusUseCase } from './ChangeTeamApprovalStatus';
+import { RemoveActorFromRosterUseCase } from './RemoveActorFromRoster';
 
 export const applyTeamUseCase = new ApplyTeamUseCase(
   prismaTeamRepository,
@@ -15,3 +15,6 @@ export const applyTeamUseCase = new ApplyTeamUseCase(
 );
 
 export const changeTeamApprovalStatusUseCase = new ChangeTeamApprovalStatusUseCase(prismaTeamRepository);
+
+export const addActorToRosterUseCase = new AddActorToRosterUseCase(prismaRosterRepository);
+export const removeActorFromRosterUseCase = new RemoveActorFromRosterUseCase(prismaRosterRepository);

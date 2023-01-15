@@ -27,11 +27,11 @@ export class CreateDiscordActorUseCase implements IUseCase<CreateDiscordActorDTO
       discordActor = new DiscordActor({ actor, discordId: dto.discordId });
       await this.discordActorRepository.create(discordActor);
     } else {
-      throw new ValidationError('Você já está cadastrado.');
+      throw new ValidationError('Você já está cadastrado');
     }
 
     if (discordActor.discordId !== dto.discordId) {
-      throw new ValidationError('Esse usuário já está associada a outra conta.');
+      throw new ValidationError('Esse usuário já está associada a outra conta');
     }
 
     return discordActor;

@@ -45,6 +45,10 @@ export class Team extends AggregateRoot<TeamProps> {
     this.roster.add(teamActor);
   }
 
+  public removeFromRoster(teamActor: TeamActor): void {
+    this.roster.remove(teamActor);
+  }
+
   public changeStatus(status: ApprovalStatus): void {
     this.props.status = status;
   }

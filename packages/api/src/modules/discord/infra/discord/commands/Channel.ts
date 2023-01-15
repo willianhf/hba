@@ -35,7 +35,7 @@ export class DiscordChannelCommands {
       if (interaction.channel) {
         channel = interaction.channel as TextChannel;
       } else {
-        interaction.reply(new MessageBuilder('Não foi possível encontrar o canal.').kind('ERROR').build());
+        interaction.reply(new MessageBuilder('Não foi possível encontrar o canal').kind('ERROR').build());
         return;
       }
     }
@@ -46,6 +46,6 @@ export class DiscordChannelCommands {
       name: channel.name
     });
 
-    interaction.reply(new MessageBuilder('Canal definido com sucesso.').kind('SUCCESS').build());
+    interaction.reply(new MessageBuilder('Canal definido com sucesso').kind('SUCCESS').build());
   }
 }
