@@ -11,11 +11,16 @@ model Actor {
   id            String @id @default(uuid())
   habboUsername String
 
-  identity Identity?
-  roles    Role[]
-  actor    DiscordActor?
-  players  Player[]
-  rosters  TeamActor[]
+  identity        Identity?
+  roles           Role[]
+  actor           DiscordActor?
+  players         Player[]
+  rosters         TeamActor[]
+  referees        MatchResult[] @relation("referee")
+  scorers         MatchResult[] @relation("scorer")
+  recorders       MatchResult[] @relation("recorder")
+  videoAssistants MatchResult[] @relation("videoReferee")
+  statsKeepers    MatchResult[] @relation("statsKepper")
 }
 
 model DiscordActor {
@@ -218,9 +223,19 @@ model MatchResult {
   isWalkover         Boolean  @default(false)
   releasedAt         DateTime
   playerOfTheMatchId String
+  refereeId          String
+  scorerId           String
+  recorderId         String?
+  videoRefereeId     String?
+  statsKeeperId      String?
 
   match            Match  @relation(fields: [matchId], references: [id])
   playerOfTheMatch Player @relation(fields: [playerOfTheMatchId], references: [id])
+  referee          Actor  @relation(fields: [refereeId], references: [id], name: "referee")
+  scorer           Actor  @relation(fields: [scorerId], references: [id], name: "scorer")
+  recorder         Actor? @relation(fields: [recorderId], references: [id], name: "recorder")
+  videoReferee     Actor? @relation(fields: [videoRefereeId], references: [id], name: "videoReferee")
+  statsKeeper      Actor? @relation(fields: [statsKeeperId], references: [id], name: "statsKepper")
 }
 
 model MatchStats {

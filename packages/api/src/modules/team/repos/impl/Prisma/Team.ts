@@ -1,4 +1,5 @@
 import { SeasonRepository } from '~/modules/season/repos';
+import { teamWithRelations } from '~/modules/team/database';
 import { Team, ApprovalStatus } from '~/modules/team/domain';
 import { TeamMapper } from '~/modules/team/mapper';
 import { IncIdentifier, UniqueIdentifier } from '~/shared/domain';
@@ -6,25 +7,13 @@ import { prisma } from '~/shared/infra/database';
 import { RosterRepository, TeamRepository } from '../..';
 
 export class PrismaTeamRepository implements TeamRepository {
-  private static RELATIONS = {
-    nbaTeam: true,
-    roster: {
-      include: {
-        actor: true
-      }
-    },
-    season: true
-  };
-
   public constructor(
     private readonly seasonRepository: SeasonRepository,
     private readonly rosterRepository: RosterRepository
   ) {}
 
   public async findAll(): Promise<Team[]> {
-    const prismaTeams = await prisma.team.findMany({
-      include: PrismaTeamRepository.RELATIONS
-    });
+    const prismaTeams = await prisma.team.findMany(teamWithRelations);
 
     return prismaTeams.map(TeamMapper.toDomain);
   }
@@ -35,7 +24,7 @@ export class PrismaTeamRepository implements TeamRepository {
         seasonId: seasonId.toValue(),
         approvalStatus: status
       },
-      include: PrismaTeamRepository.RELATIONS
+      ...teamWithRelations
     });
 
     return prismaTeams.map(TeamMapper.toDomain);
@@ -46,7 +35,7 @@ export class PrismaTeamRepository implements TeamRepository {
       where: {
         id: id.toValue()
       },
-      include: PrismaTeamRepository.RELATIONS
+      ...teamWithRelations
     });
 
     if (!prismaTeam) {

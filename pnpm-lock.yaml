@@ -23,11 +23,13 @@ importers:
       '@swan-io/boxed': ^0.10.0
       '@trpc/server': ^9.26.2
       '@types/bcrypt': ^5.0.0
+      '@types/common-tags': ^1.8.1
       '@types/jsonwebtoken': ^8.5.8
       '@types/node': ^16.11.6
       '@types/uuid': ^8.3.4
       babel-plugin-module-resolver: ^4.1.0
       bcrypt: ^5.0.1
+      common-tags: ^1.8.2
       discord.js: ^14.7.1
       discordx: ^11.5.2
       dotenv: ^10.0.0
@@ -56,6 +58,7 @@ importers:
       '@swan-io/boxed': 0.10.0
       '@trpc/server': 9.27.3
       bcrypt: 5.1.0
+      common-tags: 1.8.2
       discord.js: 14.7.1
       discordx: 11.5.2_discord.js@14.7.1
       dotenv: 10.0.0
@@ -74,6 +77,7 @@ importers:
       '@babel/preset-env': 7.20.2_@babel+core@7.20.12
       '@babel/preset-typescript': 7.18.6_@babel+core@7.20.12
       '@types/bcrypt': 5.0.0
+      '@types/common-tags': 1.8.1
       '@types/jsonwebtoken': 8.5.9
       '@types/node': 16.18.11
       '@types/uuid': 8.3.4
@@ -2625,6 +2629,10 @@ packages:
       '@types/node': 16.18.11
     dev: true
 
+  /@types/common-tags/1.8.1:
+    resolution: {integrity: sha512-20R/mDpKSPWdJs5TOpz3e7zqbeCNuMCPhV7Yndk9KU2Rbij2r5W4RzwDPkzC+2lzUqXYu9rFzTktCBnDjHuNQg==}
+    dev: true
+
   /@types/json5/0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
@@ -3232,6 +3240,11 @@ packages:
     resolution: {integrity: sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==}
     engines: {node: '>= 6'}
     dev: true
+
+  /common-tags/1.8.2:
+    resolution: {integrity: sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA==}
+    engines: {node: '>=4.0.0'}
+    dev: false
 
   /commondir/1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}

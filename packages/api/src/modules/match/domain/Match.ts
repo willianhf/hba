@@ -1,18 +1,18 @@
 import { SeasonId } from '~/modules/season/domain';
-import { TeamId } from '~/modules/team/domain';
+import { Team } from '~/modules/team/domain';
 import { AggregateRoot, UniqueIdentifier } from '~/shared/domain';
 import { MatchKind } from './MatchKind';
-import { MatchSeriesId } from './MatchSeries';
+import { MatchSeries } from './MatchSeries';
 
 export class MatchId extends UniqueIdentifier {}
 
 interface MatchProps {
   seasonId: SeasonId;
-  homeTeamId: TeamId;
-  awayTeamId: TeamId;
+  homeTeam: Team;
+  awayTeam: Team;
   matchKind: MatchKind;
   scheduledTo?: Date;
-  matchSeriesId?: MatchSeriesId;
+  matchSeries?: MatchSeries;
 }
 
 export class Match extends AggregateRoot<MatchProps, MatchId> {
@@ -24,12 +24,12 @@ export class Match extends AggregateRoot<MatchProps, MatchId> {
     return this.props.seasonId;
   }
 
-  get homeTeamId(): TeamId {
-    return this.props.homeTeamId;
+  get homeTeam(): Team{
+    return this.props.homeTeam;
   }
 
-  get awayTeamId(): TeamId {
-    return this.props.awayTeamId;
+  get awayTeam(): Team{
+    return this.props.awayTeam;
   }
 
   get kind(): MatchKind {
@@ -40,7 +40,11 @@ export class Match extends AggregateRoot<MatchProps, MatchId> {
     return this.props.scheduledTo;
   }
 
-  get matchSeriesId(): MatchSeriesId | undefined {
-    return this.props.matchSeriesId;
+  get matchSeries(): MatchSeries | undefined {
+    return this.props.matchSeries;
+  }
+
+  public toTableRow(): string {
+    return `${this.awayTeam.nbaTeam.emoji} vs. ${this.homeTeam.nbaTeam.emoji}`
   }
 }

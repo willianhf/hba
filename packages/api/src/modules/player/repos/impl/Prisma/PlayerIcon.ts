@@ -6,7 +6,6 @@ import { PlayerIconRepository } from '../..';
 export class PrismaPlayerIconRepository implements PlayerIconRepository {
   public async create(icons: Icons): Promise<void> {
     const data = icons.getItems().map(PlayerIconMapper.toPersist);
-    console.log({ data });
 
     await prisma.playerIcon.createMany({ data });
   }

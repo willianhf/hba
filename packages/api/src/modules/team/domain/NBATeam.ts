@@ -1,5 +1,6 @@
-import { Entity, UniqueIdentifier } from '~/shared/domain';
 import { Conference } from '@prisma/client';
+import { DiscordEmojiFacade } from '~/modules/discord/facades';
+import { Entity, UniqueIdentifier } from '~/shared/domain';
 
 export { Conference } from '@prisma/client';
 
@@ -29,5 +30,9 @@ export class NBATeam extends Entity<NBATeamProps> {
 
   public get nickname(): string {
     return this.props.nickname;
+  }
+
+  public get emoji(): string {
+    return DiscordEmojiFacade.getEmojiByName(this.tricode);
   }
 }
