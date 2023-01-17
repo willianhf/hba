@@ -266,6 +266,8 @@ model MatchSeries {
 enum DiscordChannelCategory {
   STANDINGS
   SCHEDULE
+  TEAMS
+  RESULTS
 }
 
 model DiscordChannel {

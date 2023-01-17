@@ -2,6 +2,7 @@ import { stripIndent } from 'common-tags';
 import { Conference } from '~/modules/team/domain';
 import { ValueObject } from '~/shared/domain';
 import { Match } from './Match';
+import { MatchKind } from './MatchKind';
 
 interface SeasonMatchesProps {
   remainingMatches: Match[];
@@ -12,12 +13,16 @@ export class SeasonMatches extends ValueObject<SeasonMatchesProps> {
     return this.props.remainingMatches;
   }
 
+  get regular(): Match[] {
+    return this.remaining.filter(match => match.kind === MatchKind.REGULAR);
+  }
+
   get sameConference(): Match[] {
-    return this.remaining.filter(match => match.homeTeam.nbaTeam.conference === match.awayTeam.nbaTeam.conference);
+    return this.regular.filter(match => match.homeTeam.nbaTeam.conference === match.awayTeam.nbaTeam.conference);
   }
 
   get betweenConferences(): Match[] {
-    return this.remaining.filter(match => match.homeTeam.nbaTeam.conference !== match.awayTeam.nbaTeam.conference);
+    return this.regular.filter(match => match.homeTeam.nbaTeam.conference !== match.awayTeam.nbaTeam.conference);
   }
 
   get east(): Match[] {
