@@ -1,4 +1,4 @@
-import { stripIndent } from 'common-tags';
+import { stripIndents } from 'common-tags';
 import { Conference } from '~/modules/team/domain';
 import { ValueObject } from '~/shared/domain';
 import { Match } from './Match';
@@ -34,18 +34,18 @@ export class SeasonMatches extends ValueObject<SeasonMatchesProps> {
   }
 
   public getTable(): string {
-    return stripIndent(`
+    return stripIndents(`
       \`\`\`JOGOS RESTANTES\`\`\`
       \`\`\`ts
       EASTERN CONFERENCE\`\`\`
-      ${this.east.map(match => match.toTableRow())}
+      ${this.east.map(match => match.toTableRow()).join('\n')}
       
       \`\`\`prolog
       WESTERN CONFERENCE\`\`\`
-      ${this.west.map(match => match.toTableRow())}
+      ${this.west.map(match => match.toTableRow()).join('\n')}
       
       \`\`\`BETWEEN CONFERENCES\`\`\`
-      ${this.betweenConferences.map(match => match.toTableRow())}
+      ${this.betweenConferences.map(match => match.toTableRow()).join('\n')}
     `);
   }
 }

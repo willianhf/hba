@@ -24,11 +24,11 @@ export class Match extends AggregateRoot<MatchProps, MatchId> {
     return this.props.seasonId;
   }
 
-  get homeTeam(): Team{
+  get homeTeam(): Team {
     return this.props.homeTeam;
   }
 
-  get awayTeam(): Team{
+  get awayTeam(): Team {
     return this.props.awayTeam;
   }
 
@@ -45,6 +45,6 @@ export class Match extends AggregateRoot<MatchProps, MatchId> {
   }
 
   public toTableRow(): string {
-    return `${this.awayTeam.nbaTeam.emoji} vs. ${this.homeTeam.nbaTeam.emoji}`
+    return `${this.awayTeam.nbaTeam.emoji} vs. ${this.homeTeam.nbaTeam.emoji}`;
   }
 }

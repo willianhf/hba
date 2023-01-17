@@ -1,4 +1,4 @@
-import { oneLineTrim, stripIndent } from 'common-tags';
+import { stripIndents } from 'common-tags';
 import { Season } from '~/modules/season/domain';
 import { Conference } from '~/modules/team/domain';
 import { ValueObject } from '~/shared/domain';
@@ -16,7 +16,7 @@ export class Standings extends ValueObject<StandingsProps> {
   }
 
   public getTable(season: Season): string {
-    return stripIndent(`
+    return stripIndents(`
       :small_blue_diamond: Habbo Basketball Association :small_blue_diamond: Season ${season.name} :small_blue_diamond:
 
       \`\`\`ts
@@ -24,14 +24,14 @@ export class Standings extends ValueObject<StandingsProps> {
       \`\`\`\`\`\`
       | # | Team                    | G  | W  | L  | CONF |  %   | LAST 3  | P |
       |---+-------------------------+----+----+----+------+------+---------+---|
-      ${this.east.map((standings, index) => standings.toTableRow(index))}
+      ${this.east.map((standings, index) => standings.toTableRow(index)).join('\n')}
       \`\`\`
       \`\`\`prolog
       WESTERN CONFERENCE
       \`\`\`\`\`\`
       | # | Team                    | G  | W  | L  | CONF |  %   | LAST 3  | P |
       |---+-------------------------+----+----+----+------+------+---------+---|
-      ${this.west.map((standings, index) => standings.toTableRow(index))}
+      ${this.west.map((standings, index) => standings.toTableRow(index)).join('\n')}
       \`\`\`\`\`\`
       % - WIN PERCENTAGE | LAST 3 - LAST 3 GAMES | P - CLINCHED PLAYOFFS
       \`\`\`

@@ -2,7 +2,7 @@ import { SeasonRepository } from '~/modules/season/repos';
 import { ApprovalStatus } from '~/modules/team/domain';
 import { TeamRepository } from '~/modules/team/repos';
 import { IUseCase } from '~/shared/core';
-import { Match } from '../domain';
+import { Match, MatchKind } from '../domain';
 import { MatchRepository } from '../repos';
 
 type CreateSeasonMatchesDTO = undefined;
@@ -27,14 +27,15 @@ export class CreateSeasonMatchesUseCase implements IUseCase<CreateSeasonMatchesD
     const matches = teams.reduce((acc, team) => {
       const opponents = teams
         .filter(opponent => opponent.nbaTeam.conference === team.nbaTeam.conference)
-        .filter(opponent => !opponent.id.equals(team.id));
+        .filter(opponent => !opponent.id.equals(team.id))
+        .filter(opponent => !acc.some(match => match.homeTeam.equals(opponent)));
 
       const teamMatches = opponents.map(
         opponent =>
           new Match({
             homeTeam: team,
             awayTeam: opponent,
-            matchKind: 'REGULAR',
+            matchKind: MatchKind.REGULAR,
             seasonId: currentSeason.id
           })
       );

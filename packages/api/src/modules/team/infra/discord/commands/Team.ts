@@ -77,12 +77,7 @@ export class TeamCommands {
   private buildTeamsList(teams: Team[]): string[] {
     const biggestTeamName = Math.max(...teams.map(team => team.nbaTeam.name.length));
 
-    return teams.map(
-      team =>
-        `${team.nbaTeam.name.padEnd(biggestTeamName, ' ')} | © ${team.roster.captain.habboUsername} & ${
-          team.roster.coCaptain.habboUsername
-        }© ${team.roster.captain.habboUsername}`
-    );
+    return teams.map(team => team.toTeamRow(biggestTeamName));
   }
 
   @Slash({ description: 'Aplica-se para ser capitão de uma equipe' })

@@ -33,6 +33,6 @@ export class NBATeam extends Entity<NBATeamProps> {
   }
 
   public get emoji(): string {
-    return DiscordEmojiFacade.getEmojiByName(this.tricode);
+    return DiscordEmojiFacade.getEmojiByName(this.tricode.toLowerCase());
   }
 }

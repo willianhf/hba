@@ -1,3 +1,4 @@
+import { oneLineTrim } from 'common-tags';
 import { Season } from '~/modules/season/domain';
 import { AggregateRoot, UniqueIdentifier } from '~/shared/domain';
 import { ApprovalStatus } from './ApprovalStatus';
@@ -51,5 +52,13 @@ export class Team extends AggregateRoot<TeamProps> {
 
   public changeStatus(status: ApprovalStatus): void {
     this.props.status = status;
+  }
+
+  public toTeamRow(biggestTeamName: number = 0): string {
+    return oneLineTrim(`
+      ${this.nbaTeam.name.padEnd(biggestTeamName, ' ')} | 
+      © ${this.roster.captain.habboUsername} & 
+      ${this.roster.coCaptain.habboUsername}
+    `);
   }
 }

@@ -17,13 +17,17 @@ export class StandingsCommands {
   @Guard(PermissionGuard(['Administrator']))
   async generate(interaction: CommandInteraction): Promise<void> {
     try {
+      interaction.deferReply();
+
       await createSeasonMatchesUseCase.execute();
       await updateStandingsChannelUseCase.execute();
 
-      interaction.reply(new MessageBuilder('Tabela de classificação gerada com sucesso').kind('SUCCESS').build());
+      interaction.editReply(new MessageBuilder('Tabela de classificação gerada com sucesso').kind('SUCCESS').build());
     } catch (ex) {
       if (ex instanceof ValidationError) {
-        interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+        interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
+      } else {
+        console.error(ex)
       }
     }
   }
