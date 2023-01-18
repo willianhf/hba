@@ -11,8 +11,30 @@ interface StandingsProps {
 export class Standings extends ValueObject<StandingsProps> {
   public constructor(props: StandingsProps) {
     super(props);
-    props.teamsStandings.sort((a, b) => a.team.nbaTeam.name.localeCompare(b.team.nbaTeam.name));
-    props.teamsStandings.sort((a, b) => b.wins - a.wins);
+    this.sort();
+  }
+
+  public setTeamStandings(teamStandings: TeamStandings[]): void {
+    this.props.teamsStandings = teamStandings;
+    this.sort();
+  }
+
+  private sort(): void {
+    this.props.teamsStandings.sort(
+      (a, b) =>
+        b.wins - a.wins ||
+        b.conferenceWins - a.conferenceWins ||
+        a.wonAgainst(b.team) ||
+        a.team.nbaTeam.name.localeCompare(b.team.nbaTeam.name)
+    );
+  }
+
+  get east(): TeamStandings[] {
+    return this.props.teamsStandings.filter(standings => standings.team.nbaTeam.conference === Conference.EAST);
+  }
+
+  get west(): TeamStandings[] {
+    return this.props.teamsStandings.filter(standings => standings.team.nbaTeam.conference === Conference.WEST);
   }
 
   public getTable(season: Season): string {
@@ -24,25 +46,17 @@ export class Standings extends ValueObject<StandingsProps> {
       \`\`\`\`\`\`
       | # | Team                    | G  | W  | L  | CONF |  %   | LAST 3  | P |
       |---+-------------------------+----+----+----+------+------+---------+---|
-      ${this.east.map((standings, index) => standings.toTableRow(index)).join('\n')}
+      ${this.east.map(standings => standings.toTableRow()).join('\n')}
       \`\`\`
       \`\`\`prolog
       WESTERN CONFERENCE
       \`\`\`\`\`\`
       | # | Team                    | G  | W  | L  | CONF |  %   | LAST 3  | P |
       |---+-------------------------+----+----+----+------+------+---------+---|
-      ${this.west.map((standings, index) => standings.toTableRow(index)).join('\n')}
+      ${this.west.map(standings => standings.toTableRow()).join('\n')}
       \`\`\`\`\`\`
       % - WIN PERCENTAGE | LAST 3 - LAST 3 GAMES | P - CLINCHED PLAYOFFS
       \`\`\`
     `);
-  }
-
-  get east(): TeamStandings[] {
-    return this.props.teamsStandings.filter(standings => standings.team.nbaTeam.conference === Conference.EAST);
-  }
-
-  get west(): TeamStandings[] {
-    return this.props.teamsStandings.filter(standings => standings.team.nbaTeam.conference === Conference.WEST);
   }
 }

@@ -35,4 +35,12 @@ export class NBATeam extends Entity<NBATeamProps> {
   public get emoji(): string {
     return DiscordEmojiFacade.getEmojiByName(this.tricode.toLowerCase());
   }
+
+  public get conferenceColor(): string {
+    return this.props.conference === Conference.EAST ? 'ts' : 'prolog';
+  }
+
+  public get conferenceEmoji(): string {
+    return DiscordEmojiFacade.getEmojiByName(this.conference.toLowerCase());
+  }
 }

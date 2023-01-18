@@ -1,3 +1,4 @@
+import { stripIndents } from 'common-tags';
 import { SeasonId } from '~/modules/season/domain';
 import { Team } from '~/modules/team/domain';
 import { AggregateRoot, UniqueIdentifier } from '~/shared/domain';
@@ -40,11 +41,20 @@ export class Match extends AggregateRoot<MatchProps, MatchId> {
     return this.props.scheduledTo;
   }
 
-  get matchSeries(): MatchSeries | undefined {
+  get series(): MatchSeries | undefined {
     return this.props.matchSeries;
   }
 
-  public toTableRow(): string {
+  public toPlayoffsHeader(): string {
+    const matchName = this.series?.name ?? '';
+
+    return stripIndents(`
+    \`\`\`${this.homeTeam.nbaTeam.conferenceColor}
+    ${this.homeTeam.nbaTeam.conferenceEmoji} ${matchName}\`\`\`
+  `);
+  }
+
+  public toStandings(): string {
     return `${this.awayTeam.nbaTeam.emoji} vs. ${this.homeTeam.nbaTeam.emoji}`;
   }
 }

@@ -4,7 +4,7 @@ import { prismaMatchRepository } from '../repos/impl/Prisma';
 import { CreateMatchUseCase } from './CreateMatch';
 import { CreateSeasonMatchesUseCase } from './CreateSeasonMatches';
 
-export const createMatchUseCase = new CreateMatchUseCase(prismaMatchRepository, prismaSeasonRepository);
+export const createMatchUseCase = new CreateMatchUseCase(prismaMatchRepository);
 
 export const createSeasonMatchesUseCase = new CreateSeasonMatchesUseCase(
   prismaSeasonRepository,

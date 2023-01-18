@@ -1,7 +1,10 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction } from 'discord.js';
 import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from 'discordx';
+import { DiscordEmojiFacade } from '~/modules/discord/facades';
 import { MatchKind, MatchSeries } from '~/modules/match/domain';
+import { prismaMatchSeriesRepository } from '~/modules/match/repos/impl/Prisma';
 import { createMatchUseCase } from '~/modules/match/useCases';
+import { prismaSeasonRepository } from '~/modules/season/repos';
 import { ApprovalStatus, Team, TeamId } from '~/modules/team/domain';
 import { teamsCache } from '~/modules/team/infra/discord/cache';
 import { prismaTeamRepository } from '~/modules/team/repos/impl/Prisma';
@@ -57,38 +60,53 @@ export class MatchCommands {
       required: true
     })
     matchKind: MatchKind,
-    @SlashChoice(...Object.values(MatchKind))
+    @SlashChoice(
+      'EASTERN CONFERENCE SEMI-FINALS',
+      'EASTERN CONFERENCE FINALS',
+      'WESTERN CONFERENCE SEMI-FINALS',
+      'WESTERN CONFERENCE FINALS',
+      'THE FINALS'
+    )
     @SlashOption({
-      description: 'Nome da série',
+      description: 'Nome da série de partidas',
       name: 'series_name',
       type: ApplicationCommandOptionType.String
     })
     seriesName: string | null,
     interaction: CommandInteraction
   ): Promise<void> {
-    if (homeTeamId === awayTeamId) {
-      interaction.reply(new MessageBuilder('As equipes não podem ser as mesmas').kind('ERROR').build());
-      return;
-    }
-
     try {
+      if (homeTeamId === awayTeamId) {
+        throw new ValidationError('As equipes não podem ser as mesmas');
+      }
+
       const homeTeam = await prismaTeamRepository.findById(new TeamId(homeTeamId));
       if (!homeTeam) {
-        interaction.reply(new MessageBuilder('Equipe da casa informada inválida').kind('ERROR').build());
-        return;
+        throw new ValidationError('Equipe da casa informada inválida');
       }
 
       const awayTeam = await prismaTeamRepository.findById(new TeamId(awayTeamId));
       if (!awayTeam) {
-        interaction.reply(new MessageBuilder('Equipe visitante informada inválida').kind('ERROR').build());
-        return;
+        throw new ValidationError('Equipe visitante informada inválida');
+      }
+
+      if (matchKind !== MatchKind.REGULAR && !seriesName) {
+        throw new ValidationError('É obrigatório informar o nome da série dos jogos');
+      }
+
+      const season = await prismaSeasonRepository.findCurrent();
+      let matchSeries = seriesName ? await prismaMatchSeriesRepository.findByName(season.id, seriesName) : undefined;
+      if (seriesName && !matchSeries) {
+        matchSeries = new MatchSeries({ name: seriesName, seasonId: season.id });
+        await prismaMatchSeriesRepository.create(matchSeries);
       }
 
       await createMatchUseCase.execute({
+        season,
         homeTeam,
         awayTeam,
         matchKind,
-        matchSeries: seriesName ? new MatchSeries({ name: seriesName }) : undefined
+        matchSeries: matchSeries ?? undefined
       });
 
       interaction.reply(new MessageBuilder('Partida criada com sucesso').kind('SUCCESS').build());

@@ -74,9 +74,10 @@ model Season {
   name      String  @unique
   isCurrent Boolean @default(false)
 
-  players Player[]
-  matches Match[]
-  rosters Team[]
+  players     Player[]
+  matches     Match[]
+  rosters     Team[]
+  MatchSeries MatchSeries[]
 }
 
 model NBAPlayer {
@@ -257,10 +258,14 @@ model MatchStats {
 }
 
 model MatchSeries {
-  id   String @id @unique @default(uuid())
-  name String
+  id       String @id @unique @default(uuid())
+  name     String
+  seasonId Int
 
   matches Match[]
+  season  Season  @relation(fields: [seasonId], references: [id])
+
+  @@unique([name, seasonId])
 }
 
 enum DiscordChannelCategory {

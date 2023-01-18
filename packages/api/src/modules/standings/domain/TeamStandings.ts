@@ -1,11 +1,13 @@
 import { oneLineTrim } from 'common-tags';
 import { Match, MatchResult } from '~/modules/match/domain';
-import { Team } from '~/modules/team/domain';
+import { Conference, Team } from '~/modules/team/domain';
 import { ValueObject } from '~/shared/domain';
+import { Standings } from './Standings';
 
 interface TeamStandingsProps {
   team: Team;
   results: MatchResult[];
+  standings: Standings;
 }
 
 export class TeamStandings extends ValueObject<TeamStandingsProps> {
@@ -13,13 +15,16 @@ export class TeamStandings extends ValueObject<TeamStandingsProps> {
     return this.props.team;
   }
 
-  get results(): MatchResult[] {
-    return this.props.results;
+  get standings(): TeamStandings[] {
+    return this.team.nbaTeam.conference === Conference.EAST ? this.props.standings.east : this.props.standings.west;
   }
 
-  private isWinner(result: MatchResult): boolean {
-    const winner = result.homeScore > result.awayScore ? result.match.homeTeam : result.match.awayTeam;
-    return winner.equals(this.team);
+  get opponents(): TeamStandings[] {
+    return this.standings.filter(standing => !standing.team.equals(this.team));
+  }
+
+  get results(): MatchResult[] {
+    return this.props.results;
   }
 
   private isBetweenConferences(match: Match): boolean {
@@ -40,6 +45,10 @@ export class TeamStandings extends ValueObject<TeamStandingsProps> {
     }
 
     return characters.join('');
+  }
+
+  private isWinner(result: MatchResult): boolean {
+    return result.winner.equals(this.team);
   }
 
   get wins(): number {
@@ -76,26 +85,54 @@ export class TeamStandings extends ValueObject<TeamStandingsProps> {
       .padEnd(3, '-');
   }
 
-  get winPercentage(): string {
-    return this.formatWinPercent(this.wins / this.games);
+  get winPercentage(): number {
+    return this.wins / this.games;
+  }
+
+  get position(): number {
+    return this.standings.findIndex(standing => standing.team.equals(this.team)) + 1;
+  }
+
+  public wonAgainst(opponent: Team): 0 | 1 | -1 {
+    const result = this.opponents
+      .filter(o => opponent.equals(o.team))
+      .flatMap(standings => standings.results)
+      .find(standings => standings.match.homeTeam.equals(this.team) || standings.match.awayTeam.equals(this.team));
+
+    if (!result) {
+      return 0;
+    }
+
+    return result.loser.equals(opponent) ? 1 : -1;
+  }
+
+  get isLast(): boolean {
+    return this.position === this.standings.length;
   }
 
   get clinchedPlayoffs(): boolean {
-    return this.wins > 4;
+    if (this.games < this.standings.length) {
+      return false;
+    }
+
+    if (this.isLast) {
+      return false;
+    }
+
+    return true;
   }
 
-  public toTableRow(index: number): string {
-    const position = index + 1;
+  public toTableRow(): string {
     const teamName = this.team.nbaTeam.name.padEnd(23, ' ');
 
     return oneLineTrim(`
-      | ${position} 
+      | ${this.position} 
       | ${teamName} 
       | ${this.games}  
       | ${this.wins}  
       | ${this.losses}  
       | ${this.conferenceWins}-${this.conferenceLosses}  
-      | ${this.winPercentage} 
+      | ${this.formatWinPercent(this.winPercentage)} 
       |  ${this.lastThree}    
       | ${this.clinchedPlayoffs ? 'P' : ' '} |
     `);

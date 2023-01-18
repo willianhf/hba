@@ -21,14 +21,17 @@ export class GenerateStandingsUseCase implements IUseCase<GenerateStandingsDTO, 
     const teams = await this.teamRepository.findByStatus(dto.season.id, ApprovalStatus.ACCEPTED);
     const results = await this.matchResultRepository.findBySeason(dto.season.id);
 
+    const standings = new Standings({ teamsStandings: [] });
+
     const teamsStandings = teams.map(team => {
       const teamResults = results.filter(
         result => result.match.homeTeam.equals(team) || result.match.awayTeam.equals(team)
       );
-      return new TeamStandings({ team, results: teamResults });
+      return new TeamStandings({ team, results: teamResults, standings });
     });
 
-    const standings = new Standings({ teamsStandings });
+    standings.setTeamStandings(teamsStandings);
+
     return standings;
   }
 }

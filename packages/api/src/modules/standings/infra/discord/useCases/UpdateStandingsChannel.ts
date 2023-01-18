@@ -41,7 +41,16 @@ export class UpdateStandingsChannelUseCase
 
       const remainingMatches = await this.matchRepository.findRemaining(season.id);
       const seasonMatches = new SeasonMatches({ remainingMatches });
-      await discordStandingsChannel.send(seasonMatches.getTable());
+
+      const regularSeason = seasonMatches.getRegularSeason();
+      if (regularSeason) {
+        await discordStandingsChannel.send(regularSeason);
+      }
+
+      const playoffsBracket = seasonMatches.getPlayoffsBracket();
+      if (playoffsBracket) {
+        await discordStandingsChannel.send(playoffsBracket);
+      }
     }
   }
 }

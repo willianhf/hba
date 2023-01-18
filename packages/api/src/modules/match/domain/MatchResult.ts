@@ -1,5 +1,6 @@
 import { Actor } from '~/modules/auth/domain';
 import { Player } from '~/modules/player/domain';
+import { Team } from '~/modules/team/domain';
 import { AggregateRoot, UniqueIdentifier } from '~/shared/domain';
 import { Match } from './Match';
 
@@ -66,5 +67,13 @@ export class MatchResult extends AggregateRoot<MatchResultProps, MatchResultId> 
 
   get statsKeeper(): Actor | undefined {
     return this.props.statsKeeper;
+  }
+
+  get winner(): Team {
+    return this.homeScore > this.awayScore ? this.match.homeTeam : this.match.awayTeam;
+  }
+
+  get loser(): Team {
+    return this.homeScore > this.awayScore ? this.match.awayTeam : this.match.homeTeam;
   }
 }

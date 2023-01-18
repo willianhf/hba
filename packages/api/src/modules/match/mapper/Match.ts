@@ -28,7 +28,7 @@ export class MatchMapper extends Mapper<Match> {
       awayTeamId: match.awayTeam.id.toValue(),
       matchKind: match.kind,
       scheduledTo: match.scheduledTo ?? null,
-      matchSeriesId: match.matchSeries?.id?.toValue() ?? null
+      matchSeriesId: match.series?.id?.toValue() ?? null
     };
   }
 }

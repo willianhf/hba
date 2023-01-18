@@ -1,7 +1,8 @@
 import { matchWithRelations } from '~/modules/match/database';
-import { Match, MatchId } from '~/modules/match/domain';
+import { Match, MatchId, MatchKind } from '~/modules/match/domain';
 import { MatchMapper } from '~/modules/match/mapper';
 import { SeasonId } from '~/modules/season/domain';
+import { Team } from '~/modules/team/domain';
 import { prisma } from '~/shared/infra/database';
 import { MatchRepository } from '../../';
 
@@ -15,6 +16,26 @@ export class PrismaMatchRepository implements MatchRepository {
     const data = matches.map(MatchMapper.toPersistence);
 
     await prisma.match.createMany({ data });
+  }
+
+  public async exists(seasonId: SeasonId, teamA: Team, teamB: Team, kind: MatchKind): Promise<boolean> {
+    const matchesCount = await prisma.match.count({
+      where: {
+        seasonId: seasonId.toValue(),
+        OR: [
+          {
+            homeTeamId: teamA.id.toValue(),
+            awayTeamId: teamB.id.toValue()
+          },
+          {
+            homeTeamId: teamB.id.toValue(),
+            awayTeamId: teamA.id.toValue()
+          }
+        ]
+      }
+    });
+
+    return matchesCount > 0;
   }
 
   public async findAll(): Promise<Match[]> {
