@@ -7,9 +7,9 @@ import { generateStandingsUseCase } from '~/modules/standings/useCases';
 import { IUseCase, ValidationError } from '~/shared/core';
 import { bot } from '~/shared/infra/discord/server';
 
-interface UpdateStandingsChannelDTO {}
+type UpdateStandingsChannelDTO = void;
 
-type UpdateStandingsChannelResult = any;
+type UpdateStandingsChannelResult = void;
 
 export class UpdateStandingsChannelUseCase
   implements IUseCase<UpdateStandingsChannelDTO, UpdateStandingsChannelResult>

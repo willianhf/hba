@@ -27,7 +27,7 @@ export class MatchResultMapper extends Mapper<MatchResult> {
 
   public static toPersistence(matchResult: MatchResult): ToPersistMatchResult {
     return {
-      matchId: matchResult.id.toValue(),
+      matchId: matchResult.match.id.toValue(),
       homeScore: matchResult.homeScore,
       awayScore: matchResult.awayScore,
       releasedAt: matchResult.releseadAt,

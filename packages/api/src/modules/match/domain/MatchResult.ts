@@ -1,3 +1,4 @@
+import { stripIndent } from 'common-tags';
 import { Actor } from '~/modules/auth/domain';
 import { Player } from '~/modules/player/domain';
 import { Team } from '~/modules/team/domain';
@@ -75,5 +76,20 @@ export class MatchResult extends AggregateRoot<MatchResultProps, MatchResultId> 
 
   get loser(): Team {
     return this.homeScore > this.awayScore ? this.match.awayTeam : this.match.homeTeam;
+  }
+
+  public toDiscordMessage(): string {
+    return stripIndent(`
+      ${this.match.series ? `${this.match.seriesName}\n` : ''}
+      ${this.match.awayTeam.nbaTeam.emoji} ${this.match.awayTeam.nbaTeam.name} ${this.awayScore} @ ${this.homeScore} ${
+      this.match.homeTeam.nbaTeam.name
+    } ${this.match.homeTeam.nbaTeam.emoji}
+
+      🔥 ⛹️  Cole.Wolforg Player of the Game: ${this.playerOfTheMatch.actor.habboUsername} 
+      Árbitro: ${this.referee.habboUsername}
+      Placar: ${this.scorer.habboUsername}
+      ${this.recorder ? `Recorder: ${this.recorder.habboUsername}` : ''}
+      ${this.videoReferee ? `VAR: ${this.videoReferee.habboUsername}` : ''}
+    `);
   }
 }

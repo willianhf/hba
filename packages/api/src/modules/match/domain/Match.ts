@@ -45,12 +45,22 @@ export class Match extends AggregateRoot<MatchProps, MatchId> {
     return this.props.matchSeries;
   }
 
-  public toPlayoffsHeader(): string {
-    const matchName = this.series?.name ?? '';
+  get seriesName(): string {
+    return `${this.homeTeam.nbaTeam.conferenceEmoji} ${this.series?.name ?? ''}`;
+  }
 
+  get name(): string {
+    if (this.series) {
+      return `${this.seriesName} - ${this.awayTeam.nbaTeam.tricode} vs. ${this.homeTeam.nbaTeam.tricode}`;
+    }
+
+    return `${this.awayTeam.nbaTeam.tricode} vs. ${this.homeTeam.nbaTeam.tricode}`;
+  }
+
+  public toPlayoffsHeader(): string {
     return stripIndents(`
     \`\`\`${this.homeTeam.nbaTeam.conferenceColor}
-    ${this.homeTeam.nbaTeam.conferenceEmoji} ${matchName}\`\`\`
+    ${this.seriesName}\`\`\`
   `);
   }
 

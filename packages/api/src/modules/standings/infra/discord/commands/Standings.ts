@@ -17,7 +17,7 @@ export class StandingsCommands {
   @Guard(PermissionGuard(['Administrator']))
   async generate(interaction: CommandInteraction): Promise<void> {
     try {
-      interaction.reply(new MessageBuilder('Tabela de classificação gerada com sucesso').kind('SUCCESS').build());
+      await interaction.reply(new MessageBuilder('Tabela de classificação gerada com sucesso').kind('SUCCESS').build());
 
       await createSeasonMatchesUseCase.execute();
       await updateStandingsChannelUseCase.execute();

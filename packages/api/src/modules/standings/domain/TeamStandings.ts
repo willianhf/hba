@@ -1,5 +1,5 @@
 import { oneLineTrim } from 'common-tags';
-import { Match, MatchResult } from '~/modules/match/domain';
+import { Match, MatchKind, MatchResult } from '~/modules/match/domain';
 import { Conference, Team } from '~/modules/team/domain';
 import { ValueObject } from '~/shared/domain';
 import { Standings } from './Standings';
@@ -11,6 +11,13 @@ interface TeamStandingsProps {
 }
 
 export class TeamStandings extends ValueObject<TeamStandingsProps> {
+  public constructor(props: TeamStandingsProps) {
+    super(props);
+    this.props.results = this.props.results
+      .filter(result => result.match.homeTeam.equals(this.team) || result.match.awayTeam.equals(this.team))
+      .filter(result => result.match.kind === MatchKind.REGULAR);
+  }
+
   get team(): Team {
     return this.props.team;
   }
@@ -47,12 +54,12 @@ export class TeamStandings extends ValueObject<TeamStandingsProps> {
     return characters.join('');
   }
 
-  private isWinner(result: MatchResult): boolean {
+  public isWinner(result: MatchResult): boolean {
     return result.winner.equals(this.team);
   }
 
   get wins(): number {
-    return this.props.results.filter(this.isWinner).reduce(acc => acc + 1, 0);
+    return this.props.results.filter(result => this.isWinner(result)).reduce(acc => acc + 1, 0);
   }
 
   get losses(): number {
@@ -66,7 +73,7 @@ export class TeamStandings extends ValueObject<TeamStandingsProps> {
   get conferenceWins(): number {
     return this.props.results
       .filter(result => this.isBetweenConferences(result.match))
-      .filter(this.isWinner)
+      .filter(result => this.isWinner(result))
       .reduce(acc => acc + 1, 0);
   }
 

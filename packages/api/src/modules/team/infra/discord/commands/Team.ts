@@ -115,9 +115,7 @@ export class TeamCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     const captainActor = await DiscordActorFacade.findOrRegister(interaction.user, interaction.member);
-
-    const coCaptainMember = await interaction.guild?.members.fetch({ user: coCaptain });
-    const coCaptainActor = await DiscordActorFacade.findOrRegister(coCaptain, coCaptainMember);
+    const coCaptainActor = await DiscordActorFacade.findOrRegister(coCaptain, interaction.guild);
 
     try {
       const team = await applyTeamUseCase.execute({

@@ -23,12 +23,7 @@ export class GenerateStandingsUseCase implements IUseCase<GenerateStandingsDTO, 
 
     const standings = new Standings({ teamsStandings: [] });
 
-    const teamsStandings = teams.map(team => {
-      const teamResults = results.filter(
-        result => result.match.homeTeam.equals(team) || result.match.awayTeam.equals(team)
-      );
-      return new TeamStandings({ team, results: teamResults, standings });
-    });
+    const teamsStandings = teams.map(team => new TeamStandings({ team, results, standings }));
 
     standings.setTeamStandings(teamsStandings);
 

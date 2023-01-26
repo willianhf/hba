@@ -89,8 +89,7 @@ export class RosterCommands {
         return;
       }
 
-      const playerMember = await interaction.guild?.members.fetch({ user: player });
-      const playerDiscordActor = await DiscordActorFacade.findOrRegister(player, playerMember);
+      const playerDiscordActor = await DiscordActorFacade.findOrRegister(player, interaction.guild);
 
       await addActorToRosterUseCase.execute({ actor: playerDiscordActor.actor, team });
 

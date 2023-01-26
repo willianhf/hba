@@ -28,6 +28,18 @@ export class PrismaDiscordRoleRepository implements DiscordRoleRepository {
     throw new Error('Method not implemented');
   }
 
+  async findMany(...categories: DiscordRoleCategory[]): Promise<DiscordRole[]> {
+    const prismaDiscordRoles = await prisma.discordRole.findMany({
+      where: {
+        category: {
+          in: [...categories]
+        }
+      }
+    });
+
+    return prismaDiscordRoles.map(DiscordRoleMapper.toDomain);
+  }
+
   async findByCategory(category: DiscordRoleCategory): Promise<DiscordRole | null> {
     const prismaDiscordRole = await prisma.discordRole.findFirst({ where: { category } });
     if (!prismaDiscordRole) {

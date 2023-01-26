@@ -1,5 +1,5 @@
 import { matchResultWithRelations } from '~/modules/match/database';
-import { MatchResult, MatchResultId } from '~/modules/match/domain';
+import { MatchId, MatchResult, MatchResultId } from '~/modules/match/domain';
 import { MatchResultMapper } from '~/modules/match/mapper/MatchResult';
 import { SeasonId } from '~/modules/season/domain';
 import { prisma } from '~/shared/infra/database';
@@ -31,5 +31,15 @@ export class PrismaMatchResultRepository implements MatchResultRepository {
     });
 
     return prismaMatchResults.map(MatchResultMapper.toDomain);
+  }
+
+  public async hasResult(matchId: MatchId): Promise<boolean> {
+    const count = await prisma.matchResult.count({
+      where: {
+        matchId: matchId.toValue()
+      }
+    });
+
+    return count > 0;
   }
 }
