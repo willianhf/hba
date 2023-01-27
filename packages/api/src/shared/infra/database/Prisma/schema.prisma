@@ -171,8 +171,6 @@ model Team {
   roster      TeamActor[]
   homeMatches Match[]     @relation(name: "homeMatches")
   awayMatches Match[]     @relation(name: "awayMatches")
-
-  @@unique([nbaTeamId, seasonId])
 }
 
 enum TeamRole {
