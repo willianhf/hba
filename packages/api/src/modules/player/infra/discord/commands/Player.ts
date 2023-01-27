@@ -167,6 +167,8 @@ export class PlayerCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
+      await interaction.deferReply();
+
       const discordActor = await DiscordActorFacade.findOrRegister(interaction.user, interaction.member);
 
       await applyPlayerUseCase.execute({
@@ -176,7 +178,9 @@ export class PlayerCommands {
         iconsIds: [new UniqueIdentifier(primaryIconId), new UniqueIdentifier(secondaryIconId)]
       });
 
-      interaction.reply(
+      this.cache.invalidate('applications');
+
+      interaction.editReply(
         new MessageBuilder(
           'A sua inscrição como jogador foi enviada com sucesso, aguarde ser aprovada ou rejeitada por um administrador'
         )
@@ -184,8 +188,10 @@ export class PlayerCommands {
           .build()
       );
     } catch (ex) {
-      if (ex instanceof ApplicationError) {
-        interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+      if (ex instanceof ValidationError) {
+        interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
+      } else {
+        console.error(ex);
       }
     }
   }
@@ -253,6 +259,8 @@ export class PlayerCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
+      await interaction.deferReply();
+
       const player = await changePlayerStatusUseCase.execute({
         playerId: new UniqueIdentifier(playerId),
         status: ApprovalStatus.ACCEPTED
@@ -260,7 +268,7 @@ export class PlayerCommands {
 
       this.cache.invalidate('applications');
 
-      interaction.reply(new MessageBuilder('Inscrição de jogador aprovada com sucesso').kind('SUCCESS').build());
+      interaction.editReply(new MessageBuilder('Inscrição de jogador aprovada com sucesso').kind('SUCCESS').build());
 
       const playerActorDiscord = await prismaDiscordActorRepository.findByActorId(player.actor.id);
       if (playerActorDiscord) {
@@ -272,7 +280,9 @@ export class PlayerCommands {
       }
     } catch (ex) {
       if (ex instanceof ValidationError) {
-        interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+        interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
+      } else {
+        console.error(ex);
       }
     }
   }
@@ -303,6 +313,8 @@ export class PlayerCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
+      await interaction.deferReply();
+
       const player = await changePlayerStatusUseCase.execute({
         playerId: new UniqueIdentifier(playerId),
         status: ApprovalStatus.DENIED
@@ -310,7 +322,7 @@ export class PlayerCommands {
 
       this.cache.invalidate('applications');
 
-      interaction.reply(new MessageBuilder('Inscrição de jogador reprovada com sucesso').kind('SUCCESS').build());
+      interaction.editReply(new MessageBuilder('Inscrição de jogador reprovada com sucesso').kind('SUCCESS').build());
 
       const playerActorDiscord = await prismaDiscordActorRepository.findByActorId(player.actor.id);
       if (playerActorDiscord) {
@@ -322,7 +334,7 @@ export class PlayerCommands {
       }
     } catch (ex) {
       if (ex instanceof ValidationError) {
-        interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+        interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
       }
     }
   }
