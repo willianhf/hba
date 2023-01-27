@@ -1,8 +1,10 @@
 import { PermissionGuard } from '@discordx/utilities';
+import { DiscordRoleCategory } from '@prisma/client';
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, User } from 'discord.js';
 import { Discord, Guard, Slash, SlashChoice, SlashGroup, SlashOption } from 'discordx';
 import { DiscordActorFacade } from '~/modules/auth/infra/discord/facades/DiscordActor';
 import { prismaDiscordActorRepository } from '~/modules/auth/repos/impl/prisma';
+import { RoleGuard } from '~/modules/discord/infra/discord/guards';
 import { prismaSeasonRepository } from '~/modules/season/repos';
 import { ApprovalStatus, Conference, NBATeam, Team, TeamId } from '~/modules/team/domain';
 import { prismaNBATeamRepository, prismaTeamRepository } from '~/modules/team/repos/impl/Prisma';
@@ -114,10 +116,12 @@ export class TeamCommands {
     coCaptain: User,
     interaction: CommandInteraction
   ): Promise<void> {
-    const captainActor = await DiscordActorFacade.findOrRegister(interaction.user, interaction.member);
-    const coCaptainActor = await DiscordActorFacade.findOrRegister(coCaptain, interaction.guild);
-
     try {
+      await interaction.deferReply();
+
+      const captainActor = await DiscordActorFacade.findOrRegister(interaction.user, interaction.member);
+      const coCaptainActor = await DiscordActorFacade.findOrRegister(coCaptain, interaction.guild);
+
       const team = await applyTeamUseCase.execute({
         captainActor: captainActor.actor,
         coCaptainActor: coCaptainActor.actor,
@@ -130,7 +134,9 @@ export class TeamCommands {
         `Você foi inscrito como sub-capitão da equipe ${team.nbaTeam.name} e ${team.roster.captain.habboUsername} como capitão.`
       );
 
-      interaction.reply(new MessageBuilder('A inscrição da equipe foi enviada com sucesso').kind('SUCCESS').build());
+      interaction.editReply(
+        new MessageBuilder('A inscrição da equipe foi enviada com sucesso').kind('SUCCESS').build()
+      );
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
@@ -139,6 +145,7 @@ export class TeamCommands {
   }
 
   @Slash({ description: 'Lista todas as inscrições de times da temporada' })
+  @Guard(RoleGuard([DiscordRoleCategory.MOD]))
   async applications(
     @SlashOption({
       description: 'Página',
