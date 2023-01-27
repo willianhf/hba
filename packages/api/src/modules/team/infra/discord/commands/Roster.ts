@@ -4,6 +4,8 @@ import { Discord, Guard, Slash, SlashGroup, SlashOption } from 'discordx';
 import { ActorId } from '~/modules/auth/domain';
 import { DiscordActorFacade } from '~/modules/auth/infra/discord/facades/DiscordActor';
 import { prismaActorRepository } from '~/modules/auth/repos/impl/prisma';
+import { DiscordRoleCategory } from '~/modules/discord/domain';
+import { RoleGuard } from '~/modules/discord/infra/discord/guards';
 import { prismaSeasonRepository } from '~/modules/season/repos';
 import { ApprovalStatus, Team, TeamId } from '~/modules/team/domain';
 import { prismaTeamRepository } from '~/modules/team/repos/impl/Prisma';
@@ -11,6 +13,7 @@ import { addActorToRosterUseCase, removeActorFromRosterUseCase } from '~/modules
 import { ValidationError } from '~/shared/core';
 import { MessageBuilder } from '~/shared/infra/discord';
 import { teamsCache } from '../cache';
+import { updateTeamsChannelUseCase } from '../useCases';
 
 const ACCEPTED_TEAMS_CACHE_KEY = `teams:${ApprovalStatus.ACCEPTED}`;
 
@@ -95,7 +98,7 @@ export class RosterCommands {
 
       teamsCache.invalidate(ACCEPTED_TEAMS_CACHE_KEY);
 
-      // TODO: Update teams channel
+      updateTeamsChannelUseCase.execute();
 
       const roster = this.buildTeamRoster(team);
       interaction.reply(
@@ -168,11 +171,11 @@ export class RosterCommands {
 
       teamsCache.invalidate(ACCEPTED_TEAMS_CACHE_KEY);
 
-      // TODO: Update teams channel
+      updateTeamsChannelUseCase.execute();
 
       const roster = this.buildTeamRoster(team);
       interaction.reply(
-        new MessageBuilder('Jogador removeido do elenco com sucesso')
+        new MessageBuilder('Jogador removido do elenco com sucesso')
           .codeBlock([team.nbaTeam.name, '', ...roster])
           .kind('SUCCESS')
           .build()
@@ -201,14 +204,37 @@ export class RosterCommands {
     teamId: string,
     interaction: CommandInteraction
   ): Promise<void> {
-    const teams = await this.getTeams();
-    const team = teams.find(team => team.id.equals(new TeamId(teamId)));
-    if (!team) {
-      interaction.reply(new MessageBuilder('Equipe informada inválida').kind('ERROR').build());
-      return;
-    }
+    try {
+      const teams = await this.getTeams();
+      const team = teams.find(team => team.id.equals(new TeamId(teamId)));
+      if (!team) {
+        interaction.reply(new MessageBuilder('Equipe informada inválida').kind('ERROR').build());
+        return;
+      }
 
-    const roster = this.buildTeamRoster(team);
-    interaction.reply(new MessageBuilder().codeBlock([team.nbaTeam.name, '', ...roster]).build());
+      const roster = this.buildTeamRoster(team);
+      interaction.reply(new MessageBuilder().codeBlock([team.nbaTeam.name, '', ...roster]).build());
+    } catch (ex) {
+      if (ex instanceof ValidationError) {
+        interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+      } else {
+        console.error(ex);
+      }
+    }
+  }
+
+  @Slash({ description: 'Atualiza o canal de times' })
+  @Guard(RoleGuard([DiscordRoleCategory.MOD]))
+  async update(interaction: CommandInteraction): Promise<void> {
+    try {
+      updateTeamsChannelUseCase.execute();
+      interaction.reply(new MessageBuilder('Canal de times atualizado com sucesso').kind('SUCCESS').build());
+    } catch (ex) {
+      if (ex instanceof ValidationError) {
+        interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+      } else {
+        console.error(ex);
+      }
+    }
   }
 }

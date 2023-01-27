@@ -46,7 +46,11 @@ export class MessageBuilder {
     return this;
   }
 
-  public build(): InteractionReplyOptions {
+  public newLine(): this {
+    return this.append('\n');
+  }
+
+  public build(): InteractionReplyOptions & { content: string } {
     return {
       content: this.parts.join(''),
       ephemeral: this.ephemeral

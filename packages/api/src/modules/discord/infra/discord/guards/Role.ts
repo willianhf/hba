@@ -32,17 +32,21 @@ export function RoleGuard(
     return;
   }
 
+  async function send(arg: PermissionHandler, message: PermissionOptions): Promise<void> {
+    if (arg instanceof SimpleCommandMessage) {
+      await arg?.message.reply(message);
+    } else {
+      await replyOrFollowUp(arg, message);
+    }
+  }
+
   // send message
   async function post(arg: PermissionHandler, roleCategories: DiscordRoleCategory[]): Promise<void> {
     const finalResponse = options ?? {
       content: `you need \`\`${roleCategories.join(', ')}\`\` permissions for this command`
     };
 
-    if (arg instanceof SimpleCommandMessage) {
-      await arg?.message.reply(finalResponse);
-    } else {
-      await replyOrFollowUp(arg, finalResponse);
-    }
+    send(arg, finalResponse);
 
     return;
   }
@@ -69,7 +73,7 @@ export function RoleGuard(
 
     const discordRoles = await prismaDiscordRoleRepository.findMany(...roleCategories);
     if (discordRoles.length === 0) {
-      throw new ValidationError(`Algum dos cargos ${roleCategories.join(', ')} não foi definido`);
+      return send(arg, { content: `Algum dos cargos ${roleCategories.join(', ')} não foi definido` });
     }
 
     const isAllowed =

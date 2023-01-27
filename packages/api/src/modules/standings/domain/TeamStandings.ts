@@ -13,7 +13,10 @@ interface TeamStandingsProps {
 export class TeamStandings extends ValueObject<TeamStandingsProps> {
   public constructor(props: TeamStandingsProps) {
     super(props);
-    this.props.results = this.props.results
+  }
+
+  get results(): MatchResult[] {
+    return this.props.results
       .filter(result => result.match.homeTeam.equals(this.team) || result.match.awayTeam.equals(this.team))
       .filter(result => result.match.kind === MatchKind.REGULAR);
   }
@@ -28,10 +31,6 @@ export class TeamStandings extends ValueObject<TeamStandingsProps> {
 
   get opponents(): TeamStandings[] {
     return this.standings.filter(standing => !standing.team.equals(this.team));
-  }
-
-  get results(): MatchResult[] {
-    return this.props.results;
   }
 
   private isBetweenConferences(match: Match): boolean {
@@ -59,11 +58,11 @@ export class TeamStandings extends ValueObject<TeamStandingsProps> {
   }
 
   get wins(): number {
-    return this.props.results.filter(result => this.isWinner(result)).reduce(acc => acc + 1, 0);
+    return this.results.filter(result => this.isWinner(result)).reduce(acc => acc + 1, 0);
   }
 
   get losses(): number {
-    return this.props.results.filter(result => !this.isWinner(result)).reduce(acc => acc + 1, 0);
+    return this.results.filter(result => !this.isWinner(result)).reduce(acc => acc + 1, 0);
   }
 
   get games(): number {
@@ -71,21 +70,21 @@ export class TeamStandings extends ValueObject<TeamStandingsProps> {
   }
 
   get conferenceWins(): number {
-    return this.props.results
+    return this.results
       .filter(result => this.isBetweenConferences(result.match))
       .filter(result => this.isWinner(result))
       .reduce(acc => acc + 1, 0);
   }
 
   get conferenceLosses(): number {
-    return this.props.results
+    return this.results
       .filter(result => this.isBetweenConferences(result.match))
       .filter(result => !this.isWinner(result))
       .reduce(acc => acc + 1, 0);
   }
 
   get lastThree(): string {
-    return this.props.results
+    return this.results
       .slice(-3)
       .map(result => (this.isWinner(result) ? 'W' : 'L'))
       .join()
