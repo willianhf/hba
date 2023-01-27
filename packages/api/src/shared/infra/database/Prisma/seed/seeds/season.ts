@@ -6,7 +6,7 @@ export async function seedSeason() {
 
   const season = {
     id: 1,
-    name: 'Temporada 1'
+    name: '1'
   };
 
   await prisma.season.upsert({
