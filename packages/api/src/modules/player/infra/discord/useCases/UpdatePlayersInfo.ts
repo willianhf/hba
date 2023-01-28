@@ -65,6 +65,16 @@ export class UpdatePlayerInfoChannelUseCase
           message: new MessageBuilder().codeBlock(table.render()).build().content
         });
       }
+
+      await syncChannelMessageUseCase.execute({
+        channelCategory,
+        season,
+        discordChannel,
+        message: new MessageBuilder()
+          .codeBlock('💲 PREÇOS DE MUDANÇA DE SUPERSTAR')
+          .inlineCode('3 câmbios (3c) - mudança de star (A troca pode ser feita apenas na temporada regular)')
+          .build().content
+      });
     }
   }
 }

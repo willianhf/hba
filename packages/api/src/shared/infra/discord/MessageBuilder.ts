@@ -1,4 +1,4 @@
-import { codeBlock, InteractionReplyOptions } from 'discord.js';
+import { codeBlock, inlineCode, InteractionReplyOptions } from 'discord.js';
 
 const MESSAGE_KIND = {
   SUCCESS: '✅',
@@ -30,6 +30,12 @@ export class MessageBuilder {
     } else {
       this.append(codeBlock(language, content));
     }
+
+    return this;
+  }
+
+  public inlineCode(content: string): this {
+    this.append(inlineCode(content));
 
     return this;
   }
