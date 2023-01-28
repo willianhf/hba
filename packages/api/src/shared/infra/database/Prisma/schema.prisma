@@ -117,8 +117,6 @@ model Player {
   matchStats         MatchStats[]
   icons              PlayerIcon[]
   playerOfTheMatches MatchResult[]
-
-  @@unique([actorId, seasonId, nbaPlayerId])
 }
 
 enum IconCategory {
@@ -272,6 +270,7 @@ enum DiscordChannelCategory {
   SCHEDULE
   TEAMS
   RESULTS
+  PLAYER_INFO
 }
 
 model DiscordChannel {

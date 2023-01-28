@@ -13,10 +13,11 @@ import {
 import { applyPlayerUseCase } from '~/modules/player/useCases/ApplyPlayer';
 import { changePlayerStatusUseCase } from '~/modules/player/useCases/ChangePlayerStatus';
 import { prismaSeasonRepository } from '~/modules/season/repos';
-import { ApplicationError, InMemoryCache, Pagination, ValidationError } from '~/shared/core';
+import { InMemoryCache, Pagination, ValidationError } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { MessageBuilder } from '~/shared/infra/discord';
 import { bot } from '~/shared/infra/discord/server';
+import { updatePlayerInfoUseCase } from '../useCases';
 
 const APPLICATIONS_PAGE_SIZE = 20;
 
@@ -191,6 +192,9 @@ export class PlayerCommands {
       if (ex instanceof ValidationError) {
         interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
       } else {
+        interaction.editReply(
+          new MessageBuilder('Algo deu errado, entre em contato com um administrador').kind('ERROR').build()
+        );
         console.error(ex);
       }
     }
@@ -229,6 +233,11 @@ export class PlayerCommands {
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+      } else {
+        interaction.reply(
+          new MessageBuilder('Algo deu errado, entre em contato com um administrador').kind('ERROR').build()
+        );
+        console.error(ex);
       }
     }
   }
@@ -270,6 +279,8 @@ export class PlayerCommands {
 
       interaction.editReply(new MessageBuilder('Inscrição de jogador aprovada com sucesso').kind('SUCCESS').build());
 
+      await updatePlayerInfoUseCase.execute();
+
       const playerActorDiscord = await prismaDiscordActorRepository.findByActorId(player.actor.id);
       if (playerActorDiscord) {
         const season = await prismaSeasonRepository.findCurrent();
@@ -282,6 +293,9 @@ export class PlayerCommands {
       if (ex instanceof ValidationError) {
         interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
       } else {
+        interaction.editReply(
+          new MessageBuilder('Algo deu errado, entre em contato com um administrador').kind('ERROR').build()
+        );
         console.error(ex);
       }
     }
@@ -335,6 +349,11 @@ export class PlayerCommands {
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
+      } else {
+        interaction.editReply(
+          new MessageBuilder('Algo deu errado, entre em contato com um administrador').kind('ERROR').build()
+        );
+        console.error(ex);
       }
     }
   }
@@ -372,10 +391,17 @@ export class PlayerCommands {
 
       this.cache.invalidate('applications');
 
+      updatePlayerInfoUseCase.execute();
+
       interaction.reply(new MessageBuilder('Inscrição do jogador removida com sucesso').kind('SUCCESS').build());
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+      } else {
+        interaction.reply(
+          new MessageBuilder('Algo deu errado, entre em contato com um administrador').kind('ERROR').build()
+        );
+        console.error(ex);
       }
     }
   }

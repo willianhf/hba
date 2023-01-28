@@ -1,7 +1,7 @@
 import { ApprovalStatus } from '@prisma/client';
 import { DiscordChannelCategory } from '~/modules/discord/domain';
 import { DiscordChannelRepository } from '~/modules/discord/repos';
-import { deleteChannelMessagesUseCase } from '~/modules/discord/useCases';
+import { deleteChannelMessagesUseCase, syncChannelMessageUseCase } from '~/modules/discord/useCases';
 import { SeasonRepository } from '~/modules/season/repos';
 import { Conference, Team } from '~/modules/team/domain';
 import { TeamRepository } from '~/modules/team/repos';
@@ -68,7 +68,12 @@ export class UpdateTeamsChannelUseCase implements IUseCase<UpdateTeamsChannelDTO
         .codeBlock('© = Capitão | s = Sub-capitão')
         .build();
 
-      discordTeamsChannel.send(content);
+      await syncChannelMessageUseCase.execute({
+        channelCategory,
+        season,
+        discordChannel: discordTeamsChannel,
+        message: content
+      });
     }
   }
 }

@@ -16,6 +16,7 @@ interface SyncChannelMessageDTO {
   season: Season;
   message: string;
   channelCategory: DiscordChannelCategory;
+  files?: string[];
   discordChannel:
     | DMChannel
     | PartialDMChannel
@@ -32,7 +33,7 @@ export class SyncChannelMessageUseCase implements IUseCase<SyncChannelMessageDTO
   public constructor(private readonly discordChannelMessageRespository: DiscordChannelMessageRepository) {}
 
   public async execute(dto: SyncChannelMessageDTO): Promise<void> {
-    const discordMessage = await dto.discordChannel.send(dto.message);
+    const discordMessage = await dto.discordChannel.send({ content: dto.message, files: dto.files });
     const discordChannelMessage = new DiscordChannelMessage({
       category: dto.channelCategory,
       discordId: discordMessage.id,
