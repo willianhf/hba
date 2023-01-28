@@ -176,7 +176,7 @@ export class TeamCommands {
   }
 
   @Slash({ description: 'Aprova um time para a temporada atual' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   async accept(
     @SlashOption({
       description: 'Equipe',
@@ -228,7 +228,7 @@ export class TeamCommands {
   }
 
   @Slash({ description: 'Recusa um time para a temporada atual' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   async deny(
     @SlashOption({
       description: 'Equipe',
@@ -280,7 +280,7 @@ export class TeamCommands {
   }
 
   @Slash({ description: 'Remove uma inscrição aprovada de equipe na temporada atual' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   async remove(
     @SlashOption({
       description: 'Inscrição',

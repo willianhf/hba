@@ -1,5 +1,4 @@
-import { DiscordChannelCategory } from '@prisma/client';
-import { DiscordChannel, DiscordChannelId } from '~/modules/discord/domain';
+import { DiscordChannel, DiscordChannelCategory, DiscordChannelId } from '~/modules/discord/domain';
 import { DiscordChannelMapper } from '~/modules/discord/mapper';
 import { prisma } from '~/shared/infra/database';
 import { DiscordChannelRepository } from '../../';

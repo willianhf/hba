@@ -47,7 +47,7 @@ export class MatchCommands {
   }
 
   @Slash({ description: 'Cria uma partida na temporada' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   async create(
     @SlashOption({
       description: 'Equipe casa',

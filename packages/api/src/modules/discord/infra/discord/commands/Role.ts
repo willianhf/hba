@@ -6,7 +6,7 @@ import { setDiscordRoleCategoryUseCase } from '~/modules/discord/useCases';
 import { MessageBuilder } from '~/shared/infra/discord';
 
 @Discord()
-@Guard(PermissionGuard(['Administrator']))
+@Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
 @SlashGroup({
   name: 'role',
   description: 'Gerencia os cargos'

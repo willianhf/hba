@@ -8,7 +8,7 @@ import { ValidationError } from '~/shared/core';
 import { MessageBuilder } from '~/shared/infra/discord';
 
 @Discord()
-@Guard(PermissionGuard(['Administrator']))
+@Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
 @SlashGroup({
   name: 'season',
   description: 'Gerencia as temporadas'

@@ -1,5 +1,6 @@
 import { DiscordChannelCategory } from '~/modules/discord/domain';
 import { DiscordChannelRepository } from '~/modules/discord/repos';
+import { deleteChannelMessagesUseCase, syncChannelMessageUseCase } from '~/modules/discord/useCases';
 import { SeasonMatches } from '~/modules/match/domain';
 import { MatchRepository } from '~/modules/match/repos';
 import { SeasonRepository } from '~/modules/season/repos';
@@ -21,7 +22,8 @@ export class UpdateStandingsChannelUseCase
   ) {}
 
   public async execute(): Promise<UpdateStandingsChannelResult> {
-    const standingsChannel = await this.discordChannelRepository.findByCategory(DiscordChannelCategory.STANDINGS);
+    const channelCategory = DiscordChannelCategory.STANDINGS;
+    const standingsChannel = await this.discordChannelRepository.findByCategory(channelCategory);
     if (!standingsChannel) {
       throw new ValidationError('Você precisa definir o canal de classificação');
     }
@@ -32,24 +34,38 @@ export class UpdateStandingsChannelUseCase
     }
 
     if (discordStandingsChannel.isTextBased()) {
-      const messages = await discordStandingsChannel.messages.fetch();
-      messages.forEach(message => message.delete());
-
       const season = await this.seasonRepository.findCurrent();
+      await deleteChannelMessagesUseCase.execute({ season, channelCategory, discordChannel: discordStandingsChannel });
+
       const standings = await generateStandingsUseCase.execute({ season });
-      await discordStandingsChannel.send(standings.getTable(season));
+      await syncChannelMessageUseCase.execute({
+        channelCategory,
+        season,
+        discordChannel: discordStandingsChannel,
+        message: standings.getTable(season)
+      });
 
       const remainingMatches = await this.matchRepository.findRemaining(season.id);
       const seasonMatches = new SeasonMatches({ remainingMatches });
 
       const regularSeason = seasonMatches.getRegularSeason();
       if (regularSeason) {
-        await discordStandingsChannel.send(regularSeason);
+        await syncChannelMessageUseCase.execute({
+          channelCategory,
+          season,
+          discordChannel: discordStandingsChannel,
+          message: regularSeason
+        });
       }
 
       const playoffsBracket = seasonMatches.getPlayoffsBracket();
       if (playoffsBracket) {
-        await discordStandingsChannel.send(playoffsBracket);
+        await syncChannelMessageUseCase.execute({
+          channelCategory,
+          season,
+          discordChannel: discordStandingsChannel,
+          message: playoffsBracket
+        });
       }
     }
   }

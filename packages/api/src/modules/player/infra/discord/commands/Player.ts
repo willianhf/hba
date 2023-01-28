@@ -234,7 +234,7 @@ export class PlayerCommands {
   }
 
   @Slash({ description: 'Aprova uma inscrição de jogador para a temporada atual' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   @SlashGroup('player')
   async accept(
     @SlashOption({
@@ -288,7 +288,7 @@ export class PlayerCommands {
   }
 
   @Slash({ description: 'Recusa uma inscrição de jogador para a temporada atual' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   @SlashGroup('player')
   async deny(
     @SlashOption({
@@ -340,7 +340,7 @@ export class PlayerCommands {
   }
 
   @Slash({ description: 'Remove inscrição aprovada de jogador na temporada atual' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   @SlashGroup('player')
   async remove(
     @SlashOption({

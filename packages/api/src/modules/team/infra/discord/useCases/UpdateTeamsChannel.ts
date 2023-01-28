@@ -1,13 +1,13 @@
 import { ApprovalStatus } from '@prisma/client';
 import { DiscordChannelCategory } from '~/modules/discord/domain';
 import { DiscordChannelRepository } from '~/modules/discord/repos';
+import { deleteChannelMessagesUseCase } from '~/modules/discord/useCases';
 import { SeasonRepository } from '~/modules/season/repos';
-import { TeamRepository } from '~/modules/team/repos';
 import { Conference, Team } from '~/modules/team/domain';
+import { TeamRepository } from '~/modules/team/repos';
 import { IUseCase, ValidationError } from '~/shared/core';
-import { stripIndent } from 'common-tags';
-import { bot } from '~/shared/infra/discord/server';
 import { MessageBuilder } from '~/shared/infra/discord';
+import { bot } from '~/shared/infra/discord/server';
 import { TextTable } from '~/shared/infra/discord/TextTable';
 
 type UpdateTeamsChannelDTO = void;
@@ -36,7 +36,8 @@ export class UpdateTeamsChannelUseCase implements IUseCase<UpdateTeamsChannelDTO
   }
 
   public async execute(): Promise<void> {
-    const teamsChannel = await this.discordChannelRepository.findByCategory(DiscordChannelCategory.TEAMS);
+    const channelCategory = DiscordChannelCategory.TEAMS;
+    const teamsChannel = await this.discordChannelRepository.findByCategory(channelCategory);
     if (!teamsChannel) {
       throw new ValidationError('Você precisa definir o canal de times');
     }
@@ -47,10 +48,9 @@ export class UpdateTeamsChannelUseCase implements IUseCase<UpdateTeamsChannelDTO
     }
 
     if (discordTeamsChannel.isTextBased()) {
-      const messages = await discordTeamsChannel.messages.fetch();
-      messages.forEach(message => message.delete());
-
       const season = await this.seasonRepository.findCurrent();
+      await deleteChannelMessagesUseCase.execute({ season, channelCategory, discordChannel: discordTeamsChannel });
+
       const teams = await this.teamRepository.findByStatus(season.id, ApprovalStatus.ACCEPTED);
       const east = teams.filter(team => team.nbaTeam.conference === Conference.EAST);
       const west = teams.filter(team => team.nbaTeam.conference === Conference.WEST);
