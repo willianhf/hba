@@ -21,19 +21,25 @@ const icons: Prisma.IconCreateInput[] = [
   },
   {
     id: 'CS',
-    name: 'Corner Specialist',
+    name: 'Catch & Shoot Specialist',
     category: IconCategory.PRIMARY
   },
   {
     id: 'DE',
     name: 'Deadeye',
-    category: IconCategory.PRIMARY
+    category: IconCategory.PRIMARY,
+    enabled: false
   },
   {
     id: 'ED',
     name: 'Elite Defender',
     category: IconCategory.PRIMARY,
     enabled: false
+  },
+  {
+    id: 'IN',
+    name: 'Intimidator',
+    category: IconCategory.PRIMARY
   },
   {
     id: 'SB',
@@ -53,6 +59,16 @@ const icons: Prisma.IconCreateInput[] = [
   {
     id: 'BW',
     name: 'Brick Wall',
+    category: IconCategory.SECONDARY
+  },
+  {
+    id: 'BS',
+    name: 'Break Starter',
+    category: IconCategory.SECONDARY
+  },
+  {
+    id: 'RE',
+    name: 'Range Extender',
     category: IconCategory.SECONDARY
   }
 ];
