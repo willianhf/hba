@@ -9,7 +9,7 @@ export function Score(): JSX.Element {
 
   return (
     <span className="text-center text-white text-xl mb-2">
-      {away?.emoji.toUpperCase() ?? ""} {awayScore} vs {homeScore} {home?.emoji.toUpperCase() ?? ""}
+      {away?.emoji.toUpperCase() ?? ""} {awayScore} vs. {homeScore} {home?.emoji.toUpperCase() ?? ""}
     </span>
   );
 }
