@@ -14,4 +14,8 @@ export class Actor extends AggregateRoot<ActorProps, ActorId> {
   get habboUsername(): string {
     return this.props.habboUsername;
   }
+
+  public setHabboUsername(habboUsername: string): void {
+    this.props.habboUsername = habboUsername;
+  }
 }
