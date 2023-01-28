@@ -167,7 +167,7 @@ export class PlayerCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
-      await interaction.deferReply();
+      await interaction.deferReply({ ephemeral: true });
 
       const discordActor = await DiscordActorFacade.findOrRegister(interaction.user, interaction.member);
 
@@ -259,7 +259,7 @@ export class PlayerCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
-      await interaction.deferReply();
+      await interaction.deferReply({ ephemeral: true });
 
       const player = await changePlayerStatusUseCase.execute({
         playerId: new UniqueIdentifier(playerId),
@@ -313,7 +313,7 @@ export class PlayerCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
-      await interaction.deferReply();
+      await interaction.deferReply({ ephemeral: true });
 
       const player = await changePlayerStatusUseCase.execute({
         playerId: new UniqueIdentifier(playerId),
