@@ -1,28 +1,64 @@
-import { ApprovalStatus } from '@prisma/client';
-import { AggregateRoot, IncIdentifier, UniqueIdentifier } from '~/shared/domain';
+import { oneLineTrim } from 'common-tags';
+import { Season } from '~/modules/season/domain';
+import { AggregateRoot, UniqueIdentifier } from '~/shared/domain';
+import { ApprovalStatus } from './ApprovalStatus';
+import { NBATeam } from './NBATeam';
+import { Roster } from './Roster';
+import { TeamActor } from './TeamActor';
 
 export class TeamId extends UniqueIdentifier {}
 
 interface TeamProps {
-  nbaTeamId: UniqueIdentifier;
-  seasonId: IncIdentifier;
-  status?: ApprovalStatus;
+  nbaTeam: NBATeam;
+  season: Season;
+  status: ApprovalStatus;
+  roster?: Roster;
 }
 
 export class Team extends AggregateRoot<TeamProps> {
-  public constructor(props: TeamProps, id?: TeamId) {
-    super(props, id ?? new TeamId());
+  constructor(props: TeamProps, id?: TeamId) {
+    super(
+      {
+        ...props,
+        roster: props.roster ?? new Roster()
+      },
+      id ?? new TeamId()
+    );
   }
 
-  public get nbaTeamId(): UniqueIdentifier {
-    return this.props.nbaTeamId;
+  public get nbaTeam(): NBATeam {
+    return this.props.nbaTeam;
   }
 
-  public get seasonId(): IncIdentifier {
-    return this.props.seasonId;
+  public get season(): Season {
+    return this.props.season;
   }
 
   public get status(): ApprovalStatus {
-    return this.props.status ?? ApprovalStatus.IDLE;
+    return this.props.status;
+  }
+
+  public get roster(): Roster {
+    return this.props.roster!;
+  }
+
+  public addToRoster(teamActor: TeamActor): void {
+    this.roster.add(teamActor);
+  }
+
+  public removeFromRoster(teamActor: TeamActor): void {
+    this.roster.remove(teamActor);
+  }
+
+  public changeStatus(status: ApprovalStatus): void {
+    this.props.status = status;
+  }
+
+  public toTeamRow(biggestTeamName: number = 0): string {
+    return oneLineTrim(`
+      ${this.nbaTeam.name.padEnd(biggestTeamName, ' ')} | 
+      © ${this.roster.captain.habboUsername} & 
+      ${this.roster.coCaptain.habboUsername}
+    `);
   }
 }

@@ -1,5 +1,8 @@
 import { Conference } from '@prisma/client';
+import { DiscordEmojiFacade } from '~/modules/discord/facades';
 import { Entity, UniqueIdentifier } from '~/shared/domain';
+
+export { Conference } from '@prisma/client';
 
 interface NBATeamProps {
   name: string;
@@ -27,5 +30,17 @@ export class NBATeam extends Entity<NBATeamProps> {
 
   public get nickname(): string {
     return this.props.nickname;
+  }
+
+  public get emoji(): string {
+    return DiscordEmojiFacade.getEmojiByName(this.tricode.toLowerCase());
+  }
+
+  public get conferenceColor(): string {
+    return this.props.conference === Conference.EAST ? 'ts' : 'prolog';
+  }
+
+  public get conferenceEmoji(): string {
+    return DiscordEmojiFacade.getEmojiByName(this.conference.toLowerCase());
   }
 }

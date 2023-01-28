@@ -37,7 +37,7 @@ export function Player(props: Props): JSX.Element {
         </div>
       </div>
       <div className="flex-1">
-        <div className="grid grid-flow-col font-mono text-white">
+        <div className="flex font-mono text-white">
           <PlayerStat {...props} stat="points" />
           <PlayerStat {...props} stat="assists" />
           <PlayerStat {...props} stat="rebounds" />
@@ -71,7 +71,7 @@ function PlayerStat(props: PlayerStatProps): JSX.Element {
   return (
     <button
       type="button"
-      className="text-center p-0 select-none"
+      className="text-center p-0 select-none flex-grow w-20"
       onClick={(event) => onClick(event, () => increase(props.homeOrAway, props.player, props.stat))}
       onContextMenu={(event) => onClick(event, () => decrease(props.homeOrAway, props.player, props.stat))}
     >

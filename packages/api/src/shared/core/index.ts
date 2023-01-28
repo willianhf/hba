@@ -3,4 +3,7 @@ export { Server } from './Server';
 export { IUseCase } from './UseCase';
 export { BaseController } from './BaseController';
 export { BaseRepository } from './BaseRepository';
+export { InMemoryCache } from './InMemoryCache';
+export { Pagination } from './Pagination';
+export { Helpers } from './Helpers';
 export * from './Error';

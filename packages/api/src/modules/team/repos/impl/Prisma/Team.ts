@@ -1,15 +1,19 @@
 import { SeasonRepository } from '~/modules/season/repos';
+import { teamWithRelations } from '~/modules/team/database';
 import { Team, ApprovalStatus } from '~/modules/team/domain';
 import { TeamMapper } from '~/modules/team/mapper';
 import { IncIdentifier, UniqueIdentifier } from '~/shared/domain';
 import { prisma } from '~/shared/infra/database';
-import { TeamRepository } from '../..';
+import { RosterRepository, TeamRepository } from '../..';
 
 export class PrismaTeamRepository implements TeamRepository {
-  public constructor(private seasonRepository: SeasonRepository) {}
+  public constructor(
+    private readonly seasonRepository: SeasonRepository,
+    private readonly rosterRepository: RosterRepository
+  ) {}
 
   public async findAll(): Promise<Team[]> {
-    const prismaTeams = await prisma.team.findMany({});
+    const prismaTeams = await prisma.team.findMany(teamWithRelations);
 
     return prismaTeams.map(TeamMapper.toDomain);
   }
@@ -19,7 +23,8 @@ export class PrismaTeamRepository implements TeamRepository {
       where: {
         seasonId: seasonId.toValue(),
         approvalStatus: status
-      }
+      },
+      ...teamWithRelations
     });
 
     return prismaTeams.map(TeamMapper.toDomain);
@@ -29,7 +34,8 @@ export class PrismaTeamRepository implements TeamRepository {
     const prismaTeam = await prisma.team.findUnique({
       where: {
         id: id.toValue()
-      }
+      },
+      ...teamWithRelations
     });
 
     if (!prismaTeam) {
@@ -42,6 +48,14 @@ export class PrismaTeamRepository implements TeamRepository {
   public async create(team: Team): Promise<void> {
     const data = TeamMapper.toPersist(team);
     await prisma.team.create({ data });
+
+    await this.rosterRepository.create(team.roster);
+  }
+
+  public async update(team: Team): Promise<void> {
+    const data = TeamMapper.toPersist(team);
+
+    await prisma.team.update({ where: { id: team.id.toValue() }, data });
   }
 
   public async isAvailable(nbaTeamId: UniqueIdentifier): Promise<boolean> {

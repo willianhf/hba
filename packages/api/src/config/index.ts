@@ -6,6 +6,7 @@ interface Config {
   isProduction: boolean;
   saltRounds: number;
   jwtSecret: string;
+  botToken: string;
 }
 
 type Environment = Partial<Config>;
@@ -14,7 +15,8 @@ function getEnvironment(): Environment {
   return {
     isProduction: process.env.NODE_ENV === 'production',
     saltRounds: 6,
-    jwtSecret: process.env.JWT_SECRET
+    jwtSecret: process.env.JWT_SECRET,
+    botToken: process.env.BOT_TOKEN,
   };
 }
 

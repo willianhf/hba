@@ -1,5 +1,4 @@
-import { Conference } from '@prisma/client';
-import { NBATeam } from '~/modules/team/domain';
+import { NBATeam, Conference } from '~/modules/team/domain';
 import { prismaNBATeamRepository } from '~/modules/team/repos/impl/Prisma';
 import { isNBATeamAvailableService } from '~/modules/team/services/NBATeamAvailable';
 import { UniqueIdentifier } from '~/shared/domain';

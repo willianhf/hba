@@ -3,7 +3,7 @@ import { Team, TeamRosterRole } from '~/modules/team/domain';
 import {
   prismaNBATeamRepository,
   prismaTeamRepository,
-  prismaTeamRosterRepository
+  prismaTeamActorRepository
 } from '~/modules/team/repos/impl/Prisma';
 import { UniqueIdentifier } from '~/shared/domain';
 import { schemaBuilder } from '~/shared/infra/graphql/builder';
@@ -26,11 +26,11 @@ schemaBuilder.node(TeamRef, {
     managers: t.field({
       type: [TeamRosterRef],
       resolve: team =>
-        prismaTeamRosterRepository.findByRoles(team.id, [TeamRosterRole.CAPTAIN, TeamRosterRole.CO_CAPTAIN])
+        prismaTeamActorRepository.findByRoles(team.id, [TeamRosterRole.CAPTAIN, TeamRosterRole.CO_CAPTAIN])
     }),
     roster: t.field({
       type: [TeamRosterRef],
-      resolve: team => prismaTeamRosterRepository.findByTeamId(team.id)
+      resolve: team => prismaTeamActorRepository.findByTeamId(team.id)
     }),
     nbaTeam: t.field({
       type: NBATeamRef,

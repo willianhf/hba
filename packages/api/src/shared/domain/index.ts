@@ -5,3 +5,4 @@ export { IncIdentifier } from './IncIdentifier';
 export { Identifier } from './Identifier';
 export { ComposedIdentifier } from './ComposedIdentifier';
 export { ValueObject } from './ValueObject';
+export { WatchedList } from './WatchedList';

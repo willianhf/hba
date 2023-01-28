@@ -1,5 +1,5 @@
-export { NBATeam } from './NBATeam';
+export { NBATeam, Conference } from './NBATeam';
 export { Team, TeamId } from './Team';
-export { TeamRoster, TeamRosterIdentifier } from './TeamRoster';
-export { TeamRosterRole } from './TeamRosterRole';
+export { TeamActor, TeamActorIdentifier } from './TeamActor';
+export { TeamRole } from './TeamRole';
 export { ApprovalStatus } from './ApprovalStatus';

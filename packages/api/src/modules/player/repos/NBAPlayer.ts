@@ -1,5 +1,5 @@
-import { IncIdentifier, UniqueIdentifier } from '~/shared/domain';
-import { NBAPlayer } from '../domain/NBAPlayer';
+import { UniqueIdentifier } from '~/shared/domain';
+import { NBAPlayer } from '../domain';
 
 export interface NBAPlayerRepository {
   findById(id: UniqueIdentifier): Promise<NBAPlayer | null>;

@@ -1,8 +1,8 @@
 import { prismaSeasonRepository } from '~/modules/season/repos';
 import { PrismaNBATeamRepository } from './NBATeam';
 import { PrismaTeamRepository } from './Team';
-import { PrismaTeamRosterRepository } from './TeamRoster';
+import { PrismaRosterRepository } from './Roster';
 
 export const prismaNBATeamRepository = new PrismaNBATeamRepository();
-export const prismaTeamRepository = new PrismaTeamRepository(prismaSeasonRepository);
-export const prismaTeamRosterRepository = new PrismaTeamRosterRepository();
+export const prismaRosterRepository = new PrismaRosterRepository();
+export const prismaTeamRepository = new PrismaTeamRepository(prismaSeasonRepository, prismaRosterRepository);

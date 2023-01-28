@@ -1,14 +1,13 @@
 import SchemaBuilder from '@pothos/core';
 import ErrorsPlugin from '@pothos/plugin-errors';
-import RelayPlugin, { DefaultEdgesNullability } from '@pothos/plugin-relay';
+import RelayPlugin from '@pothos/plugin-relay';
 import ScopeAuthPlugin from '@pothos/plugin-scope-auth';
 import SimpleObjectsPlugin from '@pothos/plugin-simple-objects';
-import { User } from '~/modules/users/domain';
 import { AuthenticationError, ForbiddenError } from '~/shared/core/Error';
 
 type Context = {
   userAgent: string;
-  user: User | null;
+  user: any | null;
 };
 
 type SchemaBuilderConfig = {
@@ -24,8 +23,8 @@ type SchemaBuilderConfig = {
     isAdmin: boolean;
   };
   AuthContexts: {
-    isLoggedIn: Context & { user: User };
-    isAdmin: Context & { user: User };
+    isLoggedIn: Context & { user: any };
+    isAdmin: Context & { user: any };
   };
 };
 
@@ -65,5 +64,6 @@ export const schemaBuilder = new SchemaBuilder<SchemaBuilderConfig>({
 
 schemaBuilder.scalarType('Date', {
   serialize: (value: Date) => value.toISOString(),
+  // @ts-ignore
   parseValue: (value: string) => new Date(value)
 });

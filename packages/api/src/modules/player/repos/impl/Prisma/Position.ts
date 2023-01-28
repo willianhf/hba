@@ -1,4 +1,4 @@
-import { Position } from '~/modules/player/domain/Position';
+import { Position } from '~/modules/player/domain';
 import { UniqueIdentifier } from '~/shared/domain';
 import { prisma } from '~/shared/infra/database';
 import { PositionRepository } from '../../';

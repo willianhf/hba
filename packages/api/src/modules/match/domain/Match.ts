@@ -1,18 +1,19 @@
+import { stripIndents } from 'common-tags';
 import { SeasonId } from '~/modules/season/domain';
-import { TeamId } from '~/modules/team/domain';
+import { Team } from '~/modules/team/domain';
 import { AggregateRoot, UniqueIdentifier } from '~/shared/domain';
 import { MatchKind } from './MatchKind';
-import { MatchSeriesId } from './MatchSeries';
+import { MatchSeries } from './MatchSeries';
 
 export class MatchId extends UniqueIdentifier {}
 
 interface MatchProps {
   seasonId: SeasonId;
-  homeTeamId: TeamId;
-  awayTeamId: TeamId;
+  homeTeam: Team;
+  awayTeam: Team;
   matchKind: MatchKind;
   scheduledTo?: Date;
-  matchSeriesId?: MatchSeriesId;
+  matchSeries?: MatchSeries;
 }
 
 export class Match extends AggregateRoot<MatchProps, MatchId> {
@@ -24,12 +25,12 @@ export class Match extends AggregateRoot<MatchProps, MatchId> {
     return this.props.seasonId;
   }
 
-  get homeTeamId(): TeamId {
-    return this.props.homeTeamId;
+  get homeTeam(): Team {
+    return this.props.homeTeam;
   }
 
-  get awayTeamId(): TeamId {
-    return this.props.awayTeamId;
+  get awayTeam(): Team {
+    return this.props.awayTeam;
   }
 
   get kind(): MatchKind {
@@ -40,7 +41,30 @@ export class Match extends AggregateRoot<MatchProps, MatchId> {
     return this.props.scheduledTo;
   }
 
-  get matchSeriesId(): MatchSeriesId | undefined {
-    return this.props.matchSeriesId;
+  get series(): MatchSeries | undefined {
+    return this.props.matchSeries;
+  }
+
+  get seriesName(): string {
+    return `${this.homeTeam.nbaTeam.conferenceEmoji} ${this.series?.name ?? ''}`;
+  }
+
+  get name(): string {
+    if (this.series) {
+      return `${this.seriesName} - ${this.awayTeam.nbaTeam.tricode} vs. ${this.homeTeam.nbaTeam.tricode}`;
+    }
+
+    return `${this.awayTeam.nbaTeam.tricode} vs. ${this.homeTeam.nbaTeam.tricode}`;
+  }
+
+  public toPlayoffsHeader(): string {
+    return stripIndents(`
+    \`\`\`${this.homeTeam.nbaTeam.conferenceColor}
+    ${this.seriesName}\`\`\`
+  `);
+  }
+
+  public toStandings(): string {
+    return `${this.awayTeam.nbaTeam.emoji} vs. ${this.homeTeam.nbaTeam.emoji}`;
   }
 }

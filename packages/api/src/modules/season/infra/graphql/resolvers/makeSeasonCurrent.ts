@@ -5,7 +5,7 @@ schemaBuilder.relayMutationField(
   'makeSeasonCurrent',
   {
     inputFields: t => ({
-      seasonId: t.id({ required: true })
+      seasonName: t.string({ required: true })
     })
   },
   {
@@ -13,7 +13,7 @@ schemaBuilder.relayMutationField(
       isAdmin: true
     },
     resolve: async (_parent, args) => {
-      await makeSeasonCurrentService.execute({ seasonId: +args.input.seasonId });
+      await makeSeasonCurrentService.execute({ name: args.input.seasonName });
     }
   },
   {
