@@ -3,6 +3,8 @@ import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteracti
 import { Discord, Guard, Slash, SlashGroup, SlashOption } from 'discordx';
 import { DiscordActorFacade } from '~/modules/auth/infra/discord/facades/DiscordActor';
 import { prismaDiscordActorRepository } from '~/modules/auth/repos/impl/prisma';
+import { DiscordRoleCategory } from '~/modules/discord/domain';
+import { RoleGuard } from '~/modules/discord/infra/discord/guards';
 import { ApprovalStatus, Icon, IconCategory, Player, Position } from '~/modules/player/domain';
 import { NBAAPIFacade } from '~/modules/player/facades/NBAAPI';
 import {
@@ -243,7 +245,7 @@ export class PlayerCommands {
   }
 
   @Slash({ description: 'Aprova uma inscrição de jogador para a temporada atual' })
-  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
+  @Guard(RoleGuard([DiscordRoleCategory.MOD]))
   @SlashGroup('player')
   async accept(
     @SlashOption({
@@ -302,7 +304,7 @@ export class PlayerCommands {
   }
 
   @Slash({ description: 'Recusa uma inscrição de jogador para a temporada atual' })
-  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
+  @Guard(RoleGuard([DiscordRoleCategory.MOD]))
   @SlashGroup('player')
   async deny(
     @SlashOption({
@@ -359,7 +361,7 @@ export class PlayerCommands {
   }
 
   @Slash({ description: 'Remove inscrição aprovada de jogador na temporada atual' })
-  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
+  @Guard(RoleGuard([DiscordRoleCategory.MOD]))
   @SlashGroup('player')
   async remove(
     @SlashOption({
