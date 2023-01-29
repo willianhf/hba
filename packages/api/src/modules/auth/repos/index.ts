@@ -1,3 +1,3 @@
-export { ActorRepository } from './Actor';
-export { DiscordActorRepository } from './DiscordActor';
-export { IdentityRepository } from './Identity';
+export { type ActorRepository } from './Actor';
+export { type DiscordActorRepository } from './DiscordActor';
+export { type IdentityRepository } from './Identity';

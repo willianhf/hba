@@ -1,3 +1,3 @@
-export { NBATeamRepository } from './NBATeam';
-export { TeamRepository } from './Team';
-export { RosterRepository } from './Roster';
+export { type NBATeamRepository } from './NBATeam';
+export { type TeamRepository } from './Team';
+export { type RosterRepository } from './Roster';

@@ -1,5 +1,5 @@
-export { PlayerRepository } from './Player';
-export { PositionRepository } from './Position';
-export { IconRepository } from './Icon';
-export { NBAPlayerRepository } from './NBAPlayer';
-export { PlayerIconRepository } from './PlayerIcon';
+export { type PlayerRepository } from './Player';
+export { type PositionRepository } from './Position';
+export { type IconRepository } from './Icon';
+export { type NBAPlayerRepository } from './NBAPlayer';
+export { type PlayerIconRepository } from './PlayerIcon';

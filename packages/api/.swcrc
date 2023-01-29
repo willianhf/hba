@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/swcrc",
   "isModule": true,
   "module": {
-    "type": "es6",
+    "type": "commonjs",
     "strict": true,
     "lazy": true
   },
@@ -14,7 +14,7 @@
       "dynamicImport": true
     },
     "transform": {},
-    "target": "es2016",
+    "target": "es5",
     "loose": false,
     "baseUrl": "./",
     "paths": {

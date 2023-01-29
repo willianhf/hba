@@ -1,7 +1,6 @@
 {
   "name": "@hba/api",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts --clear-screen=false",
     "type-check": "tsc --pretty --noEmit",
@@ -13,7 +12,6 @@
     "database:seed": "prisma db seed"
   },
   "dependencies": {
-    "@discordx/importer": "^1.1.10",
     "@discordx/utilities": "^5.2.1",
     "@pothos/core": "^3.24.0",
     "@pothos/plugin-errors": "^3.1.1",
