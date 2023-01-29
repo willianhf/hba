@@ -1,3 +1,3 @@
-export { MatchRepository } from './Match';
-export { MatchSeriesRepository } from './MatchSeries';
-export { MatchResultRepository } from './MatchResult';
+export { type MatchRepository } from './Match';
+export { type MatchSeriesRepository } from './MatchSeries';
+export { type MatchResultRepository } from './MatchResult';

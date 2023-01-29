@@ -1,11 +1,9 @@
-import { dirname, importx } from '@discordx/importer';
 import type { Interaction, Message } from 'discord.js';
 import { IntentsBitField } from 'discord.js';
 import { Client } from 'discordx';
 import config from '~/config/index';
 import { Server } from '~/shared/core';
-
-const __dirname = dirname(import.meta.url);
+import './commands';
 
 export const bot = new Client({
   intents: [
@@ -36,8 +34,6 @@ class DiscordServer extends Server {
     bot.on('messageCreate', (message: Message) => {
       bot.executeCommand(message);
     });
-
-    await importx(`${__dirname}/src/modules/*/infra/discord/**/*.ts`);
 
     await bot.login(config.botToken);
   }

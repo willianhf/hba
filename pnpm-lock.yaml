@@ -7,7 +7,6 @@ importers:
 
   packages/api:
     specifiers:
-      '@discordx/importer': ^1.1.10
       '@discordx/utilities': ^5.2.1
       '@pothos/core': ^3.24.0
       '@pothos/plugin-errors': ^3.1.1
@@ -44,7 +43,6 @@ importers:
       yup: ^0.32.11
       zod: ^3.17.10
     dependencies:
-      '@discordx/importer': 1.1.10
       '@discordx/utilities': 5.2.1_nvm4z27k3rs2z7ivl5kk3he24u
       '@pothos/core': 3.24.0_graphql@16.6.0
       '@pothos/plugin-errors': 3.10.0_5x3kpsrmsr73lbgajjxj5qtieq
