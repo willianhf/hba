@@ -114,10 +114,22 @@ export class TeamCommands {
       required: true
     })
     coCaptain: User,
+    @SlashOption({
+      description: 'Capitão',
+      name: 'captain',
+      type: ApplicationCommandOptionType.User,
+      required: false
+    })
+    captainOrNull: User | null,
     interaction: CommandInteraction
   ): Promise<void> {
     try {
-      await interaction.deferReply();
+      await interaction.deferReply({ ephemeral: true });
+
+      const isAdmin = interaction.memberPermissions?.has('Administrator');
+      if (!isAdmin && captainOrNull && interaction.user.id !== captainOrNull.id) {
+        throw new ValidationError('Você não pode inscrever alguém diferente de você para ser capitão');
+      }
 
       const captainActor = await DiscordActorFacade.findOrRegister(interaction.user, interaction.member);
       const coCaptainActor = await DiscordActorFacade.findOrRegister(coCaptain, interaction.guild);
@@ -139,7 +151,7 @@ export class TeamCommands {
       );
     } catch (ex) {
       if (ex instanceof ValidationError) {
-        interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+        interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
       }
     }
   }
@@ -176,7 +188,7 @@ export class TeamCommands {
   }
 
   @Slash({ description: 'Aprova um time para a temporada atual' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   async accept(
     @SlashOption({
       description: 'Equipe',
@@ -200,17 +212,17 @@ export class TeamCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
+      await interaction.deferReply({ ephemeral: true });
       const team = await prismaTeamRepository.findById(new TeamId(teamId));
       if (!team) {
-        interaction.reply(new MessageBuilder('Time informado inválido').kind('ERROR').build());
-        return;
+        throw new ValidationError('Equipe informada inválido');
       }
 
       await changeTeamApprovalStatusUseCase.execute({ team, status: ApprovalStatus.ACCEPTED });
 
       teamsCache.invalidate('teams');
 
-      interaction.reply(new MessageBuilder('Equipe aprovada com sucesso').kind('SUCCESS').build());
+      interaction.editReply(new MessageBuilder('Equipe aprovada com sucesso').kind('SUCCESS').build());
 
       const captainActorDiscord = await prismaDiscordActorRepository.findByActorId(team.roster.captain.id);
       if (captainActorDiscord) {
@@ -222,13 +234,13 @@ export class TeamCommands {
       }
     } catch (ex) {
       if (ex instanceof ValidationError) {
-        interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+        interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
       }
     }
   }
 
   @Slash({ description: 'Recusa um time para a temporada atual' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   async deny(
     @SlashOption({
       description: 'Equipe',
@@ -252,17 +264,18 @@ export class TeamCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
+      await interaction.deferReply({ ephemeral: true });
+
       const team = await prismaTeamRepository.findById(new TeamId(teamId));
       if (!team) {
-        interaction.reply(new MessageBuilder('Time informado inválido').kind('ERROR').build());
-        return;
+        throw new ValidationError('Equipe informada inválido');
       }
 
       await changeTeamApprovalStatusUseCase.execute({ team, status: ApprovalStatus.DENIED });
 
       teamsCache.invalidate('teams');
 
-      interaction.reply(new MessageBuilder('Equipe reprovada com sucesso').kind('SUCCESS').build());
+      interaction.editReply(new MessageBuilder('Equipe reprovada com sucesso').kind('SUCCESS').build());
 
       const captainActorDiscord = await prismaDiscordActorRepository.findByActorId(team.roster.captain.id);
       if (captainActorDiscord) {
@@ -274,13 +287,13 @@ export class TeamCommands {
       }
     } catch (ex) {
       if (ex instanceof ValidationError) {
-        interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+        interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
       }
     }
   }
 
   @Slash({ description: 'Remove uma inscrição aprovada de equipe na temporada atual' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   async remove(
     @SlashOption({
       description: 'Inscrição',
@@ -303,10 +316,11 @@ export class TeamCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
+      await interaction.deferReply({ ephemeral: true });
+
       const team = await prismaTeamRepository.findById(new TeamId(teamId));
       if (!team) {
-        interaction.reply(new MessageBuilder('Time informado inválido').kind('ERROR').build());
-        return;
+        throw new ValidationError('Equipe informada inválido');
       }
 
       await changeTeamApprovalStatusUseCase.execute({
@@ -316,10 +330,10 @@ export class TeamCommands {
 
       teamsCache.invalidate('teams');
 
-      interaction.reply(new MessageBuilder('Inscrição do jogador removida com sucesso').kind('SUCCESS').build());
+      interaction.editReply(new MessageBuilder('Inscrição do jogador removida com sucesso').kind('SUCCESS').build());
     } catch (ex) {
       if (ex instanceof ValidationError) {
-        interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+        interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
       }
     }
   }

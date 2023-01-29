@@ -74,10 +74,11 @@ model Season {
   name      String  @unique
   isCurrent Boolean @default(false)
 
-  players     Player[]
-  matches     Match[]
-  rosters     Team[]
-  MatchSeries MatchSeries[]
+  players               Player[]
+  matches               Match[]
+  rosters               Team[]
+  matchSeries           MatchSeries[]
+  discordChannelMessage DiscordChannelMessage[]
 }
 
 model NBAPlayer {
@@ -116,8 +117,6 @@ model Player {
   matchStats         MatchStats[]
   icons              PlayerIcon[]
   playerOfTheMatches MatchResult[]
-
-  @@unique([actorId, seasonId, nbaPlayerId])
 }
 
 enum IconCategory {
@@ -271,12 +270,21 @@ enum DiscordChannelCategory {
   SCHEDULE
   TEAMS
   RESULTS
+  PLAYER_INFO
 }
 
 model DiscordChannel {
   category  DiscordChannelCategory @id @unique
   discordId String
   name      String
+}
+
+model DiscordChannelMessage {
+  discordId String                 @id
+  category  DiscordChannelCategory
+  seasonId  Int
+
+  season Season @relation(fields: [seasonId], references: [id])
 }
 
 enum DiscordRoleCategory {

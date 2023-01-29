@@ -4,7 +4,6 @@ import type { Client, GuardFunction, Next } from 'discordx';
 import { SimpleCommandMessage } from 'discordx';
 import { DiscordRoleCategory } from '~/modules/discord/domain';
 import { prismaDiscordRoleRepository } from '~/modules/discord/repos/impl/prisma';
-import { ValidationError } from '~/shared/core';
 
 type PermissionHandler = CommandInteraction | SimpleCommandMessage;
 

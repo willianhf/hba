@@ -6,7 +6,7 @@ import { setDiscordChannelCategoryUseCase } from '~/modules/discord/useCases';
 import { MessageBuilder } from '~/shared/infra/discord';
 
 @Discord()
-@Guard(PermissionGuard(['Administrator']))
+@Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
 @SlashGroup({
   name: 'channel',
   description: 'Gerencia os canais'

@@ -3,6 +3,8 @@ import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteracti
 import { Discord, Guard, Slash, SlashGroup, SlashOption } from 'discordx';
 import { DiscordActorFacade } from '~/modules/auth/infra/discord/facades/DiscordActor';
 import { prismaDiscordActorRepository } from '~/modules/auth/repos/impl/prisma';
+import { DiscordRoleCategory } from '~/modules/discord/domain';
+import { RoleGuard } from '~/modules/discord/infra/discord/guards';
 import { ApprovalStatus, Icon, IconCategory, Player, Position } from '~/modules/player/domain';
 import { NBAAPIFacade } from '~/modules/player/facades/NBAAPI';
 import {
@@ -13,10 +15,11 @@ import {
 import { applyPlayerUseCase } from '~/modules/player/useCases/ApplyPlayer';
 import { changePlayerStatusUseCase } from '~/modules/player/useCases/ChangePlayerStatus';
 import { prismaSeasonRepository } from '~/modules/season/repos';
-import { ApplicationError, InMemoryCache, Pagination, ValidationError } from '~/shared/core';
+import { InMemoryCache, Pagination, ValidationError } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
 import { MessageBuilder } from '~/shared/infra/discord';
 import { bot } from '~/shared/infra/discord/server';
+import { updatePlayerInfoUseCase } from '../useCases';
 
 const APPLICATIONS_PAGE_SIZE = 20;
 
@@ -167,7 +170,7 @@ export class PlayerCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
-      await interaction.deferReply();
+      await interaction.deferReply({ ephemeral: true });
 
       const discordActor = await DiscordActorFacade.findOrRegister(interaction.user, interaction.member);
 
@@ -191,6 +194,9 @@ export class PlayerCommands {
       if (ex instanceof ValidationError) {
         interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
       } else {
+        interaction.editReply(
+          new MessageBuilder('Algo deu errado, entre em contato com um administrador').kind('ERROR').build()
+        );
         console.error(ex);
       }
     }
@@ -229,12 +235,17 @@ export class PlayerCommands {
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+      } else {
+        interaction.reply(
+          new MessageBuilder('Algo deu errado, entre em contato com um administrador').kind('ERROR').build()
+        );
+        console.error(ex);
       }
     }
   }
 
   @Slash({ description: 'Aprova uma inscrição de jogador para a temporada atual' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(RoleGuard([DiscordRoleCategory.MOD]))
   @SlashGroup('player')
   async accept(
     @SlashOption({
@@ -259,7 +270,7 @@ export class PlayerCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
-      await interaction.deferReply();
+      await interaction.deferReply({ ephemeral: true });
 
       const player = await changePlayerStatusUseCase.execute({
         playerId: new UniqueIdentifier(playerId),
@@ -269,6 +280,8 @@ export class PlayerCommands {
       this.cache.invalidate('applications');
 
       interaction.editReply(new MessageBuilder('Inscrição de jogador aprovada com sucesso').kind('SUCCESS').build());
+
+      await updatePlayerInfoUseCase.execute();
 
       const playerActorDiscord = await prismaDiscordActorRepository.findByActorId(player.actor.id);
       if (playerActorDiscord) {
@@ -282,13 +295,16 @@ export class PlayerCommands {
       if (ex instanceof ValidationError) {
         interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
       } else {
+        interaction.editReply(
+          new MessageBuilder('Algo deu errado, entre em contato com um administrador').kind('ERROR').build()
+        );
         console.error(ex);
       }
     }
   }
 
   @Slash({ description: 'Recusa uma inscrição de jogador para a temporada atual' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(RoleGuard([DiscordRoleCategory.MOD]))
   @SlashGroup('player')
   async deny(
     @SlashOption({
@@ -313,7 +329,7 @@ export class PlayerCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
-      await interaction.deferReply();
+      await interaction.deferReply({ ephemeral: true });
 
       const player = await changePlayerStatusUseCase.execute({
         playerId: new UniqueIdentifier(playerId),
@@ -335,12 +351,17 @@ export class PlayerCommands {
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
+      } else {
+        interaction.editReply(
+          new MessageBuilder('Algo deu errado, entre em contato com um administrador').kind('ERROR').build()
+        );
+        console.error(ex);
       }
     }
   }
 
   @Slash({ description: 'Remove inscrição aprovada de jogador na temporada atual' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(RoleGuard([DiscordRoleCategory.MOD]))
   @SlashGroup('player')
   async remove(
     @SlashOption({
@@ -372,10 +393,17 @@ export class PlayerCommands {
 
       this.cache.invalidate('applications');
 
+      updatePlayerInfoUseCase.execute();
+
       interaction.reply(new MessageBuilder('Inscrição do jogador removida com sucesso').kind('SUCCESS').build());
     } catch (ex) {
       if (ex instanceof ValidationError) {
         interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+      } else {
+        interaction.reply(
+          new MessageBuilder('Algo deu errado, entre em contato com um administrador').kind('ERROR').build()
+        );
+        console.error(ex);
       }
     }
   }

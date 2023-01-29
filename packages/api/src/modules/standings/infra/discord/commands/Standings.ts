@@ -14,7 +14,7 @@ import { updateStandingsChannelUseCase } from '../useCases';
 @SlashGroup('standings')
 export class StandingsCommands {
   @Slash({ description: 'Gera as classificações da temporada' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   async generate(interaction: CommandInteraction): Promise<void> {
     try {
       await interaction.reply(new MessageBuilder('Tabela de classificação gerada com sucesso').kind('SUCCESS').build());

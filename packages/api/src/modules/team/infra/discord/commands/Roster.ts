@@ -61,7 +61,7 @@ export class RosterCommands {
   }
 
   @Slash({ description: 'Adiciona um jogador ao elenco de uma equipe' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   async add(
     @SlashOption({
       name: 'team_id',
@@ -115,7 +115,7 @@ export class RosterCommands {
   }
 
   @Slash({ description: 'Remove um jogador do elenco de uma equipe' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   async remove(
     @SlashOption({
       name: 'team_id',

@@ -10,6 +10,17 @@ export class PrismaActorRepository implements ActorRepository {
     await prisma.actor.create({ data });
   }
 
+  async update(actor: Actor): Promise<void> {
+    const data = ActorMapper.toPersist(actor);
+
+    await prisma.actor.update({
+      where: {
+        id: actor.id.toValue()
+      },
+      data
+    });
+  }
+
   async findById(id: ActorId): Promise<Actor | null> {
     const prismaActor = await prisma.actor.findUnique({ where: { id: id.toValue() } });
     if (!prismaActor) {

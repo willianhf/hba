@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "isModule": true,
+  "module": {
+    "type": "es6",
+    "strict": true,
+    "lazy": true
+  },
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true,
+      "importAssertions": true,
+      "dynamicImport": true
+    },
+    "transform": {},
+    "target": "es2016",
+    "loose": false,
+    "baseUrl": "./",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
+  }
+}

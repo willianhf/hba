@@ -47,7 +47,7 @@ export class MatchCommands {
   }
 
   @Slash({ description: 'Cria uma partida na temporada' })
-  @Guard(PermissionGuard(['Administrator']))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   async create(
     @SlashOption({
       description: 'Equipe casa',
@@ -151,7 +151,7 @@ export class MatchCommands {
   }
 
   @Slash({ description: 'Adiciona o resultado de uma partida' })
-  @Guard(RoleGuard([DiscordRoleCategory.MOD]))
+  @Guard(RoleGuard([DiscordRoleCategory.COUNCIL]))
   async result(
     @SlashOption({
       description: 'Partida',
