@@ -1,5 +1,5 @@
 import { Conference } from '@prisma/client';
-import got from 'got';
+import axios from 'axios';
 import { log } from '../log';
 import { prisma } from '../prisma';
 
@@ -15,7 +15,8 @@ interface NBATeamsAPIResponse {
 }
 
 async function fetchNBATeams() {
-  return got('https://www.balldontlie.io/api/v1/teams').json<NBATeamsAPIResponse>();
+  const response = await axios.get<NBATeamsAPIResponse>('https://www.balldontlie.io/api/v1/teams');
+  return response.data;
 }
 
 export async function seedNBATeams() {
