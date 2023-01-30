@@ -1,20 +1,19 @@
-import { Actor } from '~/modules/auth/domain';
 import { prismaSeasonRepository, SeasonRepository } from '~/modules/season/repos';
 import { IUseCase, ValidationError } from '~/shared/core';
 import { UniqueIdentifier } from '~/shared/domain';
-import { ApprovalStatus, Player } from '../domain';
+import { Player } from '../domain';
 import { IconRepository, PlayerRepository, PositionRepository } from '../repos';
 import { prismaIconRepository, prismaPlayerRepository, prismaPositionRepository } from '../repos/impl/Prisma';
 import { findNBAPlayerService } from './FindNBAPlayer';
 
-interface ApplyPlayerDTO {
-  actor: Actor;
+interface UpdatePlayerDTO {
+  player: Player;
   nbaPlayerId: UniqueIdentifier;
   positionId: UniqueIdentifier;
   iconsIds: UniqueIdentifier[];
 }
 
-class ApplyPlayerUseCase implements IUseCase<ApplyPlayerDTO, Player> {
+class UpdatePlayerUseCase implements IUseCase<UpdatePlayerDTO, Player> {
   public constructor(
     private readonly playerRepository: PlayerRepository,
     private readonly seasonRepository: SeasonRepository,
@@ -22,7 +21,7 @@ class ApplyPlayerUseCase implements IUseCase<ApplyPlayerDTO, Player> {
     private readonly iconRepository: IconRepository
   ) {}
 
-  public async execute(dto: ApplyPlayerDTO): Promise<Player> {
+  public async execute(dto: UpdatePlayerDTO): Promise<Player> {
     const currentSeason = await this.seasonRepository.findCurrent();
 
     const position = await this.positionRepository.findById(dto.positionId);
@@ -41,36 +40,23 @@ class ApplyPlayerUseCase implements IUseCase<ApplyPlayerDTO, Player> {
       })
     );
 
-    const canRequestPlayer = await this.playerRepository.canRequestPlayer(dto.actor.id, currentSeason.id);
-    if (!canRequestPlayer) {
-      throw new ValidationError(
-        `${dto.actor.habboUsername} já tem uma inscrição pendente ou aprovada pra essa temporada`
-      );
-    }
-
     const nbaPlayer = await findNBAPlayerService.execute({ nbaPlayerId: dto.nbaPlayerId });
-    const isNBAPlayerAvailable = await this.playerRepository.isNBAPlayerAvailable(nbaPlayer.id, currentSeason.id);
+    const isNBAPlayerAvailable = await this.playerRepository.isNBAPlayerAvailable(nbaPlayer.id, currentSeason.id, dto.player);
     if (!isNBAPlayerAvailable) {
       throw new ValidationError('O jogador selecionado já foi escolhido por outra pessoa');
     }
 
-    const player = new Player({
-      actor: dto.actor,
-      seasonId: currentSeason.id,
-      nbaPlayer,
-      position,
-      status: ApprovalStatus.ACCEPTED
-    });
+    dto.player.setNBAPlayer(nbaPlayer);
+    dto.player.setPosition(position);
+    dto.player.setIcons(icons);
 
-    player.setIcons(icons);
+    await this.playerRepository.update(dto.player);
 
-    await this.playerRepository.create(player);
-
-    return player;
+    return dto.player;
   }
 }
 
-export const applyPlayerUseCase = new ApplyPlayerUseCase(
+export const updatePlayerUseCase = new UpdatePlayerUseCase(
   prismaPlayerRepository,
   prismaSeasonRepository,
   prismaPositionRepository,
