@@ -9,7 +9,8 @@
     "build": "swc src/ -d dist/ -s",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
-    "database:seed": "prisma db seed"
+    "database:seed": "prisma db seed",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@discordx/utilities": "^5.2.1",
