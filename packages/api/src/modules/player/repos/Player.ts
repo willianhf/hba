@@ -8,7 +8,7 @@ export interface PlayerRepository {
   update(player: Player): Promise<void>;
   findById(id: UniqueIdentifier): Promise<Player | null>;
   canRequestPlayer(actorId: ActorId, seasonId: SeasonId): Promise<boolean>;
-  isNBAPlayerAvailable(nbaPlayerId: UniqueIdentifier, seasonId: SeasonId): Promise<boolean>;
+  isNBAPlayerAvailable(nbaPlayerId: UniqueIdentifier, seasonId: SeasonId, player?: Player): Promise<boolean>;
   findByActorAndSeason(actorId: ActorId, seasonId: SeasonId): Promise<Player[]>;
   findAll(seasonId: SeasonId): Promise<Player[]>;
   findByStatus(seasonId: SeasonId, status: ApprovalStatus): Promise<Player[]>;

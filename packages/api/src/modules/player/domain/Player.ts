@@ -62,4 +62,12 @@ export class Player extends AggregateRoot<PlayerProps> {
   public changeStatus(status: ApprovalStatus): void {
     this.props.status = status;
   }
+
+  public setNBAPlayer(nbaPlayer: NBAPlayer): void {
+    this.props.nbaPlayer = nbaPlayer;
+  }
+
+  public setPosition(position: Position): void {
+    this.props.position = position;
+  }
 }

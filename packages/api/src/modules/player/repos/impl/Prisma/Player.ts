@@ -53,12 +53,17 @@ export class PrismaPlayerRepository implements PlayerRepository {
     return prismaPlayers.every(player => player.status === ApprovalStatus.DENIED);
   }
 
-  public async isNBAPlayerAvailable(nbaPlayerId: UniqueIdentifier, seasonId: SeasonId): Promise<boolean> {
+  public async isNBAPlayerAvailable(
+    nbaPlayerId: UniqueIdentifier,
+    seasonId: SeasonId,
+    player?: Player
+  ): Promise<boolean> {
     const prismaPlayer = await prisma.player.findFirst({
       where: {
         nbaPlayerId: nbaPlayerId.toValue(),
         seasonId: seasonId.toValue(),
-        status: ApprovalStatus.ACCEPTED
+        status: ApprovalStatus.ACCEPTED,
+        id: player ? { not: player.id.toValue() } : undefined
       }
     });
 
