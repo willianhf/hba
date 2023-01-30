@@ -25,16 +25,8 @@ export class ApplyTeamUseCase implements IUseCase<ApplyTeamDTO, ApplyTeamResult>
   public async execute(dto: ApplyTeamDTO): Promise<ApplyTeamResult> {
     const currentSeason = await this.seasonRepository.findCurrent();
 
-    const hasPendingApplication = await this.rosterRepository.hasPendingApplication(
-      dto.captainActor.id,
-      currentSeason.id
-    );
-    if (hasPendingApplication) {
-      throw new ValidationError('Você já possui duas inscrições de equipe pendentes');
-    }
-
     if (dto.captainActor.equals(dto.coCaptainActor)) {
-      throw new ValidationError('O sub-capitão não pode ser você mesmo');
+      throw new ValidationError('O sub-capitão não pode ser o mesmo que o capitão');
     }
 
     const isNBATeamAvailable = await this.teamRepository.isAvailable(dto.nbaTeamId);
@@ -44,7 +36,7 @@ export class ApplyTeamUseCase implements IUseCase<ApplyTeamDTO, ApplyTeamResult>
 
     const isCaptainInRoster = await this.rosterRepository.isActorInRoster(dto.captainActor.id, currentSeason.id);
     if (isCaptainInRoster) {
-      throw new ValidationError('Você já está em uma equipe');
+      throw new ValidationError('O capitão já está em uma equipe');
     }
 
     const isCoCaptainInRoster = await this.rosterRepository.isActorInRoster(dto.coCaptainActor.id, currentSeason.id);
@@ -57,7 +49,7 @@ export class ApplyTeamUseCase implements IUseCase<ApplyTeamDTO, ApplyTeamResult>
     const team = new Team({
       nbaTeam,
       season: currentSeason,
-      status: ApprovalStatus.IDLE
+      status: ApprovalStatus.ACCEPTED
     });
 
     const teamActorCaptain = new TeamActor({

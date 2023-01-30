@@ -4,8 +4,6 @@ import { Discord, Guard, Slash, SlashGroup, SlashOption } from 'discordx';
 import { ActorId } from '~/modules/auth/domain';
 import { DiscordActorFacade } from '~/modules/auth/infra/discord/facades/DiscordActor';
 import { prismaActorRepository } from '~/modules/auth/repos/impl/prisma';
-import { DiscordRoleCategory } from '~/modules/discord/domain';
-import { RoleGuard } from '~/modules/discord/infra/discord/guards';
 import { prismaSeasonRepository } from '~/modules/season/repos';
 import { ApprovalStatus, Team, TeamId } from '~/modules/team/domain';
 import { prismaTeamRepository } from '~/modules/team/repos/impl/Prisma';
@@ -98,8 +96,6 @@ export class RosterCommands {
 
       teamsCache.invalidate(ACCEPTED_TEAMS_CACHE_KEY);
 
-      updateTeamsChannelUseCase.execute();
-
       const roster = this.buildTeamRoster(team);
       interaction.reply(
         new MessageBuilder('Jogador adicionado ao elenco com sucesso')
@@ -171,8 +167,6 @@ export class RosterCommands {
 
       teamsCache.invalidate(ACCEPTED_TEAMS_CACHE_KEY);
 
-      updateTeamsChannelUseCase.execute();
-
       const roster = this.buildTeamRoster(team);
       interaction.reply(
         new MessageBuilder('Jogador removido do elenco com sucesso')
@@ -224,7 +218,7 @@ export class RosterCommands {
   }
 
   @Slash({ description: 'Atualiza o canal de times' })
-  @Guard(RoleGuard([DiscordRoleCategory.MOD]))
+  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
   async update(interaction: CommandInteraction): Promise<void> {
     try {
       updateTeamsChannelUseCase.execute();
