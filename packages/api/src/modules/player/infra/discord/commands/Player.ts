@@ -51,10 +51,16 @@ export class PlayerCommands {
     }
   }
 
+  private async getApplications(status: ApprovalStatus): Promise<Player[]> {
+    await this.ensureCache(status);
+
+    return this.cache.getOr<Player[]>(`applications:${status}`, []); 
+  }
+
   private async getApplicationsBySearch(status: ApprovalStatus, search: string | null): Promise<Player[]> {
     await this.ensureCache(status);
 
-    const applications = this.cache.getOr<Player[]>(`applications:${status}`, []);
+    const applications = await this.getApplications(status);
     if (search) {
       return applications
         .filter(player => player.actor.habboUsername.toLowerCase().includes(search.toLowerCase()))
@@ -339,7 +345,7 @@ export class PlayerCommands {
     try {
       await interaction.deferReply({ ephemeral: true });
 
-      const players = await this.getApplicationsBySearch(ApprovalStatus.ACCEPTED, null);
+      const players = await this.getApplications(ApprovalStatus.ACCEPTED);
       const player = players.find(player => player.id.toValue() === applicationId);
       if (!player) {
         throw new ValidationError('Jogador informado não encontrado');
