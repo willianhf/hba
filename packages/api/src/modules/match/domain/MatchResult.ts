@@ -78,6 +78,14 @@ export class MatchResult extends AggregateRoot<MatchResultProps, MatchResultId> 
     return this.homeScore > this.awayScore ? this.match.awayTeam : this.match.homeTeam;
   }
 
+  get name(): string {
+    if (this.match.series) {
+      return `${this.match.seriesName} - ${this.match.awayTeam.nbaTeam.tricode} ${this.awayScore} vs. ${this.homeScore} ${this.match.homeTeam.nbaTeam.tricode}`;
+    }
+
+    return `${this.match.awayTeam.nbaTeam.tricode} ${this.awayScore} vs ${this.homeScore} ${this.match.homeTeam.nbaTeam.tricode}`;
+  }
+
   public toDiscordMessage(): string {
     return stripIndent(`
       ${this.match.series ? `${this.match.seriesName}\n` : ''}

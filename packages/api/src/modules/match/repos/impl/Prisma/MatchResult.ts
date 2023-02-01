@@ -12,6 +12,17 @@ export class PrismaMatchResultRepository implements MatchResultRepository {
     await prisma.matchResult.create({ data });
   }
 
+  public async update(matchResult: MatchResult): Promise<void> {
+    const data = MatchResultMapper.toPersistence(matchResult);
+
+    await prisma.matchResult.update({
+      where: {
+        matchId: matchResult.match.id.toValue()
+      },
+      data
+    });
+  }
+
   public async findAll(): Promise<MatchResult[]> {
     throw new Error('Method not implemented');
   }
