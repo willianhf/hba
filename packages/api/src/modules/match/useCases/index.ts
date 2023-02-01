@@ -5,6 +5,7 @@ import { prismaMatchRepository, prismaMatchResultRepository } from '../repos/imp
 import { CreateMatchUseCase } from './CreateMatch';
 import { CreateMatchResultUseCase } from './CreateMatchResult';
 import { CreateSeasonMatchesUseCase } from './CreateSeasonMatches';
+import { UpdateMatchResultUseCase } from './UpdateMatchResult';
 
 export const createMatchUseCase = new CreateMatchUseCase(prismaMatchRepository);
 
@@ -15,6 +16,12 @@ export const createSeasonMatchesUseCase = new CreateSeasonMatchesUseCase(
 );
 
 export const createMatchResultUseCase = new CreateMatchResultUseCase(
+  prismaMatchResultRepository,
+  prismaSeasonRepository,
+  prismaPlayerRepository
+);
+
+export const updateMatchResultUseCase = new UpdateMatchResultUseCase(
   prismaMatchResultRepository,
   prismaSeasonRepository,
   prismaPlayerRepository

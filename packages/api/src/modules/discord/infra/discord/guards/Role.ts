@@ -72,7 +72,7 @@ export function RoleGuard(
 
     const discordRoles = await prismaDiscordRoleRepository.findMany(...roleCategories);
     if (discordRoles.length === 0) {
-      return send(arg, { content: `Algum dos cargos ${roleCategories.join(', ')} não foi definido` });
+      return send(arg, { content: `Algum dos cargos ${roleCategories.join(', ')} não foi definido`, ephemeral: true });
     }
 
     const isAllowed =

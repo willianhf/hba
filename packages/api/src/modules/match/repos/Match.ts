@@ -6,6 +6,6 @@ import { Match, MatchKind } from '../domain';
 export interface MatchRepository extends BaseRepository<Match> {
   findBySeason(seasonId: SeasonId): Promise<Match[]>;
   createMany(matches: Match[]): Promise<void>;
-  findRemaining(seasonId: SeasonId): Promise<Match[]>;
   exists(seasonId: SeasonId, teamA: Team, teamB: Team, kind: MatchKind): Promise<boolean>;
+  findRemaining(seasonId: SeasonId): Promise<Match[]>;
 }
