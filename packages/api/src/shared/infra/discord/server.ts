@@ -1,4 +1,4 @@
-import type { Interaction, Message } from 'discord.js';
+import { Events, Interaction, Message } from 'discord.js';
 import { IntentsBitField } from 'discord.js';
 import { Client } from 'discordx';
 import config from '~/config/index';
@@ -22,16 +22,23 @@ class DiscordServer extends Server {
   }
 
   public async start(): Promise<void> {
-    bot.once('ready', async () => {
+    bot.once(Events.ClientReady, async () => {
       await bot.initApplicationCommands();
       this.onStart();
     });
 
-    bot.on('interactionCreate', (interaction: Interaction) => {
+    bot.on(Events.InteractionCreate, (interaction: Interaction) => {
+      if (interaction.isCommand()) {
+        console.log(
+          `${interaction.user.username} executed /${interaction.commandName} ${interaction.options.data
+            .map(option => option.name)
+            .join(' ')}`
+        );
+      }
       bot.executeInteraction(interaction);
     });
 
-    bot.on('messageCreate', (message: Message) => {
+    bot.on(Events.MessageCreate, (message: Message) => {
       bot.executeCommand(message);
     });
 

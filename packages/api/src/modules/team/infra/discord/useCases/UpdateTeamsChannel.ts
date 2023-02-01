@@ -6,9 +6,8 @@ import { SeasonRepository } from '~/modules/season/repos';
 import { Conference, Team } from '~/modules/team/domain';
 import { TeamRepository } from '~/modules/team/repos';
 import { IUseCase, ValidationError } from '~/shared/core';
-import { MessageBuilder } from '~/shared/infra/discord';
+import { MessageBuilder, TextTable } from '~/shared/infra/discord';
 import { bot } from '~/shared/infra/discord/server';
-import { TextTable } from '~/shared/infra/discord/TextTable';
 
 type UpdateTeamsChannelDTO = void;
 

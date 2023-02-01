@@ -5,9 +5,8 @@ import { ApprovalStatus } from '~/modules/player/domain';
 import { PlayerRepository } from '~/modules/player/repos';
 import { SeasonRepository } from '~/modules/season/repos';
 import { Helpers, IUseCase, ValidationError } from '~/shared/core';
-import { MessageBuilder } from '~/shared/infra/discord';
+import { MessageBuilder, TextTable } from '~/shared/infra/discord';
 import { bot } from '~/shared/infra/discord/server';
-import { TextTable } from '~/shared/infra/discord/TextTable';
 
 type UpdatePlayerInfoChannelDTO = void;
 
