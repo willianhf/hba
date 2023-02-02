@@ -87,7 +87,7 @@ export class TeamStandings extends ValueObject<TeamStandingsProps> {
     return this.results
       .slice(-3)
       .map(result => (this.isWinner(result) ? 'W' : 'L'))
-      .join()
+      .join('')
       .padEnd(3, '-');
   }
 
