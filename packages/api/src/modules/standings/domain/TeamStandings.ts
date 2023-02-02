@@ -87,6 +87,7 @@ export class TeamStandings extends ValueObject<TeamStandingsProps> {
     const orderedResults = [...this.results].sort((a, b) => b.releseadAt.getTime() - a.releseadAt.getTime());
 
     return orderedResults
+      .slice(-3)
       .map(result => (this.isWinner(result) ? 'W' : 'L'))
       .join('')
       .padEnd(3, '-');
