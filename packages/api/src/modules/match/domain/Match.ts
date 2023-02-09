@@ -46,7 +46,7 @@ export class Match extends AggregateRoot<MatchProps, MatchId> {
   }
 
   get seriesName(): string {
-    return `${this.homeTeam.nbaTeam.conferenceEmoji} ${this.series?.name ?? ''}`;
+    return this.series?.name ?? '';
   }
 
   get name(): string {
@@ -59,8 +59,9 @@ export class Match extends AggregateRoot<MatchProps, MatchId> {
 
   public toPlayoffsHeader(): string {
     return stripIndents(`
-    \`\`\`${this.homeTeam.nbaTeam.conferenceColor}
-    ${this.seriesName}\`\`\`
+      ${this.homeTeam.nbaTeam.conferenceEmoji}
+      \`\`\`${this.homeTeam.nbaTeam.conferenceColor}
+      ${this.seriesName}\`\`\`
   `);
   }
 
