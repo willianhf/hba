@@ -87,13 +87,13 @@ export class MatchResult extends AggregateRoot<MatchResultProps, MatchResultId> 
   }
 
   public toDiscordMessage(): string {
+    const score = `${this.match.awayTeam.nbaTeam.emoji} ${this.match.awayTeam.nbaTeam.name} ${this.awayScore} @ ${this.homeScore} ${this.match.homeTeam.nbaTeam.name} ${this.match.homeTeam.nbaTeam.emoji}`;
+    
     return stripIndent(`
       ${this.match.series ? `${this.match.seriesName}\n` : ''}
-      ${this.match.awayTeam.nbaTeam.emoji} ${this.match.awayTeam.nbaTeam.name} ${this.awayScore} @ ${this.homeScore} ${
-      this.match.homeTeam.nbaTeam.name
-    } ${this.match.homeTeam.nbaTeam.emoji}
+      ${score}${this.isWalkover ? ' (W.O)' : ''}
 
-      🔥 ⛹️  Cole.Wolforg Player of the Game: ${this.playerOfTheMatch.actor.habboUsername} 
+      🔥 ⛹️  Cole.Wolforg Player of the Game: ${this.isWalkover ? '-' : this.playerOfTheMatch.actor.habboUsername} 
       Árbitro: ${this.referee.habboUsername}
       Placar: ${this.scorer.habboUsername}
       ${this.recorder ? `Recorder: ${this.recorder.habboUsername}` : ''}

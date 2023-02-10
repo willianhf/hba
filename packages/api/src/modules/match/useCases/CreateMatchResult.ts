@@ -34,7 +34,7 @@ export class CreateMatchResultUseCase implements IUseCase<CreateMatchResultDTO, 
       throw new ValidationError('POTG informado não possui uma inscrição de jogador ativa');
     }
 
-    const isWalkover = dto.homeScore === 0 && dto.awayScore === 0;
+    const isWalkover = (dto.homeScore === 0 && dto.awayScore === 10) || (dto.homeScore === 10 && dto.awayScore === 0);
     const releasedAt = new Date();
     const matchResult = new MatchResult({
       match: dto.match,
