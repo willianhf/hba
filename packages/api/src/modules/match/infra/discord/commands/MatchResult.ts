@@ -150,7 +150,7 @@ export class MatchResultCommands {
     try {
       await interaction.deferReply({ ephemeral: true });
       
-      if (homeScore > 0 && awayScore > 0 && homeScore === awayScore) {
+      if (homeScore === awayScore) {
         throw new ValidationError('O placar não pode ser empate');
       }
 

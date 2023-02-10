@@ -37,7 +37,7 @@ export async function seedNBATeams() {
       return prisma.nBATeam.upsert({
         where: { id: team.id },
         create: team,
-        update: team
+        update: {}
       });
     })
   );

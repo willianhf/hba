@@ -12,6 +12,6 @@ export async function seedSeason() {
   await prisma.season.upsert({
     where: { id: season.id },
     create: { ...season, isCurrent: true },
-    update: season
+    update: {}
   });
 }
