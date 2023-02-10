@@ -79,8 +79,8 @@ export class SeasonMatches extends ValueObject<SeasonMatchesProps> {
         .map(([header, matches]) => `${header}\n${matches.map(match => match.toStandings()).join('\n')}`)
         .join('\n')}
       
-      \`\`\`prolog
       ${DiscordEmojiFacade.getEmojiByName('trofeu')} THE FINALS\`\`\` 
+      \`\`\`prolog
       ${this.finals.map(match => match.toStandings()).join('\n')}
     `);
   }

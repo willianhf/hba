@@ -10,6 +10,8 @@ interface TeamStandingsProps {
   standings: Standings;
 }
 
+const REGULAR_GAMES_AMOUNT = 5;
+
 export class TeamStandings extends ValueObject<TeamStandingsProps> {
   public constructor(props: TeamStandingsProps) {
     super(props);
@@ -101,6 +103,44 @@ export class TeamStandings extends ValueObject<TeamStandingsProps> {
     return this.standings.findIndex(standing => standing.team.equals(this.team)) + 1;
   }
 
+  get isLeader(): boolean {
+    return this.position === 1;
+  }
+
+  get isLast(): boolean {
+    return this.position === this.standings.length;
+  }
+
+  get clinchedPlayoffs(): boolean {
+    if (this.games < REGULAR_GAMES_AMOUNT) {
+      if (!this.canClinchPlayoffs) {
+        return false;
+      }
+
+      return false;
+    }
+
+    return !this.isLast;
+  }
+
+  get canClinchPlayoffs(): boolean {
+    return this.opponents
+      .filter(opponent => opponent.position < this.position)
+      .reduce((acc, opponent) => {
+        if (acc) {
+          return acc;
+        }
+
+        return (
+          // a = opponent | b = this
+          // (G + 1) - Wa - Lb
+          REGULAR_GAMES_AMOUNT + 1 - opponent.wins - this.losses > 0 ||
+          // (CG + 1) - CWa - CLb
+          this.standings.length - opponent.conferenceWins - this.conferenceLosses > 0
+        );
+      }, false);
+  }
+
   public wonAgainst(opponent: Team): 0 | 1 | -1 {
     const result = this.opponents
       .filter(o => opponent.equals(o.team))
@@ -112,22 +152,6 @@ export class TeamStandings extends ValueObject<TeamStandingsProps> {
     }
 
     return result.loser.equals(opponent) ? 1 : -1;
-  }
-
-  get isLast(): boolean {
-    return this.position === this.standings.length;
-  }
-
-  get clinchedPlayoffs(): boolean {
-    if (this.games < this.standings.length) {
-      return false;
-    }
-
-    if (this.isLast) {
-      return false;
-    }
-
-    return true;
   }
 
   public toTableRow(): string {
