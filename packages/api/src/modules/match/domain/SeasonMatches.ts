@@ -76,7 +76,7 @@ export class SeasonMatches extends ValueObject<SeasonMatchesProps> {
       \`\`\`fix
       PLAYOFFS BRACKET\`\`\`
       ${playoffs
-        .map(([header, matches]) => `${header}\n${matches.map(match => match.toStandings()).join('\n')}`)
+        .map(([header, matches]) => `\n${header}\n\n${matches.map(match => match.toStandings()).join('\n')}`)
         .join('\n')}
       
       ${DiscordEmojiFacade.getEmojiByName('trofeu')} \`THE FINALS\` 
