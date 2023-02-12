@@ -14,10 +14,10 @@ import { updateStandingsChannelUseCase } from '../useCases';
 @SlashGroup('standings')
 export class StandingsCommands {
   @Slash({ description: 'Gera as classificações da temporada' })
-  @Guard(RoleGuard(['MOD']))
+  @Guard(RoleGuard(['MOD'], { ephemeral: true }))
   async generate(interaction: CommandInteraction): Promise<void> {
     try {
-      await interaction.deferReply();
+      await interaction.deferReply({ ephemeral: true });
       interaction.editReply(new MessageBuilder('Tabela de classificação gerada com sucesso').kind('SUCCESS').build());
 
       await createSeasonMatchesUseCase.execute();
