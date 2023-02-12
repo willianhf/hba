@@ -1,6 +1,7 @@
 import { PermissionGuard } from '@discordx/utilities';
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction } from 'discord.js';
 import { Discord, Guard, Slash, SlashChoice, SlashGroup, SlashOption } from 'discordx';
+import { RoleGuard } from '~/modules/discord/infra/discord/guards';
 import { MatchKind, MatchSeries } from '~/modules/match/domain';
 import { prismaMatchSeriesRepository } from '~/modules/match/repos/impl/Prisma';
 import { createMatchUseCase } from '~/modules/match/useCases';
@@ -20,7 +21,7 @@ import { cache } from '../cache';
 @SlashGroup('match')
 export class MatchCommands {
   @Slash({ description: 'Cria uma partida na temporada' })
-  @Guard(PermissionGuard(['Administrator'], { ephemeral: true }))
+  @Guard(RoleGuard(['MOD'], { ephemeral: true }))
   async create(
     @SlashOption({
       description: 'Equipe casa',
@@ -78,6 +79,8 @@ export class MatchCommands {
     interaction: CommandInteraction
   ): Promise<void> {
     try {
+      await interaction.deferReply({ ephemeral: true });
+
       if (homeTeamId === awayTeamId) {
         throw new ValidationError('As equipes não podem ser as mesmas');
       }
@@ -113,10 +116,10 @@ export class MatchCommands {
 
       cache.invalidate('matches');
 
-      interaction.reply(new MessageBuilder('Partida criada com sucesso').kind('SUCCESS').build());
+      interaction.editReply(new MessageBuilder('Partida criada com sucesso').kind('SUCCESS').build());
     } catch (ex) {
       if (ex instanceof ValidationError) {
-        interaction.reply(new MessageBuilder(ex.message).kind('ERROR').build());
+        interaction.editReply(new MessageBuilder(ex.message).kind('ERROR').build());
       } else {
         console.error(ex);
       }
